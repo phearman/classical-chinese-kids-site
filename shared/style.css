@@ -554,6 +554,9 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .anim-note { flex: none; margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
 .voice-note { flex: none; margin: 0; font-size: 13px; line-height: 1.5; color: var(--todo-fg); background: var(--todo-bg); border-radius: 8px; padding: 4px 10px; }
 .voice-note[hidden] { display: none; }
+.voice-note { display: flex; align-items: flex-start; gap: 8px; }
+.voice-note-close { flex: none; min-width: 32px; min-height: 32px; margin: -2px -6px -2px auto; border: 0; border-radius: 8px; background: none; color: inherit; font: inherit; cursor: pointer; }
+.voice-note-close:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
 .controls { flex: none; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .chapter-pick { flex: 1 1 140px; }
 .about-btn { display: none; }

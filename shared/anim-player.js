@@ -1,9 +1,9 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=a0a4eef';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=a0a4eef';
-import { characterURL as imageURL } from './assets.js?v=a0a4eef';
+import { escapeHTML } from './terms.js?v=3864b57';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=3864b57';
+import { characterURL as imageURL } from './assets.js?v=3864b57';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
@@ -37,8 +37,9 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
   let speaking = false;
   let last = 0;
   let ended = false;
-  let holdSince = 0;         // 正在等上一句念完的開始時間(performance.now);0=沒在等
-  const HOLD_MAX = 15000;    // 最多等 15 秒,裝置朗讀卡住時動畫不會永遠停住
+  let holdWaited = 0;        // 已經在播放中等了上一句多久(毫秒;暫停的時間不算);0=沒在等
+  // 最多等 15 秒,裝置朗讀卡住時動畫不會永遠停住(測試可用 ?holdmax= 縮短,只在 ?speed= 測試模式有效)
+  const HOLD_MAX = params.has('speed') && Number(params.get('holdmax')) > 0 ? Number(params.get('holdmax')) : 15000;
 
   // ---------------------------------------------------------------- 畫面骨架
   // 頁面說明;矮螢幕時收進 ⓘ 彈出視窗(CSS 決定顯示哪一個)
@@ -66,7 +67,7 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
         <input type="range" id="seek" class="seek" min="0" max="${TOTAL}" step="1" value="0" aria-label="播放進度">
         <span class="seek-time" id="seektime" aria-hidden="true"></span>
       </div>
-      <p class="voice-note" id="voice-note" role="status" hidden>這台裝置沒有華語朗讀語音，旁白只顯示字幕。</p>
+      <p class="voice-note" id="voice-note" role="status" hidden><span id="voice-note-text"></span><button type="button" class="voice-note-close" id="voice-note-close" aria-label="關閉提示">✕</button></p>
       <p class="anim-note" id="anim-note">${NOTE}</p>
       <dialog class="note-dialog" id="about-dialog" aria-labelledby="about-title">
         <form method="dialog" class="note-card">
@@ -149,27 +150,103 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     }
   }
 
-  // 取消正在念的(換幕、拖動、關旁白、片尾):讓所有舊回呼過期,並為當前實例補發一次 end
+  // 取消正在念的(換幕、拖動、關旁白、片尾):讓所有舊回呼過期,為當前實例補發一次 end,並清掉還沒送出的待念句
+  // 只有真的在念時才 cancel():Android Chrome 在 cancel() 之後馬上 speak(),常常整句沒聲音(WY17)
   function stopSpeech() {
     speechGen += 1;
+    pendingLine = null;
+    const busy = (!!current && !current.ended) || !!synth?.speaking || !!synth?.pending;
     if (current) finishInst(current);
-    if (synth) synth.cancel();
+    if (synth && busy) { synth.cancel(); lastCancelAt = performance.now(); }
     speaking = false;
+    return busy;
+  }
+
+  // ---------------------------------------------------------------- 待念句(WY17 收單 1)
+  // 內建朗讀不直接送出,先放進「待念句」:播放中、旁白開著、語音清單載入好、cancel 後的間隔過了,才送出。
+  // 間隔只算播放中的時間;暫停時不送(WebKit、Chromium 開始新句會重設暫停狀態),續播才送;
+  // 拖動、切幕、關旁白(都會呼叫 stopSpeech)時清掉。待念期間算「正在念」,下一句不會插進來。
+  const AFTER_CANCEL_MS = 150;
+  let lastCancelAt = -Infinity; // 最近一次 cancel() 的時間:任何新句都要離它至少 AFTER_CANCEL_MS
+  let pendingLine = null; // { line, id, readyAt(播放中:可送出的時間點), left(暫停中:還要等幾毫秒) }
+  function queueSynth(line, id, waitMs) {
+    pendingLine = { line, id, readyAt: performance.now() + waitMs, left: waitMs };
+    speaking = true;
+    flushPending();
+  }
+  // 暫停時把剩下的間隔存起來,續播再接著等
+  function holdPending(on) {
+    if (!pendingLine) return;
+    if (on) pendingLine.readyAt = performance.now() + pendingLine.left;
+    else pendingLine.left = Math.max(0, pendingLine.readyAt - performance.now());
+  }
+  function flushPending() {
+    if (!pendingLine) return;
+    const ready = Math.max(pendingLine.readyAt, lastCancelAt + AFTER_CANCEL_MS);
+    if (!playing || !narration || !voicesSettled || performance.now() < ready) return;
+    const { line, id } = pendingLine;
+    pendingLine = null;
+    speaking = false;
+    speakWithSynth(line, id);
   }
 
   function speak(line, id) {
     if (!narration) return;
     stopSpeech();
     const entry = audioFiles[id];
-    if (entry?.file) playAudio(line, id, entry);
-    else speakWithSynth(line, id);
+    if (entry?.file) { playAudio(line, id, entry); return; }
+    queueSynth(line, id, Math.max(0, lastCancelAt + AFTER_CANCEL_MS - performance.now()));
   }
+
+  // 手機瀏覽器(iOS Safari、部分 Android)要在使用者按下去的那一刻先念過一次,之後的朗讀才會出聲:
+  // 按「開始播放/播放」時先念一個無聲的空白句「解鎖」(WY17)
+  let unlocked = false;
+  function unlockSpeech() {
+    if (!synth || !narration || unlocked) return;
+    unlocked = true;
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    u.__prime = true;
+    synth.speak(u);
+  }
+
+  // ---------------------------------------------------------------- 沒聲音的提示(可關)
+  // kind:no-mandarin=沒有華語語音;error=朗讀出錯;slow=念了 4 秒(播放中的時間)還沒出聲
+  const NOTES = {
+    'no-mandarin': '這台裝置沒有華語朗讀語音，旁白只顯示字幕。',
+    error: '沒有聽到旁白嗎？請確認手機的媒體音量已調高，以及 ⚙ 設定裡的「旁白朗讀」是開著的；不想聽也可以關掉旁白，只看字幕。',
+    slow: '語音還在準備……沒聽到的話，請確認媒體音量與 ⚙ 設定裡的「旁白朗讀」。',
+  };
+  const SLOW_MS = 4000;
+  let noteKind = '';
+  const dismissed = new Set();
+  function showNote(kind) {
+    if (dismissed.has(kind)) return;
+    if (noteKind === 'no-mandarin' && kind !== 'no-mandarin') return; // 沒有華語語音的提示最重要,不被蓋掉
+    noteKind = kind;
+    $('voice-note-text').textContent = NOTES[kind];
+    $('voice-note').hidden = false;
+  }
+  // 之後念出聲(onstart)或音檔開始播放,就把提示收起來
+  function clearVoiceNote() {
+    if (!noteKind) return;
+    noteKind = '';
+    $('voice-note').hidden = true;
+  }
+  $('voice-note-close').addEventListener('click', () => {
+    if (noteKind) dismissed.add(noteKind);
+    noteKind = '';
+    $('voice-note').hidden = true;
+  });
+
+  const live = (inst) => inst.gen === speechGen && !inst.ended; // 回呼只對「目前這一句、還沒結束」有效
 
   function playAudio(line, id, entry) {
     const inst = begin(line, id, 'audio');
     const a = new Audio(audioURL(entry));
     a.playbackRate = Math.min(SPEED, 2);
     inst.audio = a;
+    a.onplaying = () => { if (live(inst)) clearVoiceNote(); };
     a.onended = () => { if (inst.gen === speechGen) finishInst(inst); };
     a.onerror = () => audioFailed(inst, a.error?.code);
     startAudio(inst);
@@ -183,34 +260,71 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
   }
 
   function audioFailed(inst, why) {
-    if (inst.gen !== speechGen || inst.ended) return; // 過期的回呼一律忽略
+    if (!live(inst)) return; // 過期的回呼一律忽略
     lastAudioError = String(why ?? 'error');
     finishInst(inst);
-    speakWithSynth(inst.line, inst.id);
+    queueSynth(inst.line, inst.id, 0);
   }
 
-  let noVoice = false;
-  function noMandarinVoice() {
-    noVoice = true;
-    $('voice-note').hidden = false;
+  // ---------------------------------------------------------------- 語音挑選
+  // Android Chrome 一開始 getVoices() 常常回空清單:先等 voiceschanged(最多 VOICE_WAIT_MS)再挑華語語音
+  const VOICE_WAIT_MS = 1500;
+  let voicesSettled = !synth || synth.getVoices().length > 0;
+  if (!voicesSettled) {
+    const done = () => { if (voicesSettled) return; voicesSettled = true; flushPending(); };
+    synth.addEventListener?.('voiceschanged', done, { once: true });
+    setTimeout(done, VOICE_WAIT_MS);
   }
+  // voice-unavailable 只代表那一個語音不能用:記下來,換下一個華語語音再念;全部失敗才算沒有華語(WY17 收單 4)
+  const badVoices = new Set();
+  const voiceKey = (v) => v.voiceURI || v.name || v.lang;
+  let lastVoiceLang = '';
+  let lastVoiceName = '';
 
   function speakWithSynth(line, id) {
     if (!synth) return;
-    // 只用華語語音;裝置有語音清單、卻沒有任何華語語音時,不朗讀(⛔ 自動改用粵語等),提示使用者只看字幕
-    const voices = synth.getVoices();
-    const voice = pickVoiceFrom(voices);
-    if (voices.length && !voice) { noMandarinVoice(); return; }
+    // 只用華語語音;裝置有語音清單、卻沒有能用的華語語音時,不朗讀(⛔ 自動改用粵語等),提示使用者只看字幕
+    const all = synth.getVoices();
+    const voice = pickVoiceFrom(all.filter((v) => !badVoices.has(voiceKey(v))));
+    if (all.length && !voice) { showNote('no-mandarin'); return; }
     const inst = begin(line, id, 'speech');
+    inst.silentMs = 0;
     const u = new SpeechSynthesisUtterance(line.say ?? line.text); // say:同音字版,避免多音字念錯
     const r = roles[line.role];
     u.lang = 'zh-TW';
     if (voice) u.voice = voice;
+    lastVoiceLang = voice?.lang ?? '';
+    lastVoiceName = voice?.name ?? '';
     u.pitch = r.pitch;
     u.rate = r.rate * Math.min(SPEED, 2);
+    u.onstart = () => {
+      if (!live(inst)) return;
+      inst.started = true;
+      clearVoiceNote();
+    };
     u.onend = () => { if (inst.gen === speechGen) finishInst(inst); };
-    u.onerror = u.onend;
+    u.onerror = (e) => {
+      if (!live(inst)) return; // 切幕、拖動後舊句晚到的錯誤,不影響目前的提示
+      if (e?.error === 'voice-unavailable' || e?.error === 'language-unavailable') {
+        if (!voice) { finishInst(inst); showNote('no-mandarin'); return; } // 沒指定語音也不能念:不再重試
+        badVoices.add(voiceKey(voice));
+        finishInst(inst);
+        queueSynth(line, id, 0); // 換下一個華語語音再念;都不能用時 speakWithSynth 會顯示「沒有華語」
+        return;
+      }
+      if (e?.error && !['interrupted', 'canceled'].includes(e.error)) showNote('error');
+      finishInst(inst);
+    };
     synth.speak(u);
+  }
+
+  // 每一格(播放中):送出待念句;念了 SLOW_MS(只算播放中的時間)還沒出聲就溫和提示
+  function speechTick(dtMs) {
+    flushPending();
+    if (current && current.source === 'speech' && live(current) && !current.started) {
+      current.silentMs += dtMs;
+      if (current.silentMs >= SLOW_MS) showNote('slow');
+    }
   }
 
   function pauseNarration(on) {
@@ -228,6 +342,7 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     $('play').setAttribute('aria-label', on ? '暫停' : '播放');
     $('bigplay').hidden = true;
     pauseNarration(on);
+    holdPending(on);
     if (on) { last = performance.now(); requestAnimationFrame(tick); }
   }
 
@@ -287,19 +402,20 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     if (!playing) return;
     const dt = Math.min(0.25, (now - last) / 1000);
     last = now;
+    speechTick(dt * 1000);
     const s = scenes[idx];
     const next = s.lines[shown + 1];
     // 上一句還沒念完、下一句又到點:時間停在下一句之前,念完才推進(避免截斷旁白);最多等 HOLD_MAX
     const due = next && elapsed + dt * SPEED >= next.at;
-    if (due && speaking && (!holdSince || now - holdSince < HOLD_MAX)) {
-      if (!holdSince) holdSince = now;
+    if (due && speaking && holdWaited < HOLD_MAX) {
+      holdWaited += dt * 1000; // dt 只算播放中的時間(續播時 last 會重設),暫停期間不累計
       elapsed = Math.max(elapsed, next.at - 0.001);
       stage.classList.add('is-waiting');
       updateBar();
       requestAnimationFrame(tick);
       return;
     }
-    holdSince = 0;
+    holdWaited = 0;
     stage.classList.remove('is-waiting');
     elapsed += dt * SPEED;
     if (next && elapsed >= next.at) {
@@ -317,8 +433,9 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
   }
 
   // ---------------------------------------------------------------- 操作
-  $('bigplay').addEventListener('click', () => { setPlaying(true); $('play').focus(); });
+  $('bigplay').addEventListener('click', () => { unlockSpeech(); setPlaying(true); $('play').focus(); });
   $('play').addEventListener('click', () => {
+    unlockSpeech();
     if (ended) { go(0); setPlaying(true); return; }
     setPlaying(!playing);
   });
@@ -367,5 +484,5 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
   renderScene();
   updateBar();
   // 測試用(網址帶 ?speed= 時):回報目前狀態
-  if (params.has('speed')) window.__anim = () => ({ idx, elapsed, playing, shown, ended, subtitle: subtitle.textContent, speaking, dragging, gen: speechGen, narrationSource, audioSrc: current?.audio?.src ?? '', audioPaused: current?.audio ? current.audio.paused : null, lastAudioError, holding: !!holdSince, noVoice });
+  if (params.has('speed')) window.__anim = () => ({ idx, elapsed, playing, shown, ended, subtitle: subtitle.textContent, speaking, dragging, gen: speechGen, narrationSource, audioSrc: current?.audio?.src ?? '', audioPaused: current?.audio ? current.audio.paused : null, lastAudioError, holding: holdWaited > 0, holdWaited, lastVoiceLang, lastVoiceName, noVoice: noteKind === 'no-mandarin', noteKind, pending: !!pendingLine });
 }
