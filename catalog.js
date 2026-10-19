@@ -1,4 +1,4 @@
-// 課程目錄:目錄頁從這裡產生。路徑皆相對於 site/。
+// 課程目錄:目錄頁與全站選單從這裡產生。路徑皆相對於 site/。
 export const catalog = [
   {
     id: 'lunyu-zengzi',
@@ -14,6 +14,7 @@ export const catalog = [
   },
   {
     id: 'classroom',
+    section: 'site', // 全站頁面(選單放在「全站」,不是一課)
     title: '孔子講堂',
     subtitle: '《論語》裡最常出場的 14 位學生',
     pages: [

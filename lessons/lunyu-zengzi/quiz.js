@@ -1,12 +1,12 @@
 // 隨堂測驗頁:題目由 quiz-data.js 產生;作答只存在這台裝置的瀏覽器(localStorage),不上傳、不需帳號。
-import { lesson } from './data.js?v=ab14e02';
-import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=ab14e02';
-import { escapeHTML } from '../../shared/terms.js?v=ab14e02';
-import { initPage, chromeHTML, lessonTabs } from '../../shared/page.js?v=ab14e02';
+// 一屏版(WY13):第一頁是說明與程度選擇,之後一題一頁(題組一頁);網址 #intro、#題號。
+import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=b2c26e6';
+import { escapeHTML } from '../../shared/terms.js?v=b2c26e6';
+import { initPage } from '../../shared/page.js?v=b2c26e6';
+import { createPaging, pagerHTML } from '../../shared/deck.js?v=b2c26e6';
 
-initPage();
+initPage({ paged: true });
 const app = document.getElementById('app');
-const chrome = chromeHTML({ homeHref: '../../index.html', here: lesson.title, tabs: lessonTabs('quiz') });
 
 // ---------------------------------------------------------------- 本機儲存(讀寫都包 try/catch,失敗就只在記憶體裡)
 const emptyState = () => ({ answers: {}, submitted: {}, checks: {}, level: 'all' });
@@ -85,18 +85,20 @@ function itemHTML(q, { sub = false } = {}) {
     </div>`;
 }
 
+const levelHidden = (q) => state.level !== 'all' && q.level !== state.level;
+
 function questionHTML(q, n) {
-  const level = state.level;
-  const hidden = level !== 'all' && q.level !== level ? ' hidden' : '';
+  const hidden = levelHidden(q) ? ' hidden' : '';
+  const cat = `<p class="qcat">${escapeHTML(categories[q.category].label)}・${escapeHTML(categories[q.category].desc)}</p>`;
   if (q.type === 'set') {
-    return `<section class="card qcard" id="card-${q.id}"${hidden}>
-      <div class="qnum">第 ${n} 題 ${tag(types.set)}${tag(levels[q.level], 'lv')}</div>
+    return `<section class="card qcard" id="card-${q.id}" data-page="${q.id}"${hidden}>${cat}
+      <div class="qnum qhead" tabindex="-1">第 ${n} 題 ${tag(types.set)}${tag(levels[q.level], 'lv')}</div>
       <p class="qprompt">${escapeHTML(q.prompt)}</p>
       <div class="passage">${q.passage.map((p) => `<p>${escapeHTML(p)}</p>`).join('')}</div>
       ${q.items.map((it, i) => `<div class="subnum">(${i + 1})</div>${itemHTML({ ...it, level: q.level }, { sub: true })}`).join('')}
     </section>`;
   }
-  return `<section class="card qcard" id="card-${q.id}"${hidden}><div class="qnum">第 ${n} 題</div>${itemHTML(q)}</section>`;
+  return `<section class="card qcard" id="card-${q.id}" data-page="${q.id}"${hidden}>${cat}<div class="qnum qhead" tabindex="-1">第 ${n} 題</div>${itemHTML(q)}</section>`;
 }
 
 function summaryHTML() {
@@ -109,27 +111,31 @@ function summaryHTML() {
 function render() {
   let n = 0;
   app.innerHTML = `
-    ${chrome.top}
-    <main class="wrap">
-      ${chrome.tabs}
-      <h1>${escapeHTML(quizMeta.title)}</h1>
-      <p class="lead">三類題目：學習內容、延伸提問、引導式查詢。選擇和填充會馬上告訴你對不對；問答題看參考答案後自己檢核。</p>
-      <div class="card quizbar">
-        <fieldset class="levelpick"><legend>程度</legend>
-          ${[['all', '全部'], ['elementary', '小學'], ['junior', '國中']].map(([v, l]) => `
-            <label class="pill"><input type="radio" name="level" value="${v}"${state.level === v ? ' checked' : ''}> <span>${l}</span></label>`).join('')}
-        </fieldset>
-        <p class="summary" aria-live="polite">${summaryHTML()}</p>
-        <p class="small">作答只存在這台裝置的瀏覽器，不會上傳。</p>
-        <button type="button" class="clear">清除全部作答</button>
+    <main class="deck-view quiz-view">
+      <p class="summary" aria-live="polite">${summaryHTML()}</p>
+      <div class="quiz-pages">
+        <section class="card qcard quiz-intro" id="card-intro" data-page="intro">
+          <h1 class="qhead" tabindex="-1">${escapeHTML(quizMeta.title)}</h1>
+          <p class="lead">三類題目：學習內容、延伸提問、引導式查詢。選擇和填充會馬上告訴你對不對；問答題看參考答案後自己檢核。</p>
+          <fieldset class="levelpick"><legend>程度</legend>
+            ${[['all', '全部'], ['elementary', '小學'], ['junior', '國中']].map(([v, l]) => `
+              <label class="pill"><input type="radio" name="level" value="${v}"${state.level === v ? ' checked' : ''}> <span>${l}</span></label>`).join('')}
+          </fieldset>
+          <p class="small">作答只存在這台裝置的瀏覽器，不會上傳。</p>
+          <div class="intro-actions">
+            <button type="button" class="start" data-goto="${keysNow()[1] ?? 'intro'}">開始作答 →</button>
+            <button type="button" class="clear">清除全部作答</button>
+          </div>
+          <p class="story-note">題目、解析與參考答案為本站自行撰寫；原文依維基文庫《論語》等公有領域古籍。</p>
+        </section>
+        ${questions.map((q) => questionHTML(q, ++n)).join('')}
       </div>
-      ${Object.entries(categories).map(([key, c]) => {
-        const list = questions.filter((q) => q.category === key);
-        return `<h2>${escapeHTML(c.label)}<small>${escapeHTML(c.desc)}</small></h2>${list.map((q) => questionHTML(q, ++n)).join('')}`;
-      }).join('')}
-      <footer>題目、解析與參考答案為本站自行撰寫；原文依維基文庫《論語》等公有領域古籍。</footer>
+      <div class="pager-slot"></div>
     </main>`;
 }
+
+// 目前程度下的頁:說明頁+看得到的題目
+const keysNow = () => ['intro', ...questions.filter((q) => !levelHidden(q)).map((q) => q.id)];
 
 function findItem(id) {
   return flatItems().find((q) => q.id === id);
@@ -185,6 +191,8 @@ app.addEventListener('click', (e) => {
     }
     clearAll();
     render();
+    paging.setKeys(keysNow());
+    paging.show();
     app.querySelector('.clear').focus();
   }
 });
@@ -193,10 +201,11 @@ app.addEventListener('change', (e) => {
   if (e.target.name === 'level') {
     state.level = e.target.value;
     save();
-    for (const q of questions) {
-      app.querySelector(`#card-${q.id}`).hidden = state.level !== 'all' && q.level !== state.level;
-    }
+    for (const q of questions) app.querySelector(`#card-${q.id}`).hidden = levelHidden(q);
     app.querySelector('.summary').textContent = summaryHTML();
+    paging.setKeys(keysNow());
+    app.querySelector('.start').dataset.goto = keysNow()[1] ?? 'intro';
+    paging.show();
   } else if (e.target.dataset.check) {
     const id = e.target.dataset.check;
     state.checks[id] = [...app.querySelectorAll(`input[data-check="${id}"]:checked`)].map((el) => Number(el.value));
@@ -214,3 +223,13 @@ app.addEventListener('input', (e) => {
 });
 
 render();
+const paging = createPaging({
+  root: app,
+  keys: keysNow(),
+  focusSel: '.qcard.is-current .qhead',
+  onShow(key, i, total) {
+    for (const card of app.querySelectorAll('.qcard')) card.classList.toggle('is-current', card.dataset.page === key);
+    app.querySelector('.pager-slot').innerHTML = pagerHTML(i, total, { label: i === 0 ? '說明' : `第 ${i} / ${total - 1} 題` });
+  },
+});
+paging.show();

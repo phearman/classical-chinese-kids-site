@@ -1,17 +1,15 @@
 // 動畫故事播放器:逐幕播放 CSS/SVG 動畫,字幕同步顯示,旁白用瀏覽器內建朗讀(speechSynthesis)。
 // 不支援朗讀或關掉旁白時,照時間軸顯示字幕。網址 ?speed=N 可加速(測試用)。
-import { lesson } from './data.js?v=ab14e02';
-import { animMeta, roles, scenes } from './anim-data.js?v=ab14e02';
-import { audio as audioFiles, audioMeta } from './audio/manifest.js?v=ab14e02';
-import { escapeHTML } from '../../shared/terms.js?v=ab14e02';
-import { initPage, chromeHTML, lessonTabs } from '../../shared/page.js?v=ab14e02';
+import { animMeta, roles, scenes } from './anim-data.js?v=b2c26e6';
+import { audio as audioFiles, audioMeta } from './audio/manifest.js?v=b2c26e6';
+import { escapeHTML } from '../../shared/terms.js?v=b2c26e6';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from '../../shared/page.js?v=b2c26e6';
 
-initPage();
+initPage({ paged: true });
 const params = new URLSearchParams(location.search);
 const SPEED = Math.max(1, Number(params.get('speed')) || 1);
 const app = document.getElementById('app');
-const chrome = chromeHTML({ homeHref: '../../index.html', here: lesson.title, tabs: lessonTabs('animation') });
-import { characterURL as imageURL } from '../../shared/assets.js?v=ab14e02';
+import { characterURL as imageURL } from '../../shared/assets.js?v=b2c26e6';
 const synth = 'speechSynthesis' in window ? window.speechSynthesis : null;
 const hasAudio = Object.keys(audioFiles).length > 0; // 有 AI 配音音檔
 // 音檔網址帶內容雜湊:重產後檔名不變也不會播到快取的舊檔
@@ -38,38 +36,49 @@ const PROPS = {
 let idx = 0;
 let elapsed = 0;
 let playing = false;
-let narration = !!synth || hasAudio;
+const canSpeak = !!synth || hasAudio;
+let narration = canSpeak && narrationOn(); // 旁白開關在 ⚙ 設定裡,存本機
 let shown = -1;            // 本幕已顯示到第幾句
 let speaking = false;
 let last = 0;
 let ended = false;
 
 // ---------------------------------------------------------------- 畫面骨架
+// 頁面說明;矮螢幕時收進 ⓘ 彈出視窗(CSS 決定顯示哪一個)
+const NOTE = `${escapeHTML(animMeta.note)}角色圖由 AI 生成，背景與道具為程式繪製。${hasAudio ? `旁白由 AI 語音（${escapeHTML(audioMeta.provider)}）產生。` : canSpeak ? '旁白用的是手機／電腦內建語音，不同裝置聲音不同。' : '這個瀏覽器不支援朗讀，只顯示字幕。'}`;
+
+// 一屏版面(WY13):舞台依剩餘高度縮放(保持 16:9),字幕、控制列、進度條固定在下方
 app.innerHTML = `
-  ${chrome.top}
-  <main class="wrap">
-    ${chrome.tabs}
-    <h1>${escapeHTML(animMeta.title)}</h1>
-    <div class="player">
-      <div class="stage" id="stage" role="img" aria-roledescription="動畫畫面"></div>
-      <button type="button" class="bigplay" id="bigplay"><span>▶ 開始播放<small>約 ${Math.floor(TOTAL / 60)} 分 ${TOTAL % 60} 秒</small></span></button>
-      <p class="subtitle" id="subtitle" aria-live="polite"></p>
-      <div class="controls" role="group" aria-label="播放控制">
-        <button type="button" id="prev" aria-label="上一幕">⏮</button>
-        <button type="button" id="play" aria-label="播放">▶</button>
-        <button type="button" id="next" aria-label="下一幕">⏭</button>
-        <button type="button" id="voice" aria-pressed="${narration}" ${synth || hasAudio ? '' : 'disabled'}>旁白：${narration ? '開' : '關'}</button>
+  <main class="anim-view">
+    <h1 class="sr-only">${escapeHTML(animMeta.title)}</h1>
+    <div class="stage-wrap">
+      <div class="stage-box">
+        <div class="stage" id="stage" role="img" aria-roledescription="動畫畫面"></div>
+        <button type="button" class="bigplay" id="bigplay"><span>▶ 開始播放<small>約 ${Math.floor(TOTAL / 60)} 分 ${TOTAL % 60} 秒</small></span></button>
       </div>
-      <div class="seekbar">
-        <input type="range" id="seek" class="seek" min="0" max="${TOTAL}" step="1" value="0" aria-label="播放進度">
-        <span class="seek-time" id="seektime" aria-hidden="true"></span>
-      </div>
-      <ol class="chapters" aria-label="分幕">${scenes.map((s, i) => `<li><button type="button" data-go="${i}">${i + 1}. ${escapeHTML(s.title)}</button></li>`).join('')}</ol>
-      ${synth || hasAudio ? '' : '<p class="small">這個瀏覽器不支援朗讀，會只顯示字幕。</p>'}
     </div>
-    <p class="small">${escapeHTML(animMeta.note)}角色圖由 AI 生成，背景與道具為程式繪製。${hasAudio ? `旁白由 AI 語音（${audioMeta.provider}）產生。` : '旁白用的是手機／電腦內建語音，不同裝置聲音不同。'}</p>
-    <p><a class="btn-link" href="study.html">看完了？來讀課文 →</a></p>
+    <p class="subtitle" id="subtitle" aria-live="polite"></p>
+    <div class="controls" role="group" aria-label="播放控制">
+      <button type="button" id="prev" aria-label="上一幕">⏮</button>
+      <button type="button" id="play" aria-label="播放">▶</button>
+      <button type="button" id="next" aria-label="下一幕">⏭</button>
+      <button type="button" id="about" class="about-btn" aria-label="關於這段動畫" aria-haspopup="dialog">ⓘ</button>
+      <select id="chapter" class="chapter-pick" aria-label="選擇分幕">${scenes.map((s, i) => `<option value="${i}">${i + 1}. ${escapeHTML(s.title)}</option>`).join('')}</select>
+    </div>
+    <div class="seekbar">
+      <input type="range" id="seek" class="seek" min="0" max="${TOTAL}" step="1" value="0" aria-label="播放進度">
+      <span class="seek-time" id="seektime" aria-hidden="true"></span>
+    </div>
+    <p class="anim-note" id="anim-note">${NOTE}</p>
+    <dialog class="note-dialog" id="about-dialog" aria-labelledby="about-title">
+      <form method="dialog" class="note-card">
+        <h2 id="about-title">關於這段動畫</h2>
+        <p>${NOTE}</p>
+        <button value="close">關閉</button>
+      </form>
+    </dialog>
   </main>`;
+if (!canSpeak) disableSetting('set-narration', '這個瀏覽器不支援朗讀，只顯示字幕');
 
 const $ = (id) => document.getElementById(id);
 const stage = $('stage');
@@ -95,7 +104,7 @@ function renderScene() {
   stage.style.setProperty('--speed', SPEED);
   stage.setAttribute('aria-label', `第 ${idx + 1} 幕：${s.title}。${s.card}`);
   stage.innerHTML = `<div class="card">${escapeHTML(s.card)}</div>${s.items.map((it) => itemHTML(it, elapsed)).join('')}`;
-  document.querySelectorAll('.chapters button').forEach((b, i) => b.toggleAttribute('aria-current', i === idx));
+  $('chapter').value = String(idx);
   shown = s.lines.filter((l) => l.at <= elapsed).length - 1;
   subtitle.innerHTML = shown >= 0 ? lineHTML(s.lines[shown]) : '';
 }
@@ -270,7 +279,7 @@ function finish() {
   stopSpeech(); // 片尾也要清掉旁白,補發 narration:end
   setPlaying(false);
   ended = true;
-  subtitle.innerHTML = '<span class="who">完</span>看完了！按 ▶ 可以再看一次。';
+  subtitle.innerHTML = '<span class="who">完</span>看完了！按 ▶ 可以再看一次，或<a href="study.html">去讀課文 →</a>';
 }
 
 function tick(now) {
@@ -302,11 +311,10 @@ $('play').addEventListener('click', () => {
 });
 $('prev').addEventListener('click', () => go(idx - 1));
 $('next').addEventListener('click', () => go(idx + 1));
-$('voice').addEventListener('click', () => {
-  narration = !narration;
+document.addEventListener('ccc:pref', (e) => {
+  if (e.detail.name !== 'narration') return;
+  narration = canSpeak && e.detail.value !== 'off';
   if (!narration) stopSpeech();
-  $('voice').setAttribute('aria-pressed', narration);
-  $('voice').textContent = `旁白：${narration ? '開' : '關'}`;
 });
 function dragStart() {
   if (dragging) return;
@@ -330,12 +338,13 @@ $('seek').addEventListener('input', (e) => { seekTo(Number(e.target.value)); });
 $('seek').addEventListener('pointerdown', dragStart);
 document.addEventListener('pointerup', () => dragEnd(true));
 $('seek').addEventListener('pointercancel', () => dragEnd(false));
-document.querySelector('.chapters').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-go]');
-  if (b) go(Number(b.dataset.go));
-});
+$('chapter').addEventListener('change', (e) => go(Number(e.target.value)));
+$('about').addEventListener('click', () => $('about-dialog').showModal());
+$('about-dialog').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+$('about-dialog').addEventListener('close', () => $('about').focus());
+onSwipe(document.querySelector('.stage-wrap'), (d) => go(idx + d));
 document.addEventListener('keydown', (e) => {
-  if (e.target.closest('input, textarea')) return;
+  if (overlayOpen() || e.target.closest('input, textarea, select')) return;
   if (e.key === 'ArrowRight') go(idx + 1);
   else if (e.key === 'ArrowLeft') go(idx - 1);
   else if (e.key === ' ' && !e.target.closest('button')) { e.preventDefault(); $('play').click(); }
