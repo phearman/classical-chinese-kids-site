@@ -1,7 +1,7 @@
 // 課程目錄頁。一屏版(WY13):做成選單式首頁,每課一組大按鈕,一屏看完。
-import { catalog } from './catalog.js?v=3864b57';
-import { escapeHTML } from './shared/terms.js?v=3864b57';
-import { initPage } from './shared/page.js?v=3864b57';
+import { catalog } from './catalog.js?v=17af6f9';
+import { escapeHTML } from './shared/terms.js?v=17af6f9';
+import { initPage } from './shared/page.js?v=17af6f9';
 
 initPage({ paged: true });
 document.getElementById('app').innerHTML = `

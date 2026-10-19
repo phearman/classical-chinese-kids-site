@@ -67,7 +67,7 @@ body {
   font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
   font-size: 17px;
   line-height: 1.75;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word; /* WY18:⛔ anywhere(會讓逗號、句號被擠到行首) */
 }
 a { color: var(--accent); }
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px 48px; }
@@ -160,9 +160,9 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 /* 原文與可點的詞 */
 .classical { font-family: "Noto Serif TC", "PMingLiU", "Songti TC", serif; font-size: 21px; line-height: 2.1; letter-spacing: .04em; }
 .term {
-  font: inherit; color: inherit; letter-spacing: inherit;
-  background: none; border: 0; border-bottom: 2px solid var(--term-line);
-  border-radius: 3px; padding: 0 1px; margin: 0; cursor: pointer; line-height: inherit;
+  /* 行內元素(span role=button,WY18):跟著文字換行,避頭尾照一般規則 */
+  border-bottom: 2px solid var(--term-line); border-radius: 3px; padding: 0 1px; cursor: pointer;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .term:hover, .term:focus-visible { background: var(--accent-soft); outline: 2px solid var(--accent); outline-offset: 1px; }
 .plain { margin: 2px 0 0; color: var(--ink-soft); }
@@ -742,4 +742,13 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .home-group h2 { margin-bottom: 4px; }
   .home-group h2 small { display: none; }
   .home-view .story-note { font-size: 12px; line-height: 1.4; }
+}
+
+/* 窄螢幕放大(WY18,約 188px 寬):標籤欄改上下排、引文框縮內距,避免撐出橫捲或被迫把標點拆到行首 */
+@media (max-width: 260px) {
+  .fact, .timeline li { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .quote { padding: 8px 8px; }
+  .classical { letter-spacing: 0; }
+  .choice { padding: 6px; gap: 4px; }
+  .qitem.is-sub { padding-left: 6px; }
 }

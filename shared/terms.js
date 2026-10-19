@@ -24,10 +24,13 @@ export function plainText(source) {
   return parseMarked(source).map((p) => p.text).join('');
 }
 
+// 可點的詞(WY18 修):用行內的 <span role="button" tabindex="0">,⛔ <button>。
+// <button> 是行內區塊,前後都是換行點,標點會跟詞分開掉到行首;行內元素則照一般文字的避頭尾規則換行,
+// 也不會像「詞+標點包成不換行的一塊」那樣在窄框裡撐出橫捲。鍵盤操作(Enter/Space)由 sheet.js 補上。
 export function renderMarked(source) {
   return parseMarked(source)
     .map((p) => (p.id
-      ? `<button type="button" class="term" data-term="${escapeHTML(p.id)}">${escapeHTML(p.text)}</button>`
+      ? `<span class="term" role="button" tabindex="0" data-term="${escapeHTML(p.id)}">${escapeHTML(p.text)}</span>`
       : escapeHTML(p.text)))
     .join('');
 }

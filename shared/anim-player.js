@@ -1,9 +1,9 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=3864b57';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=3864b57';
-import { characterURL as imageURL } from './assets.js?v=3864b57';
+import { escapeHTML } from './terms.js?v=17af6f9';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=17af6f9';
+import { characterURL as imageURL } from './assets.js?v=17af6f9';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
@@ -283,12 +283,14 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
 
   function speakWithSynth(line, id) {
     if (!synth) return;
-    // 只用華語語音;裝置有語音清單、卻沒有能用的華語語音時,不朗讀(⛔ 自動改用粵語等),提示使用者只看字幕
+    // 只指定華語語音(⛔ 粵語等);清單裡找不到華語時「不指定語音、只設 lang=zh-TW」照念(WY17 追修):
+    // Android Chrome 的 getVoices() 常只列一部分,沒列出中文時 Google TTS 照樣念得出來。
+    // 真的不能念(language-unavailable/voice-unavailable,或念了 SLOW_MS 都沒出聲)才提示「沒有華語」。
     const all = synth.getVoices();
     const voice = pickVoiceFrom(all.filter((v) => !badVoices.has(voiceKey(v))));
-    if (all.length && !voice) { showNote('no-mandarin'); return; }
     const inst = begin(line, id, 'speech');
     inst.silentMs = 0;
+    inst.unlisted = all.length > 0 && !voice; // 清單裡沒有華語,靠 lang 念
     const u = new SpeechSynthesisUtterance(line.say ?? line.text); // say:同音字版,避免多音字念錯
     const r = roles[line.role];
     u.lang = 'zh-TW';
@@ -323,7 +325,7 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     flushPending();
     if (current && current.source === 'speech' && live(current) && !current.started) {
       current.silentMs += dtMs;
-      if (current.silentMs >= SLOW_MS) showNote('slow');
+      if (current.silentMs >= SLOW_MS) showNote(current.unlisted ? 'no-mandarin' : 'slow');
     }
   }
 

@@ -1,5 +1,5 @@
 // 詞條小卡:點原文裡的詞,從下方滑出讀音、意思、作用、比喻。
-import { escapeHTML } from './terms.js?v=3864b57';
+import { escapeHTML } from './terms.js?v=17af6f9';
 
 export function setupGlossary(glossary, root = document) {
   const dialog = document.createElement('dialog');
@@ -18,15 +18,24 @@ export function setupGlossary(glossary, root = document) {
     if (e.target === dialog || e.target.closest('[data-close]')) close();
   });
 
-  root.addEventListener('click', (e) => {
-    const btn = e.target.closest('button.term');
-    if (!btn) return;
+  const open = (btn) => {
     const entry = glossary[btn.dataset.term];
     if (!entry) return;
     opener = btn;
     dialog.innerHTML = cardHTML(entry);
     dialog.showModal();
     dialog.querySelector('[data-close]')?.focus();
+  };
+  root.addEventListener('click', (e) => {
+    const btn = e.target.closest('.term');
+    if (btn) open(btn);
+  });
+  // 詞是 <span role="button">(見 terms.js):補上按鈕的鍵盤操作,Enter 或 Space 打開
+  root.addEventListener('keydown', (e) => {
+    const btn = e.target.closest?.('.term');
+    if (!btn || (e.key !== 'Enter' && e.key !== ' ') || e.repeat) return;
+    e.preventDefault(); // Space 不捲動頁面
+    open(btn);
   });
 }
 
