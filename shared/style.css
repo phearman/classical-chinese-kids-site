@@ -225,6 +225,14 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .prop-thread circle { stroke: var(--accent); }
 .prop-mark text { font-size: 30px; font-weight: 700; fill: var(--accent); }
 .prop-coin { fill: var(--glow); stroke: var(--prop); stroke-width: 3; }
+/* 第 4 課〈論語選〉故事插圖道具 */
+.prop-animals2 .animal { fill: var(--prop); }
+.prop-animals2 .bowl, .prop-basket2 .weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; }
+.prop-animals2 .bowl { fill: var(--moss); stroke: none; }
+.prop-mound2 .soil, .prop-basket2 .soil, .prop-pit2 .soil { fill: var(--art-floor); stroke: var(--prop); stroke-width: 2; }
+.prop-mound2 .gap { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 6 5; }
+.prop-basket2 .weave { fill: var(--glow); stroke: var(--prop); stroke-width: 2; }
+.prop-pit2 .ground { fill: color-mix(in srgb, var(--art-floor) 70%, var(--prop)); }
 .prop-coin-text { font-size: 26px; font-weight: 700; fill: var(--ink); }
 @media (prefers-reduced-motion: no-preference) {
   .prop-glow { animation: flicker 2.4s ease-in-out infinite; }
@@ -285,6 +293,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   width: 100%; font: inherit; color: var(--ink); background: var(--bg);
   border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 8px 0;
 }
+.essay[readonly] { background: var(--quote-bg); cursor: default; }
 .fill:focus-visible, .essay:focus-visible, .choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hints { border: 1px dashed var(--moss); border-radius: 10px; padding: 6px 12px; margin: 8px 0; }
 .hints p { margin: 4px 0; }
@@ -385,7 +394,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .stage.bg-hall { background: linear-gradient(var(--art-hall) 0 78%, var(--art-floor) 78%); }
 .stage.bg-night { background: linear-gradient(var(--art-night) 0 78%, color-mix(in srgb, var(--art-night) 70%, #000) 78%); }
 .stage.bg-paper { background: radial-gradient(circle at 50% 40%, var(--surface), var(--art-paper)); }
-.stage.is-paused, .stage.is-paused * { animation-play-state: paused !important; }
+.stage.is-paused, .stage.is-paused *, .stage.is-waiting, .stage.is-waiting * { animation-play-state: paused !important; } /* is-waiting:等上一句旁白念完 */
 .stage .card {
   position: absolute; left: 2%; top: 3%; max-width: 70%; z-index: 3;
   font-size: max(11px, 5cqh); line-height: 1.4; padding: .2em .6em; border-radius: 8px; color: var(--ink);
@@ -435,6 +444,19 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .prop-bracelet { width: 46cqh; } .prop-bracelet svg { width: 100%; }
 .p-bracelet .ring { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 260; stroke-dashoffset: 260; animation: draw calc(3s / var(--speed)) both; animation-delay: var(--d, 0s); }
 .p-bracelet .bead { fill: var(--glow); stroke: var(--prop); stroke-width: 1.5; animation: fadeIn calc(.4s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + var(--i) * .25s / var(--speed)); }
+/* 第 4 課〈論語選〉道具 */
+.prop-animals { width: 62%; animation: fadeIn calc(1s / var(--speed)) both; } .prop-animals svg { width: 100%; }
+.p-horse path, .p-dog path { fill: var(--prop); }
+.p-dog .p-tail { fill: none; stroke: var(--prop); stroke-width: 5; stroke-linecap: round; }
+.p-bowl path { fill: var(--moss); }
+.prop-mound { width: 56%; animation: fadeIn calc(1s / var(--speed)) both; } .prop-mound svg { width: 100%; overflow: visible; }
+.prop-pit { width: 70%; } .prop-pit svg { width: 100%; }
+.p-soil { fill: var(--art-floor); stroke: var(--prop); stroke-width: 2; }
+.p-gap { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 6 5; animation: blink calc(1.2s / var(--speed)) infinite; }
+.p-ground { fill: color-mix(in srgb, var(--art-floor) 70%, var(--prop)); }
+.prop-basket { width: 14%; animation: floatIn calc(1s / var(--speed)) both; animation-delay: var(--d, 0s); } .prop-basket svg { width: 100%; }
+.p-weave { fill: var(--glow); stroke: var(--prop); stroke-width: 2; }
+.p-weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; opacity: .7; }
 /* 動作 */
 .anim-walkIn { animation: walkIn calc(3s / var(--speed)) ease-out both; }
 .anim-bob { animation: bob calc(1.6s / var(--speed)) ease-in-out infinite; }
@@ -530,6 +552,8 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .stage-box { position: relative; width: min(100cqw, 100cqh * 16 / 9); aspect-ratio: 16 / 9; }
 .subtitle { flex: none; }
 .anim-note { flex: none; margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.voice-note { flex: none; margin: 0; font-size: 13px; line-height: 1.5; color: var(--todo-fg); background: var(--todo-bg); border-radius: 8px; padding: 4px 10px; }
+.voice-note[hidden] { display: none; }
 .controls { flex: none; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .chapter-pick { flex: 1 1 140px; }
 .about-btn { display: none; }
@@ -591,6 +615,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .controls { grid-column: 2; grid-row: 3; }
   .seekbar { grid-column: 2; grid-row: 4; }
   .anim-note { display: none; }
+  .voice-note { grid-column: 2; grid-row: 5; align-self: start; }
   .about-btn { display: block; }
   .story-page { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: auto auto minmax(0, 1fr); column-gap: 14px; padding-bottom: 8px; }
   .story-art { grid-column: 1; grid-row: 1 / -1; max-height: none; min-height: 0; }
@@ -679,6 +704,12 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .tile:hover { border-color: var(--accent); }
 .tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .home-view .story-note { margin: 0; }
+/* 手機直式:課一多,說明小字就收起來,只留大按鈕(按鈕名稱已足夠辨識) */
+@media (max-width: 760px) {
+  .tile span { display: none; }
+  .tile { min-height: 44px; align-content: center; padding: 6px 10px; }
+  .home-tiles { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+}
 @media (max-height: 720px) { .tile span { -webkit-line-clamp: 1; } }
 
 /* 矮螢幕(手機橫放、桌機放大):卡片兩欄(插圖/大圖在左)、講堂孔子在左學生在右、首頁按鈕一排多個 */
@@ -699,10 +730,13 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .pc-top { grid-row: 1 / -1; min-height: 0; height: 100%; }
   .pc-body { grid-column: 2; }
   .pc-nav { grid-column: 2; }
-  .home-view { gap: 6px; }
+  .home-view { gap: 4px; padding-top: 8px; padding-bottom: 8px; }
   .home-head h1 { font-size: 20px; }
   .home-head .lead { display: none; }
   .home-tiles { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
   .tile { min-height: 44px; padding: 6px 10px; }
   .tile span { display: none; }
+  .home-group h2 { margin-bottom: 4px; }
+  .home-group h2 small { display: none; }
+  .home-view .story-note { font-size: 12px; line-height: 1.4; }
 }

@@ -1,9 +1,9 @@
 // 隨堂測驗頁:題目由 quiz-data.js 產生;作答只存在這台裝置的瀏覽器(localStorage),不上傳、不需帳號。
 // 一屏版(WY13):第一頁是說明與程度選擇,之後一題一頁(題組一頁);網址 #intro、#題號。
-import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=b2c26e6';
-import { escapeHTML } from '../../shared/terms.js?v=b2c26e6';
-import { initPage } from '../../shared/page.js?v=b2c26e6';
-import { createPaging, pagerHTML } from '../../shared/deck.js?v=b2c26e6';
+import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=a0a4eef';
+import { escapeHTML } from '../../shared/terms.js?v=a0a4eef';
+import { initPage } from '../../shared/page.js?v=a0a4eef';
+import { createPaging, pagerHTML } from '../../shared/deck.js?v=a0a4eef';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -44,7 +44,9 @@ function inputsHTML(q) {
   if (q.type === 'fill') {
     return `<input class="fill" type="text" name="${name}" aria-labelledby="${name}-p" autocomplete="off" value="${escapeHTML(saved ?? '')}"${locked}>`;
   }
-  return `<textarea class="essay" name="${name}" rows="4" aria-labelledby="${name}-p" placeholder="寫下你的想法">${escapeHTML(saved ?? '')}</textarea>`;
+  // 看過參考答案後改成唯讀(修改不會再存);要改就按「重做這題」
+  const ro = state.submitted[q.id] ? ` readonly aria-describedby="${name}-ro"` : '';
+  return `<textarea class="essay" name="${name}" rows="4" aria-labelledby="${name}-p" placeholder="寫下你的想法"${ro}>${escapeHTML(saved ?? '')}</textarea>${ro ? `<p class="small" id="${name}-ro">已看過參考答案；想修改答案，請按「重做這題」。</p>` : ''}`;
 }
 
 function feedbackHTML(q) {

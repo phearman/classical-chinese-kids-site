@@ -1,10 +1,10 @@
 // 課文學習版:原文逐句+白話、點詞看解釋、比喻、情境帶入、延伸章節。
 // 一屏版(WY13):主文一句一頁;比喻、情境、討論、延伸各自成頁;上方段落籤可跳段。頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=b2c26e6';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=b2c26e6';
-import { setupGlossary } from '../../shared/sheet.js?v=b2c26e6';
-import { initPage } from '../../shared/page.js?v=b2c26e6';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=b2c26e6';
+import { lesson, glossary, study } from './data.js?v=a0a4eef';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=a0a4eef';
+import { setupGlossary } from '../../shared/sheet.js?v=a0a4eef';
+import { initPage } from '../../shared/page.js?v=a0a4eef';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=a0a4eef';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -44,6 +44,7 @@ const pages = [
     body: `${title(x.title)}${x.sentences.map(sentenceHTML).join('')}
       <p class="source">${escapeHTML(x.source)}</p>
       <p class="hint">${escapeHTML(x.link)}</p>
+      ${x.href ? `<p><a href="${escapeHTML(x.href)}">${escapeHTML(x.hrefLabel)}</a></p>` : ''}
       ${x.pending ? `<p class="small"><span class="tag todo">待查證</span> ${escapeHTML(x.pending)}</p>` : ''}
       ${i === extensions.length - 1 ? `<p class="next-step"><a class="btn-link" href="quiz.html">讀完了？來做隨堂測驗 →</a></p>
         <p class="story-note">${escapeHTML(lesson.sourceNote)}</p>` : ''}`,

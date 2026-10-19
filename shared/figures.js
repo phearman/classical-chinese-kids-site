@@ -1,6 +1,6 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=b2c26e6';
+import { escapeHTML } from './terms.js?v=a0a4eef';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -8,14 +8,15 @@ export const ROLES = {
   'kongzi':       { label: '孔子', image: 'kongzi.webp', height: 168 },
   'kongzi-leave': { label: '孔子', image: 'kongzi.webp', height: 168, faded: true },
   'zengzi':       { label: '曾參', image: 'zengzi.webp', height: 140 },
+  'ziyou':        { label: '子游', image: 'ziyou.webp', height: 140 }, // 沿用孔子講堂的子游圖(第 4 課)
   'menren-a':     { label: '門人', image: 'menren-a.webp', height: 140 },
   'menren-b':     { label: '門人', image: 'menren-b.webp', height: 140 },
   'menren-c':     { label: '門人', image: 'menren-c.webp', height: 140 },
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=b2c26e6';
-import { characterURL as imageURL } from './assets.js?v=b2c26e6';
+export { characterURL as imageURL } from './assets.js?v=a0a4eef';
+import { characterURL as imageURL } from './assets.js?v=a0a4eef';
 
 function silhouette(r, x) {
   const head = 118;
@@ -46,6 +47,14 @@ const PROPS = {
   door: () => '<rect class="prop" x="270" y="70" width="40" height="106" rx="4"/>',
   question: () => '<g class="prop-mark"><text x="34" y="52">?</text><text x="282" y="52">?</text><text x="152" y="32">?</text></g>',
   coin: () => '<g><circle class="prop-coin" cx="250" cy="70" r="26"/><text class="prop-coin-text" x="250" y="79" text-anchor="middle">忠</text></g>',
+  // 第 4 課〈論語選〉
+  animals: () => '<g class="prop-animals2">'
+    + '<path class="animal" d="M52 172 L55 140 Q58 128 76 128 L104 128 Q110 114 122 114 L128 121 L123 130 L126 142 L121 172 L112 172 L110 152 L70 152 L64 172Z"/>'
+    + '<path class="animal" d="M178 172 L183 120 Q188 98 214 96 L240 94 Q252 76 268 70 L274 80 L262 92 Q270 102 262 110 L250 112 L248 172 L238 172 L235 128 L200 130 L194 172Z"/>'
+    + '<path class="bowl" d="M78 166 H112 L106 176 H84Z"/><path class="bowl" d="M200 166 H236 L230 176 H206Z"/></g>',
+  mound: () => '<g class="prop-mound2"><path class="soil" d="M70 176 L140 66 L180 66 L250 176Z"/><path class="gap" d="M140 66 L160 40 L180 66"/></g>',
+  basket: () => '<g class="prop-basket2"><path class="soil" d="M246 46 Q270 30 294 46Z"/><path class="weave" d="M244 46 H296 L288 80 H252Z"/><path class="weave-line" d="M249 56 H291 M251 66 H289 M262 46 L264 80 M270 46 V80 M278 46 L276 80"/></g>',
+  pit: () => '<g class="prop-pit2"><path class="ground" d="M0 150 H60 Q160 226 260 150 H320 V200 H0Z"/><path class="soil" d="M142 178 Q160 160 178 178Z"/></g>',
   bracelet: () => {
     // 左:四顆散落的珠子(禮孝友學)→ 中:箭頭 → 右:同樣四顆珠子被紅線串成手鍊;紅線=一以貫之
     const words = ['禮', '孝', '友', '學'];
@@ -65,7 +74,8 @@ const PROPS = {
 
 export function sceneSVG(art) {
   const n = art.figures.length;
-  const xs = art.figures.map((_, i) => Math.round(160 + (i - (n - 1) / 2) * 80));
+  // xs:可指定角色的水平位置(例如讓出插圖中央給道具);沒指定就置中排開
+  const xs = art.xs ?? art.figures.map((_, i) => Math.round(160 + (i - (n - 1) / 2) * 80));
   // 問號、硬幣畫在角色前面,其餘道具在角色後面
   const FRONT = new Set(['question', 'coin']);
   const draw = (front) => (art.props ?? []).filter((p) => FRONT.has(p) === front).map((p) => {

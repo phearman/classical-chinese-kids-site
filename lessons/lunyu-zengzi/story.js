@@ -1,10 +1,10 @@
 // 圖文故事版:一頁一段情境,上下頁導覽;頁碼記在網址 #p1~#pN。
 // 一屏版(WY13):插圖依剩餘高度縮放,文字太長時只在文字區內捲動,整頁不捲。
-import { lesson, glossary, storyPages } from './data.js?v=b2c26e6';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=b2c26e6';
-import { setupGlossary } from '../../shared/sheet.js?v=b2c26e6';
-import { sceneSVG } from '../../shared/figures.js?v=b2c26e6';
-import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=b2c26e6';
+import { lesson, glossary, storyPages } from './data.js?v=a0a4eef';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=a0a4eef';
+import { setupGlossary } from '../../shared/sheet.js?v=a0a4eef';
+import { sceneSVG } from '../../shared/figures.js?v=a0a4eef';
+import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=a0a4eef';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
