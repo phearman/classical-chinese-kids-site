@@ -1,4 +1,5 @@
 // 課程目錄:目錄頁與全站選單從這裡產生。路徑皆相對於 site/。
+// book(可省):課本課次,首頁收合列的一行說明優先用它,沒有就用 subtitle。
 export const catalog = [
   {
     id: 'lunyu-zengzi',
@@ -16,11 +17,24 @@ export const catalog = [
     id: 'lunyu-xuan',
     title: '論語選',
     subtitle: '子游問孝、譬如為山、吾日三省吾身',
+    book: '翰林七上第 4 課',
     pages: [
       { href: 'lessons/lunyu-xuan/animation.html', label: '動畫故事', desc: '約 2 分鐘，三則各一小段，有字幕和朗讀旁白' },
       { href: 'lessons/lunyu-xuan/story.html', label: '圖文故事', desc: '一頁一段情境，像看繪本' },
       { href: 'lessons/lunyu-xuan/study.html', label: '課文學習', desc: '三則原文逐句白話、逐詞解釋、生活比喻' },
       { href: 'lessons/lunyu-xuan/quiz.html', label: '隨堂測驗', desc: '選擇、填充、問答和素養題，作答只存在這台裝置' },
+    ],
+  },
+  {
+    id: 'ershi-jiqu',
+    title: '兒時記趣',
+    subtitle: '沈復《浮生六記》：把蚊子看成鶴、把草叢看成森林',
+    book: '翰林七上第 7 課',
+    pages: [
+      { href: 'lessons/ershi-jiqu/animation.html', label: '動畫故事', desc: '約 2 分鐘，有字幕和朗讀旁白' },
+      { href: 'lessons/ershi-jiqu/story.html', label: '圖文故事', desc: '一頁一段情境，像看繪本' },
+      { href: 'lessons/ershi-jiqu/study.html', label: '課文學習', desc: '四段原文逐句白話、逐詞解釋、生活比喻、作者小檔案' },
+      { href: 'lessons/ershi-jiqu/quiz.html', label: '隨堂測驗', desc: '選擇、填充、問答和素養題，作答只存在這台裝置' },
     ],
   },
   {

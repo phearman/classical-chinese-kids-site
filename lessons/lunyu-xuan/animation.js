@@ -1,18 +1,12 @@
 // 〈論語選〉動畫故事:本課的資料與道具;播放器共用 shared/anim-player.js。
 // 本課尚未產生 AI 配音音檔(音訊工作延到使用者另行安排),旁白只用內建朗讀。
-import { animMeta, roles, scenes } from './anim-data.js?v=17af6f9';
-import { mountAnimation } from '../../shared/anim-player.js?v=17af6f9';
+import { animMeta, roles, scenes } from './anim-data.js?v=3ccc89b';
+import { mountAnimation } from '../../shared/anim-player.js?v=3ccc89b';
 
 // ---------------------------------------------------------------- 道具(程式繪製 SVG)
 const PROPS = {
   ink: () => `<svg viewBox="0 0 200 120" class="p-ink"><circle cx="70" cy="60" r="40"/><circle cx="120" cy="50" r="32"/><circle cx="105" cy="78" r="26"/></svg>`,
   lamp: () => `<svg viewBox="0 0 40 60" class="p-lamp"><circle class="p-glow" cx="20" cy="16" r="14"/><path class="p-flame" d="M20 8 Q26 18 20 24 Q14 18 20 8Z"/><rect x="12" y="24" width="16" height="6" rx="2"/><rect x="17" y="30" width="6" height="26"/><rect x="9" y="54" width="22" height="5" rx="2"/></svg>`,
-  // 狗和馬,各有一個食盆(「皆能有養」)
-  animals: () => `<svg viewBox="0 0 200 120" class="p-animals">
-    <g class="p-horse"><path d="M112 96 L116 60 Q120 44 140 42 L160 40 Q170 26 182 22 L186 30 L178 38 Q184 46 178 52 L168 54 L166 96 L158 96 L156 66 L128 68 L124 96Z"/></g>
-    <g class="p-dog"><path d="M20 96 L22 74 Q24 62 40 62 L64 62 Q70 50 80 50 L86 56 L82 64 L84 74 L80 96 L72 96 L70 80 L36 80 L32 96Z"/><path d="M20 70 Q8 62 12 54" class="p-tail"/></g>
-    <g class="p-bowl"><path d="M44 104 H70 L66 112 H48Z"/><path d="M128 104 H156 L152 112 H132Z"/></g>
-  </svg>`,
   // 土山:只差最上面一筐(頂端虛線)
   mound: () => `<svg viewBox="0 0 200 120" class="p-mound"><path class="p-soil" d="M10 116 L86 30 L114 30 L190 116Z"/><path class="p-gap" d="M86 30 L100 12 L114 30"/></svg>`,
   // 竹筐(簣):裝著土

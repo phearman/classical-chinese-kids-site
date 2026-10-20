@@ -1,14 +1,15 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=17af6f9';
-import { version } from './version.js?v=17af6f9';
-import { catalog } from '../catalog.js?v=17af6f9';
+import { escapeHTML } from './terms.js?v=3ccc89b';
+import { version } from './version.js?v=3ccc89b';
+import { catalog } from '../catalog.js?v=3ccc89b';
+import { siteMusic } from './sound.js?v=3ccc89b';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
 
 // ---------------------------------------------------------------- 偏好(本機儲存;讀寫失敗就當沒設)
-export const PREF_KEYS = { theme: 'ccc:theme', narration: 'ccc:narration' };
+export const PREF_KEYS = { theme: 'ccc:theme', narration: 'ccc:narration', lesson: 'ccc:lesson' }; // lesson:上次看過的課(首頁預設展開它)
 
 export function getPref(name) {
   try { return localStorage.getItem(PREF_KEYS[name]); } catch { return null; }
@@ -72,7 +73,7 @@ function settingsHTML() {
   return `
     <form method="dialog" class="settings-card">
       <h2>設定</h2>
-      <div class="set-row"><div>背景音樂<small>即將推出</small></div>${sw('set-music', '背景音樂', false, ' disabled')}</div>
+      <div class="set-row"><div>背景音樂<small>古風配樂，旁白時自動變小聲</small></div>${sw('set-music', '背景音樂', siteMusic().enabled())}</div>
       <div class="set-row"><div>旁白朗讀<small>動畫故事的旁白聲音</small></div>${sw('set-narration', '旁白朗讀', narrationOn())}</div>
       <div class="set-row"><div>深色模式<small>沒設定時跟著裝置</small></div>${sw('set-dark', '深色模式', isDark())}</div>
       <p class="site-version">${escapeHTML(versionText())}</p>
@@ -85,6 +86,7 @@ export function initPage({ paged = false } = {}) {
   applyThemeParam();
   if (document.querySelector('.shell')) return;
   const here = whereAmI();
+  if (here.lesson) { try { localStorage.setItem(PREF_KEYS.lesson, here.lesson); } catch { /* 無痕或封鎖時不記 */ } }
   const app = document.getElementById('app');
   const shell = document.createElement('div');
   shell.className = 'shell';
@@ -111,6 +113,7 @@ export function initPage({ paged = false } = {}) {
 
   setupMenu(shell);
   setupSettings(settings);
+  if (!siteMusic().supported()) disableSetting('set-music', '這個瀏覽器不支援');
 }
 
 function setupMenu(shell) {
@@ -153,8 +156,11 @@ function setupSettings(dialog) {
   const opener = document.getElementById('set-btn');
   opener.addEventListener('click', () => {
     dialog.querySelector('#set-dark').setAttribute('aria-checked', String(isDark()));
+    dialog.querySelector('#set-music').setAttribute('aria-checked', String(siteMusic().enabled()));
     dialog.showModal();
   });
+  // 別頁改了背景音樂開關(從 bfcache 恢復、回前景、別的分頁):開關跟著變
+  document.addEventListener('ccc:music', (e) => dialog.querySelector('#set-music').setAttribute('aria-checked', String(e.detail.on)));
   dialog.addEventListener('close', () => opener.focus());
   // 沒指定主題(跟隨系統)時,系統切換深淺色,開關跟著變
   globalThis.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
@@ -165,6 +171,12 @@ function setupSettings(dialog) {
     const on = e.currentTarget.getAttribute('aria-checked') !== 'true';
     e.currentTarget.setAttribute('aria-checked', String(on));
     setPref('narration', on ? 'on' : 'off');
+  });
+  // 背景音樂(WY11):在這次點擊裡啟動音訊,手機才放得出聲音
+  dialog.querySelector('#set-music').addEventListener('click', (e) => {
+    const on = e.currentTarget.getAttribute('aria-checked') !== 'true';
+    e.currentTarget.setAttribute('aria-checked', String(on));
+    siteMusic().setEnabled(on, e);
   });
   dialog.querySelector('#set-dark').addEventListener('click', (e) => {
     const on = e.currentTarget.getAttribute('aria-checked') !== 'true';

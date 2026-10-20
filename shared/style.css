@@ -16,6 +16,7 @@
   --art-hall: #e8d9bd;
   --art-night: #3c4257;
   --art-floor: #cdb894;
+  --art-garden: #e3e6cf;
   --fig-kongzi: #6d4c3d;
   --fig-zengzi: #a78560;
   --fig-menren-a: #4f7a74;
@@ -40,7 +41,7 @@
     --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
     --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
     --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
-    --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033;
+    --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428;
     --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
     --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
     --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
@@ -51,7 +52,7 @@
   --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
   --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
   --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
-  --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033;
+  --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428;
   --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
   --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
   --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
@@ -207,6 +208,24 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .art-bg { fill: var(--art-paper); }
 .bg-hall .art-bg { fill: var(--art-hall); }
 .bg-night .art-bg { fill: var(--art-night); }
+.bg-garden .art-bg { fill: var(--art-garden); }
+/* 第 7 課〈兒時記趣〉故事道具(WY19 PR-B) */
+.prop-sun2 circle { fill: #f2b84b; } .prop-sun2 .ray { stroke: #f2b84b; stroke-width: 3; stroke-linecap: round; }
+.prop-sun2 .warn { fill: var(--accent); font-size: 12px; font-weight: 700; }
+.prop-leaf2 .lens { fill: var(--surface); stroke: var(--prop); stroke-width: 3; }
+.prop-leaf2 .blade { fill: var(--moss); } .prop-leaf2 .vein { fill: none; stroke: var(--surface); stroke-width: 1.5; }
+/* 夜景底色深(淺色、深色主題都是),蚊子用固定的淺色才看得到 */
+.prop-mosq2 .body { fill: #f1e8d6; } .prop-mosq2 .wing { fill: none; stroke: #d9d2c4; stroke-width: 1.2; }
+.prop-cranes2 path { fill: #f7f3ea; stroke: var(--prop); stroke-width: 1; }
+.prop-net2 path { fill: rgba(255, 255, 255, .35); stroke: var(--prop); stroke-width: 1.5; } .prop-net2 .fold { fill: none; stroke-dasharray: 4 6; opacity: .6; }
+.prop-smoke2 path { fill: none; stroke: #b9b4aa; stroke-width: 6; stroke-linecap: round; opacity: .7; }
+.prop-cloud2 path { fill: #cfe0dc; stroke: var(--prop); stroke-width: 1; }
+.prop-wall2 path { fill: var(--art-floor); stroke: var(--prop); stroke-width: 1.5; } .prop-wall2 .bump { fill: none; }
+.prop-wall2 .bed { fill: color-mix(in srgb, var(--art-floor) 70%, var(--prop)); }
+.prop-grass2 path { fill: none; stroke: var(--moss); stroke-width: 3; stroke-linecap: round; }
+.prop-ants2 circle { fill: var(--ink); }
+.prop-clods2 path { fill: var(--art-floor); stroke: var(--prop); stroke-width: 1.5; } .prop-clods2 .pit { fill: none; }
+.prop-bugs2 ellipse { fill: #6b5a3c; } .prop-bugs2 .leg { stroke: var(--ink); stroke-width: 1.2; }
 .art-floor { fill: var(--art-floor); }
 .fig-head { fill: var(--fig-head); }
 .fig-hair, .fig-beard { fill: var(--fig-hair); }
@@ -226,9 +245,7 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .prop-mark text { font-size: 30px; font-weight: 700; fill: var(--accent); }
 .prop-coin { fill: var(--glow); stroke: var(--prop); stroke-width: 3; }
 /* 第 4 課〈論語選〉故事插圖道具 */
-.prop-animals2 .animal { fill: var(--prop); }
-.prop-animals2 .bowl, .prop-basket2 .weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; }
-.prop-animals2 .bowl { fill: var(--moss); stroke: none; }
+.prop-basket2 .weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; }
 .prop-mound2 .soil, .prop-basket2 .soil, .prop-pit2 .soil { fill: var(--art-floor); stroke: var(--prop); stroke-width: 2; }
 .prop-mound2 .gap { fill: none; stroke: var(--accent); stroke-width: 3; stroke-dasharray: 6 5; }
 .prop-basket2 .weave { fill: var(--glow); stroke: var(--prop); stroke-width: 2; }
@@ -247,6 +264,7 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .story-text p { margin: 8px 0; }
 /* 人物頁 */
 .facts { margin: 6px 0; }
+.author-portrait { display: block; height: 120px; width: auto; margin: 4px auto 8px; }
 .fact { display: grid; grid-template-columns: 6.5em 1fr; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); }
 .fact dt { color: var(--ink-soft); font-size: 15px; }
 .fact dd { margin: 0; }
@@ -393,6 +411,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 }
 .stage.bg-hall { background: linear-gradient(var(--art-hall) 0 78%, var(--art-floor) 78%); }
 .stage.bg-night { background: linear-gradient(var(--art-night) 0 78%, color-mix(in srgb, var(--art-night) 70%, #000) 78%); }
+.stage.bg-garden { background: linear-gradient(var(--art-garden) 0 70%, var(--art-floor) 70%); }
 .stage.bg-paper { background: radial-gradient(circle at 50% 40%, var(--surface), var(--art-paper)); }
 .stage.is-paused, .stage.is-paused *, .stage.is-waiting, .stage.is-waiting * { animation-play-state: paused !important; } /* is-waiting:等上一句旁白念完 */
 .stage .card {
@@ -445,10 +464,6 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .p-bracelet .ring { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 260; stroke-dashoffset: 260; animation: draw calc(3s / var(--speed)) both; animation-delay: var(--d, 0s); }
 .p-bracelet .bead { fill: var(--glow); stroke: var(--prop); stroke-width: 1.5; animation: fadeIn calc(.4s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + var(--i) * .25s / var(--speed)); }
 /* 第 4 課〈論語選〉道具 */
-.prop-animals { width: 62%; animation: fadeIn calc(1s / var(--speed)) both; } .prop-animals svg { width: 100%; }
-.p-horse path, .p-dog path { fill: var(--prop); }
-.p-dog .p-tail { fill: none; stroke: var(--prop); stroke-width: 5; stroke-linecap: round; }
-.p-bowl path { fill: var(--moss); }
 .prop-mound { width: 56%; animation: fadeIn calc(1s / var(--speed)) both; } .prop-mound svg { width: 100%; overflow: visible; }
 .prop-pit { width: 70%; } .prop-pit svg { width: 100%; }
 .p-soil { fill: var(--art-floor); stroke: var(--prop); stroke-width: 2; }
@@ -457,6 +472,27 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .prop-basket { width: 14%; animation: floatIn calc(1s / var(--speed)) both; animation-delay: var(--d, 0s); } .prop-basket svg { width: 100%; }
 .p-weave { fill: var(--glow); stroke: var(--prop); stroke-width: 2; }
 .p-weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; opacity: .7; }
+/* 第 7 課〈兒時記趣〉動畫道具(WY19 PR-B) */
+.stage .ftext.warn { color: var(--accent); background: var(--surface); border-radius: .3em; padding: .1em .4em; }
+.prop-sun { width: 18%; } .prop-sun svg, .prop-leaf svg, .prop-mosquitoes svg, .prop-cranes svg, .prop-net svg, .prop-smoke svg, .prop-cloud svg, .prop-forest svg, .prop-bugs svg { width: 100%; display: block; }
+.p-sun circle { fill: #f2b84b; } .p-ray { stroke: #f2b84b; stroke-width: 4; stroke-linecap: round; }
+.prop-leaf { width: 30%; }
+.p-lens { fill: var(--surface); stroke: var(--prop); stroke-width: 3; } .p-blade { fill: var(--moss); } .p-vein { fill: none; stroke: var(--surface); stroke-width: 1.5; }
+.prop-mosquitoes { width: 60%; } .p-mbody { fill: #f1e8d6; } .p-wing { fill: none; stroke: #d9d2c4; stroke-width: 1.2; } /* 夜景底色深,蚊子用固定淺色 */
+.p-mosq g { animation: blink calc(1.2s / var(--speed)) ease-in-out infinite; animation-delay: calc(var(--i) * .13s); }
+.prop-cranes { width: 62%; } .p-cranes path { fill: #f7f3ea; stroke: var(--prop); stroke-width: 1; }
+.prop-net { width: 58%; height: 70%; } .prop-net svg { height: 100%; }
+.p-net path { fill: rgba(255, 255, 255, .28); stroke: #ece4d6; stroke-width: 1.5; } .p-net .p-fold { fill: none; stroke-dasharray: 4 6; opacity: .6; }
+.prop-smoke { width: 22%; } .p-smoke path { fill: none; stroke: #b9b4aa; stroke-width: 7; stroke-linecap: round; opacity: .7; }
+.prop-cloud { width: 50%; } .p-cloud path { fill: #cfe0dc; stroke: var(--prop); stroke-width: 1; opacity: .9; }
+.prop-forest { width: 74%; }
+.p-forest .p-ground, .p-forest .p-hill { fill: var(--art-floor); stroke: var(--prop); stroke-width: 1.5; } .p-forest .p-pit { fill: none; stroke: var(--prop); stroke-width: 1.5; }
+.p-tree rect { fill: #8a6a3e; } .p-tree path { fill: var(--moss); } .p-ant circle { fill: var(--ink); }
+.prop-bugs { width: 14%; } .p-bug { fill: #6b5a3c; } .p-leg { stroke: var(--ink); stroke-width: 1.2; }
+.p-bug-l { animation: bugL calc(.5s / var(--speed)) ease-in-out infinite alternate; } .p-bug-r { animation: bugR calc(.5s / var(--speed)) ease-in-out infinite alternate; }
+.anim-hopOut { animation: hopOut calc(4s / var(--speed)) ease-in both; animation-delay: var(--d, 3s); }
+@keyframes bugL { to { transform: translateX(3px); } } @keyframes bugR { to { transform: translateX(-3px); } }
+@keyframes hopOut { 0% { transform: translateX(-50%); opacity: 1; } 30% { transform: translateX(-20%) translateY(-12%); } 60% { transform: translateX(10%); } 100% { transform: translateX(60%); opacity: 0; } }
 /* 動作 */
 .anim-walkIn { animation: walkIn calc(3s / var(--speed)) ease-out both; }
 .anim-bob { animation: bob calc(1.6s / var(--speed)) ease-in-out infinite; }
@@ -487,7 +523,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 @keyframes slideR { from { opacity: 0; transform: translate(-10%, -50%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 @media (prefers-reduced-motion: reduce) {
   .stage .actor { animation: none !important; transform: translateX(-50%); }
-  .p-coin-in, .p-dot, .p-glow { animation: none !important; }
+  .p-coin-in, .p-dot, .p-glow, .p-mosq g, .p-bug-l, .p-bug-r { animation: none !important; }
 }
 .bigplay {
   position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; color: inherit;
@@ -693,10 +729,23 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   flex: 1; min-height: 0; width: 100%; max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; justify-content: safe center;
   padding: 12px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px));
 }
+.home-view > * { flex-shrink: 0; } /* 內容比畫面高時不互相擠壓重疊,改由內容區捲動 */
 .home-head h1 { font-size: 26px; margin: 0; }
 .home-head .lead { margin: 2px 0 0; font-size: 15px; line-height: 1.6; }
-.home-group h2 { font-size: 18px; margin: 0 0 6px; }
-.home-group h2 small { display: block; margin: 0; font-size: 13px; }
+/* 每課一列可收合(WY19):summary=課名+一行說明;點開才出現各頁按鈕 */
+.home-list { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.home-group { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.home-group > summary {
+  display: flex; align-items: baseline; gap: 8px; min-height: 44px; padding: 8px 12px; cursor: pointer; list-style: none;
+  border-radius: 12px;
+}
+.home-group > summary::-webkit-details-marker { display: none; }
+.home-group > summary::before { content: "▸"; color: var(--accent); flex: none; }
+.home-group[open] > summary::before { content: "▾"; }
+.home-group > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.home-title { font-size: 17px; font-weight: 700; flex: none; }
+.home-group > summary small { min-width: 0; font-size: 13px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.home-group .home-tiles { padding: 0 10px 10px; }
 .home-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 .tile {
   display: grid; gap: 1px; min-height: 48px; padding: 8px 12px; border-radius: 12px; text-decoration: none;
@@ -714,6 +763,15 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .home-tiles { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
 }
 @media (max-height: 720px) { .tile span { -webkit-line-clamp: 1; } }
+/* 課多時(WY19 收合列):手機直式與一般桌機也要一屏放得下 8 課 */
+@media (max-height: 820px) {
+  .home-view { gap: 4px; padding-top: 6px; padding-bottom: 6px; }
+  .home-head h1 { font-size: 22px; }
+  .home-head .lead { display: none; }
+  .home-list { gap: 4px; }
+  .home-group > summary { min-height: 40px; padding: 4px 10px; align-items: center; }
+  .home-view .story-note { font-size: 12px; line-height: 1.4; }
+}
 
 /* 矮螢幕(手機橫放、桌機放大):卡片兩欄(插圖/大圖在左)、講堂孔子在左學生在右、首頁按鈕一排多個 */
 @media (max-height: 520px) and (min-aspect-ratio: 5/4) {
@@ -739,8 +797,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .home-tiles { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
   .tile { min-height: 44px; padding: 6px 10px; }
   .tile span { display: none; }
-  .home-group h2 { margin-bottom: 4px; }
-  .home-group h2 small { display: none; }
+  .home-group > summary { min-height: 40px; padding: 4px 10px; align-items: center; }
   .home-view .story-note { font-size: 12px; line-height: 1.4; }
 }
 

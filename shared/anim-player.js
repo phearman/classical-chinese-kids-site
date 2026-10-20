@@ -1,9 +1,9 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=17af6f9';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=17af6f9';
-import { characterURL as imageURL } from './assets.js?v=17af6f9';
+import { escapeHTML } from './terms.js?v=3ccc89b';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=3ccc89b';
+import { characterURL as imageURL } from './assets.js?v=3ccc89b';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
@@ -94,7 +94,7 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
       return `<span class="ftext ${it.cls ?? ''}${anim}" style="${style}--s:${it.size};">${escapeHTML(it.text)}</span>`;
     }
     if (!PROPS[it.name]) throw new Error(`未知道具：${it.name}`);
-    return `<div class="prop prop-${it.name}" style="${style}">${PROPS[it.name]()}</div>`;
+    return `<div class="prop prop-${it.name}${anim}" style="${style}">${PROPS[it.name]()}</div>`;
   }
 
   function renderScene() {
@@ -115,6 +115,7 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
   // ---------------------------------------------------------------- 旁白播放(AI 配音音檔優先,沒有或失敗才用內建朗讀)
   // 每一次念一句都是一個「播放實例」,帶世代編號 gen:只有當前實例的回呼能改狀態,而且每個實例只結束一次。
   // 事件(給 BGM 降音用):document 上的 narration:start / narration:end,一定成對;
+  //   念到一半按暫停發 narration:pause、續播發 narration:resume(只在 start 與 end 之間);
   //   e.detail = { id: '幕-句', source: 'audio' | 'speech' }
   let speechGen = 0;
   let current = null; // { gen, id, source, line, audio, ended }
@@ -334,6 +335,10 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     if (current?.audio && !current.ended) {
       if (on) startAudio(current);
       else current.audio.pause();
+    }
+    if (current && !current.ended && !!current.held === on) {
+      current.held = !on;
+      emit(on ? 'narration:resume' : 'narration:pause', current);
     }
   }
 

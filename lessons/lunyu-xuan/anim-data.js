@@ -53,8 +53,9 @@ export const scenes = [
       { at: 8, role: 'kongzi', text: '如果心裡沒有尊敬，這兩件事，要怎麼分別呢？' },
     ],
     items: [
-      { kind: 'prop', name: 'animals', x: 50, y: 62 },
-      { kind: 'text', text: '敬', x: 50, y: 42, size: 14, anim: 'glow', delay: 9, cls: 'stamp' },
+      { kind: 'actor', who: 'dog', x: 30, y: 96, h: 42, anim: 'fade' },
+      { kind: 'actor', who: 'horse', x: 68, y: 96, h: 66, anim: 'fade', delay: 1 },
+      { kind: 'text', text: '敬', x: 38, y: 40, size: 10, anim: 'glow', delay: 9, cls: 'stamp' },
     ],
   },
   {
