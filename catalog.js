@@ -39,6 +39,16 @@ export const catalog = [
     ],
   },
   {
+    id: 'shenhua-yuyan',
+    title: '古代神話與寓言選',
+    subtitle: '夸父逐日、濫竽充數，還有盤古、女媧、驚弓之鳥',
+    book: '翰林七上自學選文一',
+    pages: [
+      { href: 'lessons/shenhua-yuyan/study.html', label: '課文學習', desc: '兩則原文逐句白話、逐詞解釋，加上三張故事卡' },
+      { href: 'lessons/shenhua-yuyan/quiz.html', label: '隨堂測驗', desc: '選擇、填充、問答和素養題，作答只存在這台裝置' },
+    ],
+  },
+  {
     id: 'classroom',
     section: 'site', // 全站頁面(選單放在「全站」,不是一課)
     title: '孔子講堂',

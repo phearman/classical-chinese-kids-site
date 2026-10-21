@@ -1,14 +1,14 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=60e92fb';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=60e92fb';
-import { characterURL as imageURL } from './assets.js?v=60e92fb';
+import { escapeHTML } from './terms.js?v=644a242';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=644a242';
+import { characterURL as imageURL } from './assets.js?v=644a242';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
-// prefer:'male'(角色設定 voice: 'male',目前只有孔子,WY23):同一層裡先挑看得出是男聲的,
-// 依序 zh-TW 男聲 → 其他華語男聲 → 都沒有就照原本的順序;其他角色不受影響。
+// prefer:'male'/'female'(角色設定 voice;孔子 male,WY23;小沈復 female,WY28):同一層裡先挑看得出是該性別的,
+// 依序 zh-TW → 其他華語 → 都沒有就照原本的順序;其他角色不受影響。
 const VOICE_TIERS = [
   (l) => /^zh-TW$/i.test(l),
   (l) => /^(zh-(CN|SG|Hans|Hant)|cmn)(-|$)/i.test(l),
@@ -18,11 +18,16 @@ const VOICE_TIERS = [
 // Google(Android)的語音代號看不出性別,沒有可靠對照表,所以不列(找不到男聲就照原本的順序)。
 const MALE_NAME = /\bmale\b|男|\b(Zhiwei|Yunjhe|Kangkang|Yunxi|Yunyang|Yunjian)\b/i;
 export const isMaleVoice = (v) => MALE_NAME.test(`${v.name ?? ''} ${v.voiceURI ?? ''}`);
+// 看得出是女聲:名稱含 female/女,或微軟、蘋果公開的華語女聲名稱(WY28:內建朗讀沒有童聲,小沈復挑女聲再小幅拉高)。
+const FEMALE_NAME = /\bfemale\b|女|\b(Hanhan|Yating|HsiaoChen|HsiaoYu|Huihui|Yaoyao|Xiaoxiao|Xiaoyi|Xiaobei|Xiaoni|Mei-?Jia|Ting-?Ting)\b/i;
+export const isFemaleVoice = (v) => FEMALE_NAME.test(`${v.name ?? ''} ${v.voiceURI ?? ''}`);
+const PREFER = { male: isMaleVoice, female: isFemaleVoice };
 export function pickVoiceFrom(voices, { prefer } = {}) {
   const lang = (v) => String(v.lang ?? '').replace('_', '-');
-  if (prefer === 'male') {
+  const want = PREFER[prefer];
+  if (want) {
     for (const tier of VOICE_TIERS) {
-      const v = voices.find((x) => tier(lang(x)) && isMaleVoice(x));
+      const v = voices.find((x) => tier(lang(x)) && want(x));
       if (v) return v;
     }
   }

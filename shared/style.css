@@ -225,7 +225,15 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .prop-grass2 path { fill: none; stroke: var(--moss); stroke-width: 3; stroke-linecap: round; }
 .prop-ants2 circle { fill: var(--ink); }
 .prop-clods2 path { fill: var(--art-floor); stroke: var(--prop); stroke-width: 1.5; } .prop-clods2 .pit { fill: none; }
-.prop-bugs2 ellipse { fill: #6b5a3c; } .prop-bugs2 .leg { stroke: var(--ink); stroke-width: 1.2; }
+/* 甲蟲(WY29,圖文故事與動畫共用):固定深色描邊,深淺色模式都看得清楚 */
+.beetle path, .beetle ellipse, .beetle circle { stroke-linecap: round; stroke-linejoin: round; }
+.beetle .body { stroke: #2b2620; stroke-width: .7; }
+.beetle .far { fill: none; stroke: #6d6253; stroke-width: .9; }
+.beetle .near, .beetle .feeler { fill: none; stroke: #2b2620; stroke-width: .9; }
+.beetle .seam { fill: none; stroke: #2b2620; stroke-width: .5; opacity: .7; }
+.beetle .shine { fill: none; stroke: #fff8e8; stroke-width: .8; opacity: .6; }
+.beetle .jaw { fill: none; stroke: #2b2620; stroke-width: 1.1; }
+.beetle .eye { fill: #fff8e8; }
 .art-floor { fill: var(--art-floor); }
 .fig-head { fill: var(--fig-head); }
 .fig-hair, .fig-beard { fill: var(--fig-hair); }
@@ -475,7 +483,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .p-weave-line { fill: none; stroke: var(--prop); stroke-width: 1.5; opacity: .7; }
 /* 第 7 課〈兒時記趣〉動畫道具(WY19 PR-B) */
 .stage .ftext.warn { color: var(--accent); background: var(--surface); border-radius: .3em; padding: .1em .4em; }
-.prop-sun { width: 18%; } .prop-sun svg, .prop-leaf svg, .prop-mosquitoes svg, .prop-cranes svg, .prop-net svg, .prop-smoke svg, .prop-cloud svg, .prop-forest svg, .prop-bugs svg { width: 100%; display: block; }
+.prop-sun { width: 18%; } .prop-sun svg, .prop-leaf svg, .prop-mosquitoes svg, .prop-cranes svg, .prop-net svg, .prop-smoke svg, .prop-cloud svg, .prop-forest svg { width: 100%; display: block; }
 .p-sun circle { fill: #f2b84b; } .p-ray { stroke: #f2b84b; stroke-width: 4; stroke-linecap: round; }
 .prop-leaf { width: 30%; }
 .p-lens { fill: var(--surface); stroke: var(--prop); stroke-width: 3; } .p-blade { fill: var(--moss); } .p-vein { fill: none; stroke: var(--surface); stroke-width: 1.5; }
@@ -489,10 +497,31 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .prop-forest { width: 74%; }
 .p-forest .p-ground, .p-forest .p-hill { fill: var(--art-floor); stroke: var(--prop); stroke-width: 1.5; } .p-forest .p-pit { fill: none; stroke: var(--prop); stroke-width: 1.5; }
 .p-tree rect { fill: #8a6a3e; } .p-tree path { fill: var(--moss); } .p-ant circle { fill: var(--ink); }
-.prop-bugs { width: 14%; } .p-bug { fill: #6b5a3c; } .p-leg { stroke: var(--ink); stroke-width: 1.2; }
-.p-bug-l { animation: bugL calc(.5s / var(--speed)) ease-in-out infinite alternate; } .p-bug-r { animation: bugR calc(.5s / var(--speed)) ease-in-out infinite alternate; }
+/* 第 6 幕怪獸登場(WY29):整段鋪滿舞台,單位=舞台 160×90;時間都從本幕開頭算(--d 已含拖動與倍速) */
+.prop-toadAttack { width: 100%; z-index: 1; } .prop-toadAttack svg { width: 100%; display: block; overflow: visible; }
+.p-toadAttack .p-grass path, .p-toadAttack .p-fall path { fill: none; stroke: var(--moss); stroke-width: 1.4; stroke-linecap: round; }
+.p-toadAttack .p-tongue path { stroke: #e88a9a; stroke-width: 3; stroke-linecap: round; } .p-toadAttack .p-tongue circle { fill: #e88a9a; }
+.p-fight-l { animation: ramL calc(.7s / var(--speed)) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+.p-fight-r { animation: ramR calc(.7s / var(--speed)) ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+.p-fight-l, .p-fight-r, .p-fall, .p-toad-gulp { transform-box: fill-box; transform-origin: 50% 100%; }
+.p-world { animation: quake calc(.2s / var(--speed)) linear 12; animation-delay: calc(var(--d, 0s) + 6.4s / var(--speed)); }
+.p-fall-2 { animation: fallOver calc(.5s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 6.8s / var(--speed)); }
+.p-fall-1 { animation: fallOver calc(.5s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 8.4s / var(--speed)); }
+.p-toad-move { animation: toadIn calc(3s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.p-toad-hop { animation: toadHop calc(.5s / var(--speed)) ease-in-out 6; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.p-tongue { transform-origin: 0 0; animation: tongue calc(1.4s / var(--speed)) linear both; animation-delay: calc(var(--d, 0s) + 12.4s / var(--speed)); }
+.p-gone { transform-origin: 86px 79px; animation: eaten calc(1.4s / var(--speed)) linear both; animation-delay: calc(var(--d, 0s) + 12.4s / var(--speed)); }
+.p-toad-gulp { animation: gulp calc(.5s / var(--speed)) ease-in-out 2; animation-delay: calc(var(--d, 0s) + 13.9s / var(--speed)); }
+@keyframes ramL { 0%, 40% { transform: translateX(0) rotate(0); } 100% { transform: translateX(2px) rotate(-6deg); } }
+@keyframes ramR { 0%, 40% { transform: translateX(0) rotate(0); } 100% { transform: translateX(-2px) rotate(6deg); } }
+@keyframes quake { 25% { transform: translate(.6px, -.4px); } 75% { transform: translate(-.6px, .4px); } }
+@keyframes fallOver { to { transform: translate(-6px, -8px) rotate(-120deg); opacity: 0; } }
+@keyframes toadIn { from { transform: translateX(62px); } to { transform: translateX(0); } }
+@keyframes toadHop { 50% { transform: translateY(-3px); } }
+@keyframes tongue { 0% { transform: scaleX(0); } 20%, 45% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+@keyframes eaten { 0%, 45% { transform: none; opacity: 1; } 99% { transform: translate(var(--mx), var(--my)) scale(.15); opacity: 1; } 100% { transform: translate(var(--mx), var(--my)) scale(.15); opacity: 0; } }
+@keyframes gulp { 50% { transform: scale(1.05, .94); } }
 .anim-hopOut { animation: hopOut calc(4s / var(--speed)) ease-in both; animation-delay: var(--d, 3s); }
-@keyframes bugL { to { transform: translateX(3px); } } @keyframes bugR { to { transform: translateX(-3px); } }
 @keyframes hopOut { 0% { transform: translateX(-50%); opacity: 1; } 30% { transform: translateX(-20%) translateY(-12%); } 60% { transform: translateX(10%); } 100% { transform: translateX(60%); opacity: 0; } }
 /* 動作 */
 .anim-walkIn { animation: walkIn calc(3s / var(--speed)) ease-out both; }
@@ -524,7 +553,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 @keyframes slideR { from { opacity: 0; transform: translate(-10%, -50%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 @media (prefers-reduced-motion: reduce) {
   .stage .actor { animation: none !important; transform: translateX(-50%); }
-  .p-coin-in, .p-dot, .p-glow, .p-mosq g, .p-bug-l, .p-bug-r { animation: none !important; }
+  .p-coin-in, .p-dot, .p-glow, .p-mosq g, .p-fight-l, .p-fight-r, .p-world, .p-toad-hop, .p-toad-gulp { animation: none !important; }
 }
 .bigplay {
   position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; color: inherit;
@@ -809,4 +838,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .classical { letter-spacing: 0; }
   .choice { padding: 6px; gap: 4px; }
   .qitem.is-sub { padding-left: 6px; }
+  /* 首頁(WY26):課名較長(古代神話與寓言選)時,收起一行說明,課名可換行,不撐出橫捲 */
+  .home-group > summary small { display: none; }
+  .home-title { flex: 0 1 auto; min-width: 0; }
 }

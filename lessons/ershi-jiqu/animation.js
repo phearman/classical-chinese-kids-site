@@ -1,7 +1,9 @@
 // 〈兒時記趣〉動畫故事:本課的資料與道具;播放器共用 shared/anim-player.js。
 // 本課尚未產生 AI 配音音檔(音訊工作另行安排),旁白只用內建朗讀。
-import { animMeta, roles, scenes } from './anim-data.js?v=60e92fb';
-import { mountAnimation } from '../../shared/anim-player.js?v=60e92fb';
+import { animMeta, roles, scenes } from './anim-data.js?v=644a242';
+import { mountAnimation } from '../../shared/anim-player.js?v=644a242';
+import { characterURL } from '../../shared/assets.js?v=644a242';
+import { beetle } from '../../shared/figures.js?v=644a242';
 
 // ---------------------------------------------------------------- 道具(程式繪製 SVG)
 const PROPS = {
@@ -26,8 +28,37 @@ const PROPS = {
     ${[12, 26, 40, 112, 190].map((x, i) => `<g class="p-tree"><rect x="${x - 2}" y="${66 - (i % 2) * 8}" width="4" height="${26 + (i % 2) * 8}"/><path d="M${x - 12} ${70 - (i % 2) * 8} L${x} ${40 - (i % 2) * 10} L${x + 12} ${70 - (i % 2) * 8}Z"/></g>`).join('')}
     <g class="p-ant"><circle cx="70" cy="86" r="3"/><circle cx="76" cy="86" r="4"/><circle cx="84" cy="86" r="3"/></g>
   </svg>`,
-  // 兩隻小蟲在打架
-  bugs: () => `<svg viewBox="0 0 80 40" class="p-bugs"><ellipse class="p-bug p-bug-l" cx="26" cy="22" rx="10" ry="7"/><ellipse class="p-bug p-bug-r" cx="54" cy="22" rx="10" ry="7"/><path class="p-leg" d="M18 24 L12 30 M34 24 L40 30 M46 24 L40 30 M62 24 L68 30"/></svg>`,
+  // 第 6 幕整段(WY29):鋪滿舞台的 SVG(單位=舞台 160×90),小沈復在左(角色圖另放)、兩隻甲蟲在中間偏右的草叢裡頂角打架、
+  // 癩蝦蟆(定稿 B,鏡像面向左)第 6 秒從右邊跳著進場、撞倒草叢、地面震動;第 12.4 秒程式畫的粉紅舌頭從嘴角伸到甲蟲、
+  // 縮回時把兩隻甲蟲帶進嘴裡。三者不互相遮擋;嘴角座標依 toad.webp 量得(寬 495、高 440 的 (367, 95))。
+  toadAttack: () => {
+    const [tx, ty, th] = [114, 46.4, 40]; // 蝦蟆圖左上角與高度
+    const tw = th * 495 / 440;
+    const mouth = [tx + tw * (1 - 367 / 495), ty + th * 95 / 440];
+    const target = [86, 79]; // 兩隻甲蟲頂角的地方
+    const dx = target[0] - mouth[0];
+    const dy = target[1] - mouth[1];
+    const len = Math.hypot(dx, dy).toFixed(1);
+    const deg = (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1);
+    const blades = (xs, base) => xs.map((x, i) => `<path d="M${x} ${base} Q${x + (i % 2 ? 2 : -2)} ${base - 6 - (i % 3) * 2} ${x + (i % 2 ? 1 : -1)} ${base - 10 - (i % 3) * 3}"/>`).join('');
+    return `<svg viewBox="0 0 160 90" class="p-toadAttack" style="--mx:${(-dx).toFixed(1)}px;--my:${(-dy).toFixed(1)}px">
+    <g class="p-world">
+      <g class="p-grass">${blades([58, 63, 80, 92, 104, 107], 86)}</g>
+      <g class="p-fall p-fall-1">${blades([109, 111, 113], 86)}</g>
+      <g class="p-fall p-fall-2">${blades([150, 152, 154, 156], 86)}</g>
+      <g class="p-gone">
+        <g class="p-fight p-fight-l">${beetle(72, 85.5, { s: 1.1 })}</g>
+        <g class="p-fight p-fight-r">${beetle(100, 85.5, { s: 1.1, flip: true, color: '#4f7a3a' })}</g>
+      </g>
+    </g>
+    <g class="p-toad-move"><g class="p-toad-hop"><g class="p-toad-gulp">
+      <image href="${characterURL('toad.webp')}" x="${-(tx + tw)}" y="${ty}" width="${tw.toFixed(1)}" height="${th}" transform="scale(-1 1)"/>
+    </g></g></g>
+    <g transform="translate(${mouth[0].toFixed(1)} ${mouth[1].toFixed(1)}) rotate(${deg})"><g class="p-tongue">
+      <path d="M0 0 H${len}" /><circle cx="${len}" cy="0" r="2.2"/>
+    </g></g>
+  </svg>`;
+  },
 };
 
 mountAnimation({ animMeta, roles, scenes, PROPS });

@@ -374,7 +374,7 @@ export const storyPages = [
   },
   {
     title: '草叢怪獸',
-    art: { bg: 'garden', figures: ['toad'], xs: [92], props: ['grass', 'bugs'], caption: '兩隻小蟲打架，忽然來了一隻癩蝦蟆' },
+    art: { bg: 'garden', figures: ['toad'], xs: [92], props: ['lowgrass', 'bugs'], caption: '兩隻小蟲打架，忽然來了一隻癩蝦蟆' },
     text: [
       '有一天，兩隻小蟲在草叢裡打架，他看得正起勁。忽然，一個「龐然大物」像要拔山倒樹一樣衝過來——原來是一隻癩蝦蟆！',
       '牠舌頭一伸，兩隻蟲都被吞下去了。小沈復嚇得「呀」一聲叫出來。回過神後，他捉住蝦蟆，打了牠幾十下，再把牠趕到別的院子去。',

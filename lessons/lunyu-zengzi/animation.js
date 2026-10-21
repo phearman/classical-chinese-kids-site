@@ -1,7 +1,7 @@
 // 〈一聲「唯」〉動畫故事:本課的資料、道具與 AI 配音清單;播放器共用 shared/anim-player.js。
-import { animMeta, roles, scenes } from './anim-data.js?v=60e92fb';
-import { audio as audioFiles, audioMeta } from './audio/manifest.js?v=60e92fb';
-import { mountAnimation } from '../../shared/anim-player.js?v=60e92fb';
+import { animMeta, roles, scenes } from './anim-data.js?v=644a242';
+import { audio as audioFiles, audioMeta } from './audio/manifest.js?v=644a242';
+import { mountAnimation } from '../../shared/anim-player.js?v=644a242';
 
 // ---------------------------------------------------------------- 道具(程式繪製 SVG)
 const PROPS = {

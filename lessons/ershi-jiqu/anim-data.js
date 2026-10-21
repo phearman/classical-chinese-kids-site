@@ -15,7 +15,9 @@ export const animMeta = {
 const TW = '請用台灣華語(繁體中文、台灣口音)朗讀。';
 export const roles = {
   narrator: { label: '旁白', pitch: 1, rate: 0.95, tts: { voice: 'ash', instructions: `${TW}語氣活潑、有精神,像在說故事給國中生聽。` } },
-  shenfu: { label: '小沈復', pitch: 1.35, rate: 1, tts: { voice: 'echo', instructions: `${TW}你是七、八歲的男孩,好奇、興奮、說話很快樂。` } },
+  // 小沈復(WY28):使用者三星手機聽「應該用童聲,目前有點沙啞」。內建朗讀沒有童聲,pitch 拉太高會沙啞、有機器感,
+  // 改挑女聲再小幅拉高(pitch ⛔ 超過 1.2,測試把關);AI 配音用較明亮的 nova。
+  shenfu: { label: '小沈復', pitch: 1.15, rate: 1.05, voice: 'female', tts: { voice: 'nova', instructions: `${TW}七、八歲男孩的童聲,聲音清亮、天真、好奇,說話輕快。` } },
 };
 
 export const scenes = [
@@ -100,8 +102,8 @@ export const scenes = [
       { at: 18, role: 'shenfu', text: '呀！' },
     ],
     items: [
-      { kind: 'prop', name: 'bugs', x: 66, y: 74 },
-      { kind: 'actor', who: 'toad', x: 70, y: 96, h: 62, anim: 'walkIn', delay: 6 },
+      // WY29:甲蟲打架、蝦蟆從右邊跳進來、伸舌吞蟲,整段畫在同一個鋪滿舞台的道具裡(和小沈復不重疊)
+      { kind: 'prop', name: 'toadAttack', x: 50, y: 50 },
       { kind: 'actor', who: 'shenfu', x: 18, y: 96, h: 48, delay: 0 },
       { kind: 'text', text: '！', x: 30, y: 56, size: 10, anim: 'pop', delay: 18, cls: 'mark' },
     ],

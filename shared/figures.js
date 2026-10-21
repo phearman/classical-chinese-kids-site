@@ -1,6 +1,6 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=60e92fb';
+import { escapeHTML } from './terms.js?v=644a242';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -24,8 +24,25 @@ export const ROLES = {
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=60e92fb';
-import { characterURL as imageURL } from './assets.js?v=60e92fb';
+export { characterURL as imageURL } from './assets.js?v=644a242';
+import { characterURL as imageURL } from './assets.js?v=644a242';
+
+// 甲蟲(程式繪製,WY29):側面看,分節(頭、胸、鞘翅)、六隻腳(遠側三隻較淡)、觸角、大顎。
+// 原點在腳底中央、面向右,長約 22 單位;s=縮放,flip=面向左。圖文故事與動畫第 6 幕共用。
+export function beetle(x, y, { s = 1, flip = false, color = '#b5532f', cls = '' } = {}) {
+  const k = flip ? -s : s;
+  return `<g class="beetle ${cls}" transform="translate(${x} ${y}) scale(${k} ${s})">`
+    + '<path class="far" d="M-4 -2.5 L-7.5 -1 L-8.5 0 M0 -2.5 L-1 -0.6 L-1.8 0 M3.5 -3 L5.5 -1 L6.5 0"/>'
+    + `<path class="body" fill="${color}" d="M-9.5 -4.5 Q-9.5 -10.5 -3 -10.5 Q2.2 -10.5 2.4 -5 Q2.4 -2 -3 -2 Q-9.5 -2 -9.5 -4.5Z"/>`
+    + `<ellipse class="body" fill="${color}" cx="4.4" cy="-5.6" rx="2.6" ry="3"/>`
+    + `<circle class="body" fill="${color}" cx="7.6" cy="-5.4" r="2"/>`
+    + '<path class="seam" d="M-9.2 -5 Q-3.5 -3.6 2.2 -5.4 M-3 -10.4 Q-2.4 -7 -3.2 -2.2"/>'
+    + '<path class="shine" d="M-7 -7.6 Q-4.5 -9.6 -1.5 -9.2"/>'
+    + '<path class="jaw" d="M9.3 -6.3 Q11.6 -8.6 13.8 -8 M9.3 -4.5 Q11.6 -2.4 13.8 -3"/>'
+    + '<path class="feeler" d="M7.6 -7.2 L8.8 -10 L11 -11"/>'
+    + '<path class="near" d="M-5 -2.2 L-8 -0.8 L-9.6 0.2 M-0.8 -2 L-2.2 -0.4 L-2.8 0.4 M4 -2.8 L6.2 -0.8 L7.6 0.2"/>'
+    + '<circle class="eye" cx="8.3" cy="-6" r=".55"/></g>';
+}
 
 function silhouette(r, x) {
   const head = 118;
@@ -60,7 +77,10 @@ const PROPS = {
   grass: () => `<g class="prop-grass2">${[200, 214, 228, 242, 256, 270, 284, 298].map((x, i) => `<path d="M${x} 146 Q${x + (i % 2 ? 6 : -6)} ${118 - (i % 3) * 10} ${x + (i % 2 ? 2 : -2)} ${100 - (i % 3) * 12}"/>`).join('')}</g>`,
   ants: () => `<g class="prop-ants2">${[[214, 140], [236, 142], [260, 139]].map(([x, y]) => `<g><circle cx="${x}" cy="${y}" r="2"/><circle cx="${x + 4}" cy="${y}" r="2.6"/><circle cx="${x + 9}" cy="${y}" r="2"/></g>`).join('')}</g>`,
   clods: () => '<g class="prop-clods2"><path d="M196 146 q10 -14 20 0Z M262 146 q12 -18 24 0Z"/><path class="pit" d="M226 146 q12 10 24 0"/></g>',
-  bugs: () => '<g class="prop-bugs2"><ellipse cx="226" cy="132" rx="9" ry="6"/><ellipse cx="250" cy="132" rx="9" ry="6"/><path class="leg" d="M218 132 L212 138 M234 132 L240 138 M242 132 L236 138 M258 132 L264 138"/></g>',
+  // 兩隻甲蟲在草叢裡頂角打架(WY29:放大、畫得像昆蟲,站在地面上,和蝦蟆不重疊)
+  bugs: () => `<g class="prop-bugs2">${beetle(205, 177, { s: 2.2 })}${beetle(265, 177, { s: 2.2, flip: true, color: '#4f7a3a' })}</g>`,
+  // 地面上的矮草叢(WY29,第 6 段;畫在甲蟲後面)
+  lowgrass: () => `<g class="prop-grass2">${[192, 204, 216, 240, 252, 262, 288, 300, 312].map((x, i) => `<path d="M${x} 177 Q${x + (i % 2 ? 5 : -5)} ${160 - (i % 3) * 6} ${x + (i % 2 ? 2 : -2)} ${148 - (i % 3) * 8}"/>`).join('')}</g>`,
   scrolls: () => '<g class="prop"><rect x="236" y="138" width="56" height="10" rx="5"/><rect x="242" y="126" width="46" height="10" rx="5"/><rect x="248" y="114" width="36" height="10" rx="5"/></g>',
   desk: () => '<rect class="prop" x="40" y="160" width="240" height="10" rx="4"/>',
   lamp: () => '<g class="prop"><rect x="258" y="140" width="16" height="36" rx="3"/><circle class="prop-glow" cx="266" cy="132" r="14"/></g>',
