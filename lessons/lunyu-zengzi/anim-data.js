@@ -7,18 +7,18 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 
+import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=60e92fb';
+
 export const animMeta = {
   title: '動畫故事：一聲「唯」',
   note: '情節為教學改編；門人為虛構角色。',
 };
 
-// pitch/rate:瀏覽器內建朗讀用。tts:AI 配音(scripts/tts-build.js,OpenAI gpt-4o-mini-tts)用的聲音與語氣指示,可以調整;
-// 改了 voice 或 instructions,下次產音檔時那個角色的句子會全部重產。
-const TW = '請用台灣華語(繁體中文、台灣口音)朗讀。';
+// 角色聲音(pitch/rate 給內建朗讀,tts 給 AI 配音):孔子、曾子、旁白各課共用,寫在 shared/roles.js(WY23);門人只有本課有。
 export const roles = {
-  narrator: { label: '旁白', pitch: 1, rate: 0.95, tts: { voice: 'ash', instructions: `${TW}語氣活潑、有精神,像在說故事給國中生聽,句尾上揚,節奏輕快。` } },
-  kongzi: { label: '孔子', pitch: 0.75, rate: 0.85, tts: { voice: 'onyx', instructions: `${TW}你是七十歲左右的老師,語氣沉穩、慈祥、帶著笑意,說話慢一點。` } },
-  zengzi: { label: '曾子', pitch: 1.1, rate: 0.9, tts: { voice: 'echo', instructions: `${TW}你是二十多歲的學生,語氣年輕、誠懇、篤定。` } },
+  narrator,
+  kongzi,
+  zengzi,
   menren: { label: '門人', pitch: 1.35, rate: 1.05, tts: { voice: 'coral', instructions: `${TW}你是好奇又急性子的年輕學生,語氣活潑、帶點驚訝。` } },
 };
 

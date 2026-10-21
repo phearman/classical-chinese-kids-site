@@ -1,18 +1,36 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=3ccc89b';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=3ccc89b';
-import { characterURL as imageURL } from './assets.js?v=3ccc89b';
+import { escapeHTML } from './terms.js?v=60e92fb';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=60e92fb';
+import { characterURL as imageURL } from './assets.js?v=60e92fb';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
-export function pickVoiceFrom(voices) {
+// prefer:'male'(角色設定 voice: 'male',目前只有孔子,WY23):同一層裡先挑看得出是男聲的,
+// 依序 zh-TW 男聲 → 其他華語男聲 → 都沒有就照原本的順序;其他角色不受影響。
+const VOICE_TIERS = [
+  (l) => /^zh-TW$/i.test(l),
+  (l) => /^(zh-(CN|SG|Hans|Hant)|cmn)(-|$)/i.test(l),
+  (l) => /^zh$/i.test(l),
+];
+// 看得出是男聲:名稱含 male/男(female 不算),或微軟公開的華語男聲名稱。
+// Google(Android)的語音代號看不出性別,沒有可靠對照表,所以不列(找不到男聲就照原本的順序)。
+const MALE_NAME = /\bmale\b|男|\b(Zhiwei|Yunjhe|Kangkang|Yunxi|Yunyang|Yunjian)\b/i;
+export const isMaleVoice = (v) => MALE_NAME.test(`${v.name ?? ''} ${v.voiceURI ?? ''}`);
+export function pickVoiceFrom(voices, { prefer } = {}) {
   const lang = (v) => String(v.lang ?? '').replace('_', '-');
-  return voices.find((v) => /^zh-TW$/i.test(lang(v)))
-    ?? voices.find((v) => /^(zh-(CN|SG|Hans|Hant)|cmn)(-|$)/i.test(lang(v)))
-    ?? voices.find((v) => /^zh$/i.test(lang(v)))
-    ?? null;
+  if (prefer === 'male') {
+    for (const tier of VOICE_TIERS) {
+      const v = voices.find((x) => tier(lang(x)) && isMaleVoice(x));
+      if (v) return v;
+    }
+  }
+  for (const tier of VOICE_TIERS) {
+    const v = voices.find((x) => tier(lang(x)));
+    if (v) return v;
+  }
+  return null;
 }
 
 // audioFiles/audioMeta:AI 配音清單(沒有就給空的);audioBase:音檔資料夾網址
@@ -287,13 +305,13 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     // 只指定華語語音(⛔ 粵語等);清單裡找不到華語時「不指定語音、只設 lang=zh-TW」照念(WY17 追修):
     // Android Chrome 的 getVoices() 常只列一部分,沒列出中文時 Google TTS 照樣念得出來。
     // 真的不能念(language-unavailable/voice-unavailable,或念了 SLOW_MS 都沒出聲)才提示「沒有華語」。
+    const r = roles[line.role];
     const all = synth.getVoices();
-    const voice = pickVoiceFrom(all.filter((v) => !badVoices.has(voiceKey(v))));
+    const voice = pickVoiceFrom(all.filter((v) => !badVoices.has(voiceKey(v))), { prefer: r.voice });
     const inst = begin(line, id, 'speech');
     inst.silentMs = 0;
     inst.unlisted = all.length > 0 && !voice; // 清單裡沒有華語,靠 lang 念
     const u = new SpeechSynthesisUtterance(line.say ?? line.text); // say:同音字版,避免多音字念錯
-    const r = roles[line.role];
     u.lang = 'zh-TW';
     if (voice) u.voice = voice;
     lastVoiceLang = voice?.lang ?? '';

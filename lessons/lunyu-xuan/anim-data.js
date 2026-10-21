@@ -7,18 +7,19 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 
+import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=60e92fb';
+
 export const animMeta = {
   title: '動畫故事：論語選',
   note: '情節為教學改編；對話依《論語》原文改寫成白話。',
 };
 
-// pitch/rate:瀏覽器內建朗讀用。tts 欄位留給之後的 AI 配音(本課尚未產音檔)。
-const TW = '請用台灣華語(繁體中文、台灣口音)朗讀。';
+// 角色聲音(pitch/rate 給內建朗讀,tts 留給之後的 AI 配音,本課尚未產音檔):孔子、曾子、旁白各課共用,寫在 shared/roles.js(WY23)。
 export const roles = {
-  narrator: { label: '旁白', pitch: 1, rate: 0.95, tts: { voice: 'ash', instructions: `${TW}語氣活潑、有精神,像在說故事給國中生聽,句尾上揚,節奏輕快。` } },
-  kongzi: { label: '孔子', pitch: 0.75, rate: 0.85, tts: { voice: 'onyx', instructions: `${TW}你是七十歲左右的老師,語氣沉穩、慈祥、帶著笑意,說話慢一點。` } },
+  narrator,
+  kongzi,
   ziyou: { label: '子游', pitch: 1.15, rate: 0.95, tts: { voice: 'echo', instructions: `${TW}你是二十多歲的學生,語氣認真、有禮貌。` } },
-  zengzi: { label: '曾子', pitch: 1.1, rate: 0.9, tts: { voice: 'echo', instructions: `${TW}你是二十多歲的學生,語氣年輕、誠懇、篤定。` } },
+  zengzi,
 };
 
 export const scenes = [

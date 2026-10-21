@@ -1,10 +1,10 @@
 // 〈兒時記趣〉圖文故事版(比照第 4 課):一頁一段情境,上下頁導覽;頁碼記在網址 #p1~#pN。
 // 一屏版(WY13):插圖依剩餘高度縮放,文字太長時只在文字區內捲動,整頁不捲。
-import { lesson, glossary, storyPages } from './data.js?v=3ccc89b';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=3ccc89b';
-import { setupGlossary } from '../../shared/sheet.js?v=3ccc89b';
-import { sceneSVG } from '../../shared/figures.js?v=3ccc89b';
-import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=3ccc89b';
+import { lesson, glossary, storyPages } from './data.js?v=60e92fb';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=60e92fb';
+import { setupGlossary } from '../../shared/sheet.js?v=60e92fb';
+import { sceneSVG } from '../../shared/figures.js?v=60e92fb';
+import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=60e92fb';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

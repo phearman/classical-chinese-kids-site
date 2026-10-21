@@ -34,6 +34,7 @@ export const catalog = [
       { href: 'lessons/ershi-jiqu/animation.html', label: '動畫故事', desc: '約 2 分鐘，有字幕和朗讀旁白' },
       { href: 'lessons/ershi-jiqu/story.html', label: '圖文故事', desc: '一頁一段情境，像看繪本' },
       { href: 'lessons/ershi-jiqu/study.html', label: '課文學習', desc: '四段原文逐句白話、逐詞解釋、生活比喻、作者小檔案' },
+      { href: 'lessons/ershi-jiqu/people.html', label: '人物介紹', desc: '沈復的一生、《浮生六記》四卷導覽、延伸人物推薦' },
       { href: 'lessons/ershi-jiqu/quiz.html', label: '隨堂測驗', desc: '選擇、填充、問答和素養題，作答只存在這台裝置' },
     ],
   },

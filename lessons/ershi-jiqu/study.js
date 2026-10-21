@@ -1,11 +1,11 @@
 // 〈兒時記趣〉課文學習版:四段原文一句一頁(原文、點詞詞卡、白話),比喻、想一想、延伸閱讀、作者小檔案各自成頁。
 // 一屏版(比照第 4 課):上方段落籤可跳段;頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=3ccc89b';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=3ccc89b';
-import { setupGlossary } from '../../shared/sheet.js?v=3ccc89b';
-import { initPage } from '../../shared/page.js?v=3ccc89b';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=3ccc89b';
-import { characterURL } from '../../shared/assets.js?v=3ccc89b';
+import { lesson, glossary, study } from './data.js?v=60e92fb';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=60e92fb';
+import { setupGlossary } from '../../shared/sheet.js?v=60e92fb';
+import { initPage } from '../../shared/page.js?v=60e92fb';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=60e92fb';
+import { characterURL } from '../../shared/assets.js?v=60e92fb';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -54,7 +54,7 @@ const pages = [
       </dl>
       <p class="hint">${escapeHTML(author.note)}</p>
       <p class="small">「已查證」是已核對所列來源（作者自述的原文，或編者說明）；「待查證」還要再查。</p>
-      <p class="next-step"><a class="btn-link" href="quiz.html">讀完了？來做隨堂測驗 →</a></p>
+      <p class="next-step"><a class="btn-link" href="people.html">看完整人物介紹 →</a> <a class="btn-link" href="quiz.html">讀完了？來做隨堂測驗 →</a></p>
       <p class="story-note">${escapeHTML(lesson.sourceNote)}</p>`,
   },
 ];

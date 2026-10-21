@@ -1,6 +1,6 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=3ccc89b';
+import { escapeHTML } from './terms.js?v=60e92fb';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -24,8 +24,8 @@ export const ROLES = {
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=3ccc89b';
-import { characterURL as imageURL } from './assets.js?v=3ccc89b';
+export { characterURL as imageURL } from './assets.js?v=60e92fb';
+import { characterURL as imageURL } from './assets.js?v=60e92fb';
 
 function silhouette(r, x) {
   const head = 118;
