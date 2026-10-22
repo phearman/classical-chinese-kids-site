@@ -1,9 +1,9 @@
 // 〈兒時記趣〉動畫故事:本課的資料與道具;播放器共用 shared/anim-player.js。
 // 本課尚未產生 AI 配音音檔(音訊工作另行安排),旁白只用內建朗讀。
-import { animMeta, roles, scenes } from './anim-data.js?v=644a242';
-import { mountAnimation } from '../../shared/anim-player.js?v=644a242';
-import { characterURL } from '../../shared/assets.js?v=644a242';
-import { beetle } from '../../shared/figures.js?v=644a242';
+import { animMeta, roles, scenes } from './anim-data.js?v=e1a1cfa';
+import { mountAnimation } from '../../shared/anim-player.js?v=e1a1cfa';
+import { characterURL } from '../../shared/assets.js?v=e1a1cfa';
+import { beetle } from '../../shared/figures.js?v=e1a1cfa';
 
 // ---------------------------------------------------------------- 道具(程式繪製 SVG)
 const PROPS = {

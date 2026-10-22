@@ -32,6 +32,7 @@
   --bead-ink: #2b2620;    /* 金色珠子上的字(深淺色都一樣) */
   --todo-fg: #9a3a27; --todo-bg: #f6e0d8;
   --cur-fg: #9a3a27; --cur-bg: #f6e0d8;   /* 選單目前頁 */
+  --map-water: #d6e6ea; --map-land: #eceee2; --map-sea-ink: #2d5563;   /* 魯國地理圖(WY30) */
   --ok-fg: #4d5f40; --ok-bg: #e3e8dc;
   color-scheme: light;
 }
@@ -45,6 +46,7 @@
     --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
     --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
     --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
+    --map-water: #26363c; --map-land: #2f3128; --map-sea-ink: #a9cbd6;
     color-scheme: dark;
   }
 }
@@ -56,6 +58,7 @@
   --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
   --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
   --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
+  --map-water: #26363c; --map-land: #2f3128; --map-sea-ink: #a9cbd6;
   color-scheme: dark;
 }
 
@@ -448,9 +451,29 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .stage .prop svg { display: block; }
 .prop-ink { width: 80%; } .prop-ink svg { width: 100%; }
 .p-ink circle { fill: var(--ink); opacity: .12; transform-box: fill-box; transform-origin: center; animation: inkSpread calc(4s / var(--speed)) ease-out both; animation-delay: var(--d, 0s); }
-.prop-luMap { width: 46%; animation: fadeIn calc(1.5s / var(--speed)) both; } .prop-luMap svg { width: 100%; }
-.p-map path { fill: color-mix(in srgb, var(--moss) 25%, transparent); stroke: var(--moss); stroke-width: 2; }
-.p-map text { font-size: 16px; fill: var(--accent); font-weight: 700; }
+.prop-luMap { width: 86%; animation: fadeIn calc(1.5s / var(--speed)) both; }
+.prop-ink { z-index: 0; } /* 墨點在地圖後面(WY30) */
+.stage .prop-ink:has(~ .prop-luMap) { animation: inkGone calc(1.5s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 2s / var(--speed)); } /* 地圖出現時墨點淡掉 */
+@keyframes inkGone { to { opacity: 0; } }
+/* 魯國地理圖(WY30,shared/lu-map.js):底圖 Natural Earth;第一課第 1 幕從整張圖放大到曲阜,周邊國名淡出 */
+.lu-figure { display: flex; align-items: flex-end; gap: 8px; margin: 0; }
+.lu-figure .lu-map { flex: 0 0 62%; width: 62%; height: auto; display: block; border-radius: 6px; }
+.lu-caption { flex: 1; font-size: 12px; line-height: 1.45; color: var(--ink-soft); font-family: inherit; white-space: normal; }
+.lu-map .lu-water { fill: var(--map-water); }
+.lu-map .lu-land { fill: var(--map-land); }
+.lu-map .lu-coast { fill: none; stroke: var(--moss); stroke-width: 1; }
+.lu-map .lu-river { fill: none; stroke: #5e93a8; stroke-width: 1.6; stroke-linecap: round; }
+.lu-map .lu-sea { fill: var(--map-sea-ink); font-size: 14px; text-anchor: middle; letter-spacing: .2em; }
+.lu-map .lu-place circle { fill: var(--ink); } .lu-map .lu-place.is-main circle { fill: var(--accent); }
+.lu-map .lu-state { font-size: 19px; font-weight: 700; fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; }
+.lu-map .lu-place.is-main .lu-state { font-size: 24px; fill: var(--accent); }
+.lu-map .lu-capital { font-size: 15px; fill: var(--accent); text-anchor: middle; paint-order: stroke; stroke: var(--map-land); stroke-width: 3px; }
+.lu-map .lu-mount { fill: var(--prop); } .lu-map .lu-mount-name { font-size: 14px; fill: var(--ink-soft); }
+.lu-map.is-zoom .lu-zoom { animation: luZoom calc(4s / var(--speed)) ease-in-out both; animation-delay: calc(var(--d, 0s) + 4s / var(--speed)); }
+.lu-map.is-zoom .lu-edge { animation: luEdge calc(2s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 4s / var(--speed)); }
+@keyframes luZoom { from { transform: scale(1); } to { transform: scale(1.8); } }
+@keyframes luEdge { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lu-map.is-zoom .lu-zoom, .lu-map.is-zoom .lu-edge { animation: none; } }
 .p-dot { fill: var(--accent); animation: blink calc(1.2s / var(--speed)) infinite; }
 .prop-bamboo { width: 100%; height: 100%; top: 50%; } .prop-bamboo svg { width: 100%; height: 100%; }
 .p-bamboo rect { fill: var(--moss); opacity: .55; } .p-bamboo .p-node { fill: var(--ink); opacity: .3; }

@@ -7,7 +7,7 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 
-import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=644a242';
+import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=e1a1cfa';
 
 export const animMeta = {
   title: '動畫故事：一聲「唯」',
@@ -29,7 +29,7 @@ export const scenes = [
     lines: [{ at: 1, role: 'narrator', text: '兩千五百年前，在魯國，有一位老師，學生多到數不清。', say: '兩千五百年前，在魯國，有一位老師，學生多到暑不清。' }],
     items: [
       { kind: 'prop', name: 'ink', x: 50, y: 50 },
-      { kind: 'prop', name: 'luMap', x: 50, y: 46, delay: 2 },
+      { kind: 'prop', name: 'luMap', x: 50, y: 36, delay: 2 }, // 春秋魯國地理圖(WY30):先看整張,再放大到曲阜
       { kind: 'text', text: '一聲「唯」', x: 50, y: 82, size: 9, anim: 'fade', delay: 5, cls: 'title' },
     ],
   },
