@@ -1,9 +1,9 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=e1a1cfa';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=e1a1cfa';
-import { characterURL as imageURL } from './assets.js?v=e1a1cfa';
+import { escapeHTML } from './terms.js?v=0e85906';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=0e85906';
+import { characterURL as imageURL } from './assets.js?v=0e85906';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。
@@ -124,8 +124,10 @@ export function mountAnimation({ animMeta, roles, scenes, PROPS, audioFiles = {}
     const s = scenes[idx];
     stage.className = `stage bg-${s.bg}${playing ? '' : ' is-paused'}`;
     stage.style.setProperty('--speed', SPEED);
-    stage.setAttribute('aria-label', `第 ${idx + 1} 幕：${s.title}。${s.card}`);
-    stage.innerHTML = `<div class="card">${escapeHTML(s.card)}</div>${s.items.map((it) => itemHTML(it, elapsed)).join('')}`;
+    stage.setAttribute('aria-label', `第 ${idx + 1} 幕：${s.title}。${s.card ?? ''}${s.source ? `（${s.source}）` : ''}`);
+    // card 空白=這一幕不放字卡(例如開場、收尾)
+    // source(可省):字卡出處,顯示在字卡下方
+    stage.innerHTML = `${s.card ? `<div class="card">${escapeHTML(s.card)}${s.source ? `<span class="card-src">${escapeHTML(s.source)}</span>` : ''}</div>` : ''}${s.items.map((it) => itemHTML(it, elapsed)).join('')}`;
     $('chapter').value = String(idx);
     shown = s.lines.filter((l) => l.at <= elapsed).length - 1;
     subtitle.innerHTML = shown >= 0 ? lineHTML(s.lines[shown]) : '';

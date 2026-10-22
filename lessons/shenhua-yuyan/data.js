@@ -171,3 +171,118 @@ export const study = {
   ],
   booksNote: { pending: '各書的作者與成書年代（例如《山海經》作者不詳、《淮南子》由淮南王劉安主持編寫）還要再對照工具書，尚待查證。' },
 };
+
+// ---------------------------------------------------------------- 圖文故事(WY26 PR-B1:神話部分;寓言在 PR-B2)
+// 依 lessons/shenhua-yuyan/storyboard.md 十二頁(CPM 2026-10-22 核准)。文字是故事卡的分段改寫(自寫)。
+// quote:原典摘句;〈夸父逐日〉三頁直接用課文句子(可點詞看解釋),其他頁是故事卡出處的摘句(只看不點)。
+// art:插圖=定稿角色圖+程式繪製道具(shared/myth-props.js);安全處理同動畫(storyboard.md「安全與價值」)。
+const kuafu = study.parts.find((p) => p.id === 'kuafu');
+export const storyNote = '盤古、女媧、共工的原典摘句依維基文庫《太平御覽》《繹史》《淮南子》與〈三皇本紀〉（公有領域古籍），〈夸父逐日〉依維基文庫《山海經》；故事文字為本站自行撰寫，情節為教學改編。';
+export const storyPages = [
+  {
+    title: '大雞蛋裡的巨人',
+    art: { bg: 'chaos', figures: ['pangu-small'], xs: [160], props: ['mythEgg'], caption: '天和地混在一起，像一顆大雞蛋' },
+    text: [
+      '很久很久以前，還沒有天，也沒有地，一切都混在一起，像一顆大雞蛋。',
+      '巨人盤古就在這顆「蛋」裡誕生了。',
+    ],
+    quote: { text: '天地渾沌如雞子，盤古生其中。', source: '徐整《三五曆紀》（見《太平御覽》卷二引用）' },
+  },
+  {
+    title: '每天長高一丈',
+    art: { bg: 'chaos', figures: ['pangu'], xs: [120], props: ['mythSkyEarth'], caption: '天每天高一丈，盤古也每天長高一丈' },
+    text: [
+      '天地分開了：輕的往上成了天，重的往下成了地。',
+      '天每天高一丈，地每天厚一丈，盤古也每天長高一丈。過了一萬八千年，天和地被撐得很遠很遠。',
+    ],
+    quote: { text: '天日高一丈，地日厚一丈，盤古日長一丈。', source: '徐整《三五曆紀》（見《太平御覽》卷二引用）' },
+  },
+  {
+    title: '身體變成了世界',
+    art: { bg: 'paper', figures: [], props: ['mythChart'], caption: '盤古的身體，變成了風雲、雷、日月、江河、星星和草木' },
+    text: [
+      '另一本書接著說：盤古最後倒下以後，他的身體變成了世界上的萬物。',
+      '呼出的氣變成風和雲，聲音變成雷，眼睛變成太陽和月亮，血變成江河，頭髮鬍子變成星星，皮膚和毛變成草木。',
+    ],
+    quote: { text: '氣成風雲，聲為雷霆，左眼為日，右眼為月，……血液為江河，……髮髭為星辰，皮毛為草木。', source: '《五運歷年記》（見清代馬驌《繹史》卷一引用）' },
+  },
+  {
+    title: '天破了一個洞',
+    art: { bg: 'sky', figures: [], props: ['mythBroken'], caption: '撐天的柱子倒了，天破了洞' },
+    text: [
+      '《淮南子》說：很久以前，撐住天的四根柱子壞了，大地裂開，天蓋不住、地也載不住。',
+      '大火燒個不停，大水也退不下去，大家過得很辛苦。',
+    ],
+    quote: { text: '往古之時，四極廢，九州裂，天不兼覆，地不周載。', source: '《淮南子‧覽冥訓》' },
+  },
+  {
+    title: '女媧補天',
+    art: { bg: 'sky', figures: ['nuwa'], xs: [80], props: ['mythMend'], caption: '五色石補好了天，四根天柱又立起來' },
+    text: [
+      '女媧煉了五種顏色的石頭，把天上的洞一個一個補好，又用大海龜的腳立起四根天柱。',
+      '她把蘆葦燒成灰，擋住了大水。天補好了，大家又能平安過日子。',
+    ],
+    quote: { text: '女媧煉五色石以補蒼天，斷鼇足以立四極，……積蘆灰以止淫水。', source: '《淮南子‧覽冥訓》' },
+  },
+  {
+    title: '共工撞山（說法一）',
+    art: { bg: 'sky', figures: ['zhuanxu', 'gonggong'], xs: [36, 150], props: ['mythBuzhou'], caption: '說法一：共工和顓頊爭當天帝，一怒之下撞向不周山' },
+    text: [
+      '《淮南子》的另一篇〈天文訓〉說：水神共工和顓頊爭著當天帝。',
+      '共工一生氣，低頭撞向不周山——撐天的柱子斷了！',
+    ],
+    quote: { text: '昔者共工與顓頊爭為帝，怒而觸不周之山，天柱折，地維絕。', source: '《淮南子‧天文訓》' },
+  },
+  {
+    title: '天為什麼往西北斜？',
+    art: { bg: 'paper', figures: [], props: ['mythTilt'], caption: '示意圖：天往西北斜，河水往東南流' },
+    text: [
+      '柱子斷了以後，天往西北傾斜，所以太陽、月亮和星星都往那邊移動。',
+      '地的東南角塌了下去，所以江河都往東南流到海裡。古人就用這個故事，解釋他們看到的天空和河流。',
+    ],
+    quote: { text: '天傾西北，故日月星辰移焉；地不滿東南，故水潦塵埃歸焉。', source: '《淮南子‧天文訓》' },
+  },
+  {
+    title: '共工撞山（說法二）',
+    art: { bg: 'sky', figures: ['gonggong', 'zhurong'], xs: [76, 248], props: ['mythVersus'], caption: '說法二：和共工打仗的是火神祝融' },
+    text: [
+      '到了唐代，司馬貞寫〈三皇本紀〉，說共工是跟火神祝融打仗，打輸了才去撞山，接著女媧出來補天——把兩個故事接成了一個。',
+      '同一個神話，不同的書說法不一樣：和共工打的是顓頊還是祝融，就看你讀的是哪一本。',
+    ],
+    quote: { text: '乃與祝融戰，不勝而怒。乃頭觸不周山崩，天柱折。', source: '唐代司馬貞〈三皇本紀〉' },
+  },
+  {
+    title: '和太陽賽跑',
+    art: { bg: 'garden', figures: ['kuafu'], xs: [110], props: ['mythSunset'], caption: '夸父追著太陽跑' },
+    text: [
+      '還有一位巨人叫夸父。他和太陽賽跑，一直追到太陽快要落下的地方。',
+    ],
+    quote: { text: kuafu.sentences[0].text, source: kuafu.source },
+  },
+  {
+    title: '喝乾黃河和渭水',
+    art: { bg: 'garden', figures: ['kuafu'], xs: [64], props: ['mythRivers'], caption: '喝光黃河、渭水還不夠，往北找大湖' },
+    text: [
+      '夸父跑得好渴，喝光了黃河和渭水，還是不夠。',
+      '他又往北方走，想去喝大湖（大澤）的水。',
+    ],
+    quote: { text: kuafu.sentences[1].text, source: kuafu.source },
+  },
+  {
+    title: '手杖變成桃林',
+    art: { bg: 'garden', figures: [], props: ['mythGrove'], caption: '夸父丟下的手杖，長成一片桃林' },
+    text: [
+      '可是還沒走到，夸父就倒在半路上。',
+      '他丟下的手杖，長成了一大片樹林——原文叫它「鄧林」，教育部辭典說是一片桃林。',
+    ],
+    quote: { text: kuafu.sentences[2].text, source: kuafu.source },
+  },
+  {
+    title: '想一想',
+    art: { bg: 'paper', figures: [], props: ['mythIcons'], caption: '盤古、女媧、共工、夸父' },
+    text: [
+      '天地怎麼來的？天為什麼會下雨打雷？河水為什麼往東流？古人用想像力，為身邊的世界找到了答案。',
+    ],
+    question: '如果是你，會怎麼解釋「河水為什麼往東流」？（這題沒有標準答案，想一想就好。）',
+  },
+];

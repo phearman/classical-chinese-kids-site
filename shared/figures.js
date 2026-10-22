@@ -1,6 +1,7 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=e1a1cfa';
+import { escapeHTML } from './terms.js?v=0e85906';
+import * as Myth from './myth-props.js?v=0e85906';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -21,11 +22,19 @@ export const ROLES = {
   // 第 4 課「犬馬」(WY20,使用者 2026-10-20 挑定狗 B、馬 B;圖中含食盆與食槽,呼應「皆能有養」)
   'dog':          { label: '狗', image: 'dog.webp', height: 78 },
   'horse':        { label: '馬', image: 'horse.webp', height: 116, width: 150 }, // 橫向的圖,畫框放寬
+  // 自學選文一〈古代神話與寓言選〉神話(WY26 PR-B1):使用者 2026-10-22 待裁 61 挑定;夸父 A 暫定,換圖只換 kuafu.webp(寬度依原圖比例,換圖後可再調)
+  'pangu':        { label: '盤古', image: 'pangu.webp', height: 168, width: 118 }, // 巨人,畫面裡最高
+  'pangu-small':  { label: '盤古', image: 'pangu.webp', height: 100, width: 70 }, // 圖文故事第 1 段:剛在大雞蛋裡誕生
+  'nuwa':         { label: '女媧', image: 'nuwa.webp', height: 150, width: 124 },
+  'gonggong':     { label: '共工', image: 'gonggong.webp', height: 136, width: 122 },
+  'zhurong':      { label: '祝融', image: 'zhurong.webp', height: 140, width: 132 },
+  'zhuanxu':      { label: '顓頊', image: 'zhuanxu.webp', height: 140, width: 82 },
+  'kuafu':        { label: '夸父', image: 'kuafu.webp', height: 156, width: 136 }, // 巨人
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=e1a1cfa';
-import { characterURL as imageURL } from './assets.js?v=e1a1cfa';
+export { characterURL as imageURL } from './assets.js?v=0e85906';
+import { characterURL as imageURL } from './assets.js?v=0e85906';
 
 // 甲蟲(程式繪製,WY29):側面看,分節(頭、胸、鞘翅)、六隻腳(遠側三隻較淡)、觸角、大顎。
 // 原點在腳底中央、面向右,長約 22 單位;s=縮放,flip=面向左。圖文故事與動畫第 6 幕共用。
@@ -64,6 +73,12 @@ function figure(id, x) {
     + `<text class="fig-label" x="${x}" y="194" text-anchor="middle">${r.label}</text></g>`;
 }
 
+// 神話插圖:對照圖與收尾小圖示在故事插圖裡放大置中(字才夠大);其他照動畫的位置放大兩倍
+const MYTH_FIT = {
+  mythChart: 'translate(-131 -88) scale(2.8)', // 對照圖(x 52~156、y 43~88)放大置中
+  mythIcons: 'translate(-48 -30) scale(2.6)', // 小圖示(x 22~138、y 30~66)放大置中
+};
+
 const PROPS = {
   // ---- 第 7 課〈兒時記趣〉(WY19 PR-B)程式繪製道具
   sun: () => '<g class="prop-sun2"><circle cx="262" cy="46" r="22"/><path class="ray" d="M262 12 V4 M262 88 V80 M228 46 H220 M304 46 H296 M238 22 L232 16 M286 22 L292 16 M238 70 L232 76 M286 70 L292 76"/><text class="warn" x="262" y="104" text-anchor="middle">⚠ 不要直視太陽</text></g>',
@@ -89,6 +104,13 @@ const PROPS = {
   door: () => '<rect class="prop" x="270" y="70" width="40" height="106" rx="4"/>',
   question: () => '<g class="prop-mark"><text x="34" y="52">?</text><text x="282" y="52">?</text><text x="152" y="32">?</text></g>',
   coin: () => '<g><circle class="prop-coin" cx="250" cy="70" r="26"/><text class="prop-coin-text" x="250" y="79" text-anchor="middle">忠</text></g>',
+  // 自學選文一〈古代神話與寓言選〉神話(WY26 PR-B1):和動畫共用 shared/myth-props.js(160×90 座標,放大兩倍剛好對齊地板線)
+  ...Object.fromEntries([
+    ['mythEgg', () => Myth.egg()], ['mythSkyEarth', () => Myth.skyEarth()], ['mythChart', () => Myth.chart()],
+    ['mythBroken', () => Myth.brokenSky()], ['mythMend', () => Myth.mendSky()], ['mythBuzhou', () => Myth.buzhou()],
+    ['mythTilt', () => Myth.tilt()], ['mythVersus', () => Myth.versus()], ['mythSunset', () => Myth.sunset()],
+    ['mythRivers', () => Myth.rivers()], ['mythGrove', () => Myth.grove()], ['mythIcons', () => Myth.icons()],
+  ].map(([k, fn]) => [k, () => `<g transform="${MYTH_FIT[k] ?? 'scale(2)'}">${fn()}</g>`])),
   // 第 4 課〈論語選〉
   mound: () => '<g class="prop-mound2"><path class="soil" d="M70 176 L140 66 L180 66 L250 176Z"/><path class="gap" d="M140 66 L160 40 L180 66"/></g>',
   basket: () => '<g class="prop-basket2"><path class="soil" d="M246 46 Q270 30 294 46Z"/><path class="weave" d="M244 46 H296 L288 80 H252Z"/><path class="weave-line" d="M249 56 H291 M251 66 H289 M262 46 L264 80 M270 46 V80 M278 46 L276 80"/></g>',

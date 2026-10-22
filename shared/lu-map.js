@@ -1,7 +1,7 @@
 // 春秋魯國與周邊諸國示意圖(WY30,共用元件):第一課第 1 幕使用,第 4 課等其他課可沿用。
 // 底圖=Natural Earth 10m(公有領域)的陸地、海岸線、今黃河,見 lu-map-data.js;國都用「今地名」的位置示意。
 // 諸國位置的出處見 lessons/lunyu-zengzi/sources.md「魯國地理圖」;verified=已查證(對照所列工具書)。
-import { LU_MAP_BASE as B } from './lu-map-data.js?v=e1a1cfa';
+import { LU_MAP_BASE as B } from './lu-map-data.js?v=0e85906';
 
 const LAT0 = (B.box.s + B.box.n) / 2;
 const K = B.width / ((B.box.e - B.box.w) * Math.cos((LAT0 * Math.PI) / 180));

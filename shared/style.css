@@ -17,6 +17,8 @@
   --art-night: #3c4257;
   --art-floor: #cdb894;
   --art-garden: #e3e6cf;
+  --art-sky: #dbe7ec; --art-chaos: #4a4458;   /* 神話(WY26 PR-B1):天空、混沌 */
+  --myth-on-chaos: #f3ead6; --myth-sea: #8fb6c3; --myth-sea-ink: #173540; --myth-bang: #9e3a26; /* 混沌上的字、示意圖的海與海上的字、「砰」與 VS */
   --fig-kongzi: #6d4c3d;
   --fig-zengzi: #a78560;
   --fig-menren-a: #4f7a74;
@@ -42,7 +44,7 @@
     --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
     --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
     --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
-    --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428;
+    --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428; --art-sky: #2a3840; --art-chaos: #26222f; --myth-on-chaos: #f3ead6; --myth-sea: #2c4a55; --myth-sea-ink: #d6e9ef; --myth-bang: #f0a08a;
     --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
     --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
     --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
@@ -54,7 +56,7 @@
   --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
   --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
   --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
-  --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428;
+  --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428; --art-sky: #2a3840; --art-chaos: #26222f; --myth-on-chaos: #f3ead6; --myth-sea: #2c4a55; --myth-sea-ink: #d6e9ef; --myth-bang: #f0a08a;
   --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
   --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
   --on-accent: #1d1a17; --todo-fg: #f2a48f; --todo-bg: #4a2e27; --ok-fg: #b5cba3; --ok-bg: #2f3a2a; --cur-fg: #f2a48f; --cur-bg: #4a2e27;
@@ -212,6 +214,8 @@ h3 { font-size: 18px; margin: 20px 0 6px; }
 .bg-hall .art-bg { fill: var(--art-hall); }
 .bg-night .art-bg { fill: var(--art-night); }
 .bg-garden .art-bg { fill: var(--art-garden); }
+.bg-sky .art-bg { fill: var(--art-sky); }
+.bg-chaos .art-bg { fill: var(--art-chaos); }
 /* 第 7 課〈兒時記趣〉故事道具(WY19 PR-B) */
 .prop-sun2 circle { fill: #f2b84b; } .prop-sun2 .ray { stroke: #f2b84b; stroke-width: 3; stroke-linecap: round; }
 .prop-sun2 .warn { fill: var(--accent); font-size: 12px; font-weight: 700; }
@@ -546,6 +550,119 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 @keyframes gulp { 50% { transform: scale(1.05, .94); } }
 .anim-hopOut { animation: hopOut calc(4s / var(--speed)) ease-in both; animation-delay: var(--d, 3s); }
 @keyframes hopOut { 0% { transform: translateX(-50%); opacity: 1; } 30% { transform: translateX(-20%) translateY(-12%); } 60% { transform: translateX(10%); } 100% { transform: translateX(60%); opacity: 0; } }
+/* 自學選文一〈古代神話與寓言選〉神話(WY26 PR-B1):道具在 shared/myth-props.js,圖文故事與動畫共用。
+   每個元件的基本樣子=那一幕的最後畫面(圖文故事直接看到);動畫只在 .stage 裡從開頭播到這裡,減少動態時直接看結果。
+   座標 160×90(舞台);時間都從本幕開頭算(--d 已含拖動與倍速)。 */
+.stage.bg-sky { background: linear-gradient(var(--art-sky) 0 96%, var(--art-floor) 96%); }
+.stage.bg-chaos { background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--art-chaos) 75%, #fff), var(--art-chaos)); }
+.stage .card .card-src { display: block; font-size: .8em; color: var(--ink-soft); } /* 字卡出處(書名+篇名) */
+.stage .ftext.tag { font-family: inherit; color: var(--accent); background: var(--surface); border: 1px solid var(--line); border-radius: .4em; padding: .1em .4em; }
+.stage .prop:has(> .p-myth) { width: 100%; } .p-myth { width: 100%; display: block; overflow: visible; }
+.m-art text { font-family: inherit; text-anchor: middle; }
+.m-art .m-cell-g, .m-art .m-hole, .m-art .m-stone, .m-art .m-bang, .m-art .m-dizzy, .m-art .m-north, .m-art .m-icon, .m-art .m-tick { transform-box: fill-box; transform-origin: center; }
+.m-art .m-swirl { fill: none; stroke: #b7aecb; stroke-width: 1.2; opacity: .6; }
+.m-art .m-shell { fill: #f3ead6; stroke: #8b6b45; stroke-width: 1; }
+.m-art .m-crack { fill: none; stroke: #8b6b45; stroke-width: 1.2; }
+.m-art .m-egg-top { transform: translateY(-12px); opacity: .6; } .m-art .m-egg-bot { transform: translateY(10px); opacity: .6; }
+.m-art .m-skyband { fill: #cfe2ea; } .m-art .m-earthband { fill: #a88a63; }
+.m-art .m-ruler, .m-art .m-tick path { fill: none; stroke: var(--myth-on-chaos); stroke-width: 1; }
+.m-art .m-tick text { fill: var(--myth-on-chaos); font-size: 6px; text-anchor: start; }
+.m-art .m-cell { fill: var(--surface); stroke: var(--line); stroke-width: .6; }
+.m-art .m-from { font-size: 5.6px; fill: var(--ink); } .m-art .m-to { font-size: 6px; fill: var(--accent); font-weight: 700; }
+.m-art .m-ic-cloud { fill: #cfd8dc; stroke: #7d8b91; stroke-width: .5; } .m-art .m-ic-bolt, .m-art .m-ic-star, .m-art .m-dizzy path { fill: #e5b33a; }
+.m-art .m-ic-sun { fill: #f2b84b; } .m-art .m-ic-moon { fill: #e9dca8; stroke: #b39b4a; stroke-width: .4; }
+.m-art .m-ic-river, .m-art .m-flow { fill: none; stroke: #4f8fb0; stroke-width: 1.4; stroke-linecap: round; }
+.m-art .m-ic-grass { fill: none; stroke: var(--moss); stroke-width: 1.4; stroke-linecap: round; }
+.m-art .m-hole { fill: #2b2f3e; stroke: #9aa3b5; stroke-width: .7; } /* 深色天空上也看得到 */
+.m-art .m-stone { stroke: #5a4a3a; stroke-width: .5; }
+.m-art .m-stone-0 { fill: #b8574a; } .m-art .m-stone-1 { fill: #d9b44a; } .m-art .m-stone-2 { fill: #5f9e95; } .m-art .m-stone-3 { fill: #f1ece0; } .m-art .m-stone-4 { fill: #3a3632; }
+.m-art .m-pillar { fill: #a3906f; stroke: #6b5a40; stroke-width: .5; }
+.m-art .m-fall { transform-box: fill-box; transform-origin: 50% 100%; } .m-art .m-fall-l { transform: rotate(-84deg); } .m-art .m-fall-r { transform: rotate(84deg); }
+.m-art .m-rise { transform-box: fill-box; transform-origin: 50% 100%; }
+.m-art .m-flame { fill: #e58a3a; opacity: .85; } .m-art .m-wave { fill: none; stroke: #5f93ad; stroke-width: 1.6; stroke-linecap: round; }
+.m-art .m-turtle { fill: #4d6b5d; opacity: 0; } .m-art .m-turtle path { fill: none; stroke: #4d6b5d; stroke-width: 1.4; stroke-linecap: round; }
+.m-art .m-flood { opacity: 0; } .m-art .m-ash { fill: #8d8578; }
+.m-art .m-mountain { fill: #8f9c74; stroke: #5f6b4a; stroke-width: .6; }
+.m-art .m-snap { transform-box: fill-box; transform-origin: 0% 100%; transform: rotate(14deg) translate(1px, -1px); }
+.m-art .m-crackline { fill: none; stroke: #3a3226; stroke-width: 1; }
+.m-art .m-bang { font-size: 9px; font-weight: 700; fill: var(--myth-bang); }
+.m-art .m-land { fill: var(--art-garden); stroke: var(--prop); stroke-width: .8; } .m-art .m-sea { fill: var(--myth-sea); }
+.m-art .m-flow { stroke-dasharray: 3 2; }
+.m-art .m-dir { font-size: 6px; font-weight: 700; fill: var(--ink); } .m-art .m-sealabel, .m-art .m-lakename { font-size: 6px; font-weight: 700; fill: var(--myth-sea-ink); }
+.m-art .m-slide { transform: translate(-14px, -4px); }
+.m-art .m-vs-big { font-size: 14px; font-weight: 700; fill: var(--myth-bang); }
+.m-art .m-sun { fill: #ef9a3c; } .m-art .m-ground { fill: var(--art-floor); }
+.m-art .m-river { fill: none; stroke: #5f93ad; stroke-width: 1.2; opacity: .45; stroke-linecap: round; }
+.m-art .m-rname, .m-art .m-iname { font-size: 6px; fill: var(--ink); }
+.m-art .m-arrow { fill: none; stroke: var(--accent); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.m-art .m-lake { fill: var(--myth-sea); stroke: #5f93ad; stroke-width: .6; }
+.m-art .m-staff path { stroke: #7a5a34; stroke-width: 2.2; stroke-linecap: round; } .m-art .m-staff { transform-box: fill-box; transform-origin: 0% 50%; }
+.m-art .m-trunk { fill: #7a5a34; } .m-art .m-bloom, .m-art .m-petal { fill: #f2b6c0; } .m-art .m-bloom2 { fill: #e88a9a; }
+.m-art .m-tree { transform-box: fill-box; transform-origin: 50% 100%; }
+/* 動畫(只在舞台上播) */
+.stage .m-crack { stroke-dasharray: 60; animation: mDraw60 calc(1s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 2s / var(--speed)); }
+.stage .m-egg-top, .stage .m-egg-bot { animation: mEggOpen calc(2s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 4s / var(--speed)); }
+.stage .m-swirl { animation: blink calc(2.4s / var(--speed)) ease-in-out infinite; animation-delay: calc(var(--i) * .4s); }
+.stage .m-skyband { animation: mSkyUp calc(3s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.stage .m-earthband { animation: mEarthDown calc(3s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.stage .m-ruler { animation: fadeIn calc(1s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 9s / var(--speed)); }
+.stage .m-tick { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (10s + var(--i) * 2s) / var(--speed)); }
+.stage .m-cell-g { animation: mPop calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + var(--t) / var(--speed)); }
+.stage .m-broken .m-hole { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (1s + var(--i) * .4s) / var(--speed)); }
+.stage .m-fall { animation: mUnfall calc(1.2s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + (3s + var(--i) * .3s) / var(--speed)); }
+.stage .m-trouble { animation: fadeIn calc(1s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 5s / var(--speed)); }
+.stage .m-flame { animation: blink calc(1s / var(--speed)) ease-in-out infinite; }
+.stage .m-mend .m-stone { animation: mPop calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (3s + var(--i) * 1s) / var(--speed)); }
+.stage .m-rise { animation: mRise calc(1.2s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + (10s + var(--i) * .3s) / var(--speed)); }
+.stage .m-turtle { animation: mSwim calc(4s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 11s / var(--speed)); }
+.stage .m-ash { animation: mAsh calc(1.5s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + (14s + var(--i) * .15s) / var(--speed)); }
+.stage .m-flood { animation: mRecede calc(2s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 15s / var(--speed)); }
+.stage .m-shake { animation: mShake calc(.2s / var(--speed)) linear 5; animation-delay: calc(var(--d, 0s) + 8s / var(--speed)); }
+.stage .m-crackline { stroke-dasharray: 60; animation: mDraw60 calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 8.2s / var(--speed)); }
+.stage .m-snap { animation: mUnsnap calc(.8s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 8.4s / var(--speed)); }
+.stage .m-bang { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 8s / var(--speed)); }
+.stage .m-dizzy { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 9s / var(--speed)); }
+.stage .m-slide { animation: mSlide calc(3s / var(--speed)) ease-in-out both; animation-delay: calc(var(--d, 0s) + 2s / var(--speed)); }
+.stage .m-flow { animation: mFlow calc(1s / var(--speed)) linear infinite; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.stage .m-sun-move { animation: mSunDown calc(12s / var(--speed)) linear both; animation-delay: var(--d, 0s); }
+.stage .m-river { animation: mDry calc(4s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 3s / var(--speed)); }
+.stage .m-north { animation: mPop calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 8s / var(--speed)); }
+.stage .m-staff { animation: mStaff calc(1s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
+.stage .m-tree { animation: mGrow calc(1.5s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + (8s + var(--i) * .6s) / var(--speed)); }
+.stage .m-petal { animation: mPetal calc(3s / var(--speed)) linear infinite; animation-delay: calc(var(--d, 0s) + (11s + var(--i) * .5s) / var(--speed)); }
+.stage .m-icon { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (1s + var(--i) * .5s) / var(--speed)); }
+@keyframes mDraw60 { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
+@keyframes mEggOpen { from { transform: none; opacity: 1; } }
+@keyframes mSkyUp { from { transform: translateY(30px); opacity: 0; } }
+@keyframes mEarthDown { from { transform: translateY(-20px); opacity: 0; } }
+@keyframes mPop { from { transform: scale(.4); opacity: 0; } }
+@keyframes mUnfall { from { transform: none; } }
+@keyframes mRise { from { transform: scaleY(0); } }
+@keyframes mSwim { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(30px); } }
+@keyframes mAsh { from { transform: translateY(-30px); opacity: 0; } }
+@keyframes mRecede { from { opacity: 1; } to { opacity: 0; } }
+@keyframes mShake { 25% { transform: translate(1.2px, -.6px); } 75% { transform: translate(-1.2px, .6px); } }
+@keyframes mUnsnap { from { transform: none; } }
+@keyframes mSlide { from { transform: none; } }
+@keyframes mFlow { to { stroke-dashoffset: -10; } }
+@keyframes mSunDown { from { transform: translate(-24px, -40px); } }
+@keyframes mDry { from { stroke-width: 4; opacity: 1; } }
+@keyframes mStaff { from { transform: rotate(-90deg); } }
+@keyframes mGrow { from { transform: scale(0); } }
+@keyframes mPetal { 0% { transform: translate(0, -10px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-6px, 30px); opacity: 0; } }
+/* 角色動作(神話) */
+.anim-riseUp { animation: riseUp calc(2s / var(--speed)) ease-out both; }
+.anim-fadeOut { animation: fadeOutDown calc(3s / var(--speed)) ease-in both; }
+.anim-charge { animation: charge calc(5s / var(--speed)) ease-in both; }
+.anim-fromRight { animation: fromRight calc(1.5s / var(--speed)) ease-out both; }
+.anim-runIn { animation: runIn calc(10s / var(--speed)) linear both; }
+@keyframes riseUp { from { transform: translateX(-50%) translateY(25%); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+@keyframes fadeOutDown { from { transform: translateX(-50%); opacity: 1; } to { transform: translateX(-50%) translateY(6%) rotate(-4deg); opacity: 0; } }
+@keyframes charge { 0% { transform: translateX(-130%); } 80% { transform: translateX(-44%); } 90% { transform: translateX(-58%) rotate(-3deg); } 100% { transform: translateX(-50%); } }
+@keyframes fromRight { from { transform: translateX(40%); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+@keyframes runIn { from { transform: translateX(-150%); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .stage .m-art, .stage .m-art * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .stage .ftext { animation: none !important; } } /* 浮字不彈跳、不淡入,直接顯示(各課共用) */
 /* 動作 */
 .anim-walkIn { animation: walkIn calc(3s / var(--speed)) ease-out both; }
 .anim-bob { animation: bob calc(1.6s / var(--speed)) ease-in-out infinite; }
