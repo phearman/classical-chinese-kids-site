@@ -7,7 +7,7 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 // 安全處理(CPM 核准):共工只衝不傷;盤古化身用對照圖;「斷鼇足」只用旁白帶過;不放猛獸食人與殺黑龍;夸父只畫跪下。
-import { narrator } from '../../shared/roles.js?v=0e85906';
+import { narrator } from '../../shared/roles.js?v=f54ffc1';
 
 export const animMeta = {
   title: '動畫故事：古代神話',
@@ -33,7 +33,7 @@ export const scenes = [
     card: '天地渾沌如雞子，盤古生其中。……天日高一丈，地日厚一丈，盤古日長一丈。', source: '徐整《三五曆紀》',
     lines: [
       { at: 1, role: 'narrator', text: '傳說天和地原本混在一起，像一顆大雞蛋，巨人盤古就在裡面誕生。' },
-      { at: 9, role: 'narrator', text: '天每天高一丈，地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。' },
+      { at: 9, role: 'narrator', text: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。' },
     ],
     items: [
       { kind: 'prop', name: 'egg', x: 50, y: 50 },
@@ -95,7 +95,7 @@ export const scenes = [
     card: '天傾西北，故日月星辰移焉；地不滿東南，故水潦塵埃歸焉。', source: '《淮南子‧天文訓》',
     lines: [
       { at: 1, role: 'narrator', text: '從此天往西北傾斜，太陽、月亮和星星都往那邊移動；' },
-      { at: 6, role: 'narrator', text: '地的東南角塌了下去，所以江河都往東南流。' },
+      { at: 6, role: 'narrator', text: '大地的東南角塌了下去，所以江河都往東南流。' },
     ],
     items: [
       { kind: 'prop', name: 'tilt', x: 50, y: 50 },
@@ -143,7 +143,7 @@ export const scenes = [
     id: 's11', title: '手杖變桃林', duration: 16, bg: 'garden',
     card: '未至，道渴而死。棄其杖，化為鄧林。', source: '《山海經‧海外北經》',
     lines: [
-      { at: 1, role: 'narrator', text: '可是還沒走到，夸父就倒在半路上。' },
+      { at: 1, role: 'narrator', text: '可是還沒走到，夸父就倒在半路上。', say: '可是還沒走到，夸父就島在半路上。' }, // WY35:「倒」被念成 ㄉㄠˋ
       { at: 7, role: 'narrator', text: '他丟下的手杖，長成了一大片桃林。' },
     ],
     items: [
@@ -165,9 +165,13 @@ export const scenes = [
   },
 ];
 
-// 朗讀用同音字對照(本課沒有用 say)
-export const sayReplacements = {};
-export const sayApproved = [];
+// 朗讀用同音字對照(say 只能做這些替換;字幕仍顯示 text)
+// WY35(使用者 2026-10-23 試聽):第 11 幕「倒在半路上」的「倒」被內建語音念成 ㄉㄠˋ,改念同音的「島」(ㄉㄠˇ)
+export const sayReplacements = { 倒: '島' };
+// 核准使用 say 的句子(每句都經使用者試聽確認);新增 say 必須先登記在這裡
+export const sayApproved = [
+  { id: 's11-1', why: '倒→島(倒在半路上,ㄉㄠˇ)' },
+];
 
 // ---------------------------------------------------------------- 讀音防呆(比照第 7 課)
 // 以實際朗讀的句子為準:句子裡每個多音字與少見人名、地名都要登記讀音(依教育部《重編國語辭典修訂本》)。
@@ -176,21 +180,30 @@ export const polyphones = [
   '數', '當', '還', '卷', '應', '轉', '幾', '沒', '分', '將', '都', '只',
   '要', '說', '會', '傳', '血', '頭', '倒', '喝', '解', '答', '從', '那', '角', '打',
   '共', '顓', '頊', '媧', '周', '渭', '夸', '煉',
+  '島', // WY35:say 換上的同音字也登記讀音(使用者已確認)
+  '地', // WY35:單獨的「地」會被內建語音念成 ㄉㄜ˙(使用者 10-23 試聽第 7 幕),改寫成「大地」;每個「地」都列入試聽
 ];
 
-export const readingChecked = [];
+// 使用者已試聽確認的
+export const readingChecked = [
+  { id: 's11-1', spoken: '可是還沒走到，夸父就島在半路上。', char: '島', nth: 0, reading: 'ㄉㄠˇ' }, // WY35:使用者確認「倒」要念 ㄉㄠˇ
+];
 
 // 還沒人聽過的(本課旁白全部待使用者試聽;讀音依教育部辭典。共工、顓頊、女媧、不周山 2026-10-22 已查《重編國語辭典修訂本》,
 // 長(ㄓㄤˇ)、渭 這次辭典查詢被擋,先用一般讀音,見 lessons/shenhua-yuyan/storyboard.md「讀音防呆」)
 export const pendingListen = [
   { id: 's1-1', spoken: '很久很久以前，人們好奇天地是怎麼來的，就用想像力編出了神話。', char: '好', nth: 0, reading: 'ㄏㄠˋ' },
+  { id: 's1-1', spoken: '很久很久以前，人們好奇天地是怎麼來的，就用想像力編出了神話。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
   { id: 's1-1', spoken: '很久很久以前，人們好奇天地是怎麼來的，就用想像力編出了神話。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
   { id: 's2-1', spoken: '傳說天和地原本混在一起，像一顆大雞蛋，巨人盤古就在裡面誕生。', char: '傳', nth: 0, reading: 'ㄔㄨㄢˊ' },
   { id: 's2-1', spoken: '傳說天和地原本混在一起，像一顆大雞蛋，巨人盤古就在裡面誕生。', char: '說', nth: 0, reading: 'ㄕㄨㄛ' },
   { id: 's2-1', spoken: '傳說天和地原本混在一起，像一顆大雞蛋，巨人盤古就在裡面誕生。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
-  { id: 's2-2', spoken: '天每天高一丈，地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '長', nth: 0, reading: 'ㄓㄤˇ' },
-  { id: 's2-2', spoken: '天每天高一丈，地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
-  { id: 's2-2', spoken: '天每天高一丈，地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '得', nth: 0, reading: 'ㄉㄜ˙' },
+  { id: 's2-1', spoken: '傳說天和地原本混在一起，像一顆大雞蛋，巨人盤古就在裡面誕生。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
+  { id: 's2-2', spoken: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
+  { id: 's2-2', spoken: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '長', nth: 0, reading: 'ㄓㄤˇ' },
+  { id: 's2-2', spoken: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
+  { id: 's2-2', spoken: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '地', nth: 1, reading: 'ㄉㄧˋ' },
+  { id: 's2-2', spoken: '天每天高一丈，大地每天厚一丈，盤古也每天長高一丈，把天和地撐得越來越遠。', char: '得', nth: 0, reading: 'ㄉㄜ˙' },
   { id: 's3-1', spoken: '盤古最後倒下以後，他呼出的氣變成風和雲，聲音變成雷，', char: '倒', nth: 0, reading: 'ㄉㄠˇ' },
   { id: 's3-1', spoken: '盤古最後倒下以後，他呼出的氣變成風和雲，聲音變成雷，', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
   { id: 's3-2', spoken: '眼睛變成太陽和月亮，血變成江河，頭髮鬍子變成星星，皮膚和毛變成草木。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
@@ -200,6 +213,7 @@ export const pendingListen = [
   { id: 's4-1', spoken: '不知道過了多久，撐天的柱子壞了，天破了洞，大地也裂開，大火燒個不停，大水也退不下去。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
   { id: 's4-1', spoken: '不知道過了多久，撐天的柱子壞了，天破了洞，大地也裂開，大火燒個不停，大水也退不下去。', char: '了', nth: 1, reading: 'ㄌㄜ˙' },
   { id: 's4-1', spoken: '不知道過了多久，撐天的柱子壞了，天破了洞，大地也裂開，大火燒個不停，大水也退不下去。', char: '了', nth: 2, reading: 'ㄌㄜ˙' },
+  { id: 's4-1', spoken: '不知道過了多久，撐天的柱子壞了，天破了洞，大地也裂開，大火燒個不停，大水也退不下去。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
   { id: 's5-1', spoken: '女媧煉了五種顏色的石頭，把天上的洞一個一個補好；', char: '媧', nth: 0, reading: 'ㄨㄚ' },
   { id: 's5-1', spoken: '女媧煉了五種顏色的石頭，把天上的洞一個一個補好；', char: '煉', nth: 0, reading: 'ㄌㄧㄢˋ' },
   { id: 's5-1', spoken: '女媧煉了五種顏色的石頭，把天上的洞一個一個補好；', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
@@ -221,9 +235,10 @@ export const pendingListen = [
   { id: 's7-1', spoken: '從此天往西北傾斜，太陽、月亮和星星都往那邊移動；', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
   { id: 's7-1', spoken: '從此天往西北傾斜，太陽、月亮和星星都往那邊移動；', char: '都', nth: 0, reading: 'ㄉㄡ' },
   { id: 's7-1', spoken: '從此天往西北傾斜，太陽、月亮和星星都往那邊移動；', char: '那', nth: 0, reading: 'ㄋㄚˋ' },
-  { id: 's7-2', spoken: '地的東南角塌了下去，所以江河都往東南流。', char: '角', nth: 0, reading: 'ㄐㄧㄠˇ' },
-  { id: 's7-2', spoken: '地的東南角塌了下去，所以江河都往東南流。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
-  { id: 's7-2', spoken: '地的東南角塌了下去，所以江河都往東南流。', char: '都', nth: 0, reading: 'ㄉㄡ' },
+  { id: 's7-2', spoken: '大地的東南角塌了下去，所以江河都往東南流。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
+  { id: 's7-2', spoken: '大地的東南角塌了下去，所以江河都往東南流。', char: '角', nth: 0, reading: 'ㄐㄧㄠˇ' },
+  { id: 's7-2', spoken: '大地的東南角塌了下去，所以江河都往東南流。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
+  { id: 's7-2', spoken: '大地的東南角塌了下去，所以江河都往東南流。', char: '都', nth: 0, reading: 'ㄉㄡ' },
   { id: 's8-1', spoken: '不過，唐代的〈三皇本紀〉說，和共工打仗的是火神祝融，共工打輸了才去撞山。', char: '說', nth: 0, reading: 'ㄕㄨㄛ' },
   { id: 's8-1', spoken: '不過，唐代的〈三皇本紀〉說，和共工打仗的是火神祝融，共工打輸了才去撞山。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
   { id: 's8-1', spoken: '不過，唐代的〈三皇本紀〉說，和共工打仗的是火神祝融，共工打輸了才去撞山。', char: '共', nth: 0, reading: 'ㄍㄨㄥ' },
@@ -236,6 +251,7 @@ export const pendingListen = [
   { id: 's9-1', spoken: '還有一位巨人叫夸父。', char: '夸', nth: 0, reading: 'ㄎㄨㄚ' },
   { id: 's9-2', spoken: '他和太陽賽跑，一直追到太陽快要落下的地方。', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
   { id: 's9-2', spoken: '他和太陽賽跑，一直追到太陽快要落下的地方。', char: '要', nth: 0, reading: 'ㄧㄠˋ' },
+  { id: 's9-2', spoken: '他和太陽賽跑，一直追到太陽快要落下的地方。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
   { id: 's10-1', spoken: '夸父跑得好渴，一口氣喝光了黃河和渭水，', char: '夸', nth: 0, reading: 'ㄎㄨㄚ' },
   { id: 's10-1', spoken: '夸父跑得好渴，一口氣喝光了黃河和渭水，', char: '得', nth: 0, reading: 'ㄉㄜ˙' },
   { id: 's10-1', spoken: '夸父跑得好渴，一口氣喝光了黃河和渭水，', char: '好', nth: 0, reading: 'ㄏㄠˇ' },
@@ -244,12 +260,12 @@ export const pendingListen = [
   { id: 's10-1', spoken: '夸父跑得好渴，一口氣喝光了黃河和渭水，', char: '和', nth: 0, reading: 'ㄏㄜˊ' },
   { id: 's10-1', spoken: '夸父跑得好渴，一口氣喝光了黃河和渭水，', char: '渭', nth: 0, reading: 'ㄨㄟˋ' },
   { id: 's10-2', spoken: '還是不夠，又往北方去找大湖的水。', char: '還', nth: 0, reading: 'ㄏㄞˊ' },
-  { id: 's11-1', spoken: '可是還沒走到，夸父就倒在半路上。', char: '還', nth: 0, reading: 'ㄏㄞˊ' },
-  { id: 's11-1', spoken: '可是還沒走到，夸父就倒在半路上。', char: '沒', nth: 0, reading: 'ㄇㄟˊ' },
-  { id: 's11-1', spoken: '可是還沒走到，夸父就倒在半路上。', char: '夸', nth: 0, reading: 'ㄎㄨㄚ' },
-  { id: 's11-1', spoken: '可是還沒走到，夸父就倒在半路上。', char: '倒', nth: 0, reading: 'ㄉㄠˇ' },
+  { id: 's11-1', spoken: '可是還沒走到，夸父就島在半路上。', char: '還', nth: 0, reading: 'ㄏㄞˊ' },
+  { id: 's11-1', spoken: '可是還沒走到，夸父就島在半路上。', char: '沒', nth: 0, reading: 'ㄇㄟˊ' },
+  { id: 's11-1', spoken: '可是還沒走到，夸父就島在半路上。', char: '夸', nth: 0, reading: 'ㄎㄨㄚ' },
   { id: 's11-2', spoken: '他丟下的手杖，長成了一大片桃林。', char: '長', nth: 0, reading: 'ㄓㄤˇ' },
   { id: 's11-2', spoken: '他丟下的手杖，長成了一大片桃林。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
+  { id: 's12-1', spoken: '天地、日月、河流、樹林……古人用想像力，為身邊的世界找到了答案。', char: '地', nth: 0, reading: 'ㄉㄧˋ' },
   { id: 's12-1', spoken: '天地、日月、河流、樹林……古人用想像力，為身邊的世界找到了答案。', char: '為', nth: 0, reading: 'ㄨㄟˋ' },
   { id: 's12-1', spoken: '天地、日月、河流、樹林……古人用想像力，為身邊的世界找到了答案。', char: '了', nth: 0, reading: 'ㄌㄜ˙' },
   { id: 's12-1', spoken: '天地、日月、河流、樹林……古人用想像力，為身邊的世界找到了答案。', char: '答', nth: 0, reading: 'ㄉㄚˊ' },

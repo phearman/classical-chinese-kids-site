@@ -85,11 +85,12 @@ export const scenes = [
       { at: 14, role: 'narrator', text: '他想像自己在裡面遊玩，開心極了。' },
     ],
     items: [
-      { kind: 'prop', name: 'forest', x: 62, y: 62 },
+      // WY33:先近看真實的小草叢、螞蟻、土粒,第 7、8、9 秒一樣一樣變成想像的森林、野獸、山丘(印章標在變身後的位置)
+      { kind: 'prop', name: 'zoomGarden', x: 50, y: 50 },
       { kind: 'actor', who: 'shenfu-crouch', x: 18, y: 96, h: 40 },
-      { kind: 'text', text: '林', x: 46, y: 90, size: 6, anim: 'pop', delay: 7, cls: 'stamp' },
-      { kind: 'text', text: '獸', x: 62, y: 90, size: 6, anim: 'pop', delay: 8, cls: 'stamp' },
-      { kind: 'text', text: '丘', x: 78, y: 90, size: 6, anim: 'pop', delay: 9, cls: 'stamp' },
+      { kind: 'text', text: '林', x: 50, y: 93, size: 6, anim: 'pop', delay: 7.6, cls: 'stamp' },
+      { kind: 'text', text: '獸', x: 74, y: 93, size: 6, anim: 'pop', delay: 8.6, cls: 'stamp' },
+      { kind: 'text', text: '丘', x: 92, y: 93, size: 6, anim: 'pop', delay: 9.6, cls: 'stamp' },
     ],
   },
   {

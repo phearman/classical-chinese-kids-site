@@ -2,7 +2,9 @@
 // 座標一律是 160×90(=動畫舞台),地面在 y=88;圖文故事插圖(320×200)用 scale(2) 放進去,地板線剛好對齊。
 // 每個元件的「預設樣子」就是那一幕的最後畫面:圖文故事直接顯示它;動畫用 CSS 從開頭的樣子播到這裡
 // (只在 .stage 裡播,見 style.css「神話道具」),所以減少動態時關掉動畫就直接看到結果。
-// 安全(CPM 2026-10-22 核准):撞山只畫「砰」、震動、裂痕與暈頭小星星,不畫受傷;女媧只畫天柱立起、海龜游走。
+// 安全(CPM 2026-10-22 核准):撞山只畫「砰」、震動、裂痕與暈頭小星星,不畫受傷;女媧只畫天柱立起、海龜游走(WY34 起海龜用 AI 生成圖,四肢完整、背上無物)。
+
+import { characterURL } from './assets.js?v=f54ffc1';
 
 const wrap = (cls, body) => `<g class="m-art ${cls}">${body}</g>`;
 
@@ -71,14 +73,14 @@ export function brokenSky() {
     <g class="m-trouble">${flame(36)}${flame(124)}${waves(84)}</g>`);
 }
 
-// 女媧補天:五色石一顆顆補進洞裡、四根天柱立起、大海龜剪影游走、蘆葦灰撒下、大水退去
+// 女媧補天:五色石一顆顆補進洞裡、四根天柱立起、大海龜(鼇,AI 生成定稿 A,WY34)往左游走、蘆葦灰撒下、大水退去
 export function mendSky() {
   const stones = HOLES.map(([x, y], i) => `<ellipse class="m-stone m-stone-${i}" style="--i:${i}" cx="${x}" cy="${y}" rx="9.5" ry="7.5"/>`).join('');
   const ash = [70, 88, 106, 124, 142, 80, 116, 134].map((x, i) => `<circle class="m-ash" style="--i:${i}" cx="${x}" cy="${84 - (i % 3)}" r="1.1"/>`).join('');
   return wrap('m-mend', `
     ${PILLARS.map((x, i) => `<path class="m-pillar m-rise" style="--i:${i}" d="${pillar(x)}"/>`).join('')}
     ${HOLES.map((h) => `<path class="m-hole" d="${hole(h)}"/>`).join('')}${stones}
-    <g class="m-turtle"><ellipse cx="118" cy="80" rx="12" ry="6"/><circle cx="132" cy="78" r="3"/><path d="M110 85 l-3 3 M126 85 l3 3"/></g>
+    <image class="m-turtle" href="${characterURL('ao.webp')}" x="120" y="68.3" width="30" height="19"/>
     <g class="m-flood">${waves(84)}</g>${ash}`);
 }
 

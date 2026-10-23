@@ -1,7 +1,7 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=0e85906';
-import * as Myth from './myth-props.js?v=0e85906';
+import { escapeHTML } from './terms.js?v=f54ffc1';
+import * as Myth from './myth-props.js?v=f54ffc1';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -19,6 +19,8 @@ export const ROLES = {
   'shenfu-crouch': { label: '小沈復', image: 'shenfu-crouch.webp', height: 84 }, // 補姿勢:蹲下細看(與選中的 B 同一人)
   'shenfu-twig':  { label: '小沈復', image: 'shenfu-twig.webp', height: 104 }, // 補姿勢:驚訝後退、手拿細竹枝
   'toad':         { label: '癩蝦蟆', image: 'toad.webp', height: 96 },
+  'ao':           { label: '大海龜', image: 'ao.webp', height: 60, width: 96 }, // 鼇(WY34,神話篇第 5 幕;動畫由 myth-props 直接引用)
+  'toad-tongue':  { label: '癩蝦蟆', image: 'toad-tongue.webp', height: 96 }, // 吐舌(WY33,第 6 幕與閉嘴圖切換)
   // 第 4 課「犬馬」(WY20,使用者 2026-10-20 挑定狗 B、馬 B;圖中含食盆與食槽,呼應「皆能有養」)
   'dog':          { label: '狗', image: 'dog.webp', height: 78 },
   'horse':        { label: '馬', image: 'horse.webp', height: 116, width: 150 }, // 橫向的圖,畫框放寬
@@ -27,14 +29,14 @@ export const ROLES = {
   'pangu-small':  { label: '盤古', image: 'pangu.webp', height: 100, width: 70 }, // 圖文故事第 1 段:剛在大雞蛋裡誕生
   'nuwa':         { label: '女媧', image: 'nuwa.webp', height: 150, width: 124 },
   'gonggong':     { label: '共工', image: 'gonggong.webp', height: 136, width: 122 },
-  'zhurong':      { label: '祝融', image: 'zhurong.webp', height: 140, width: 132 },
+  'zhurong':      { label: '祝融', image: 'zhurong.webp', height: 140, width: 140 }, // WY34 換成 D2(年輕、無鬍、騎兩龍),和共工區分
   'zhuanxu':      { label: '顓頊', image: 'zhuanxu.webp', height: 140, width: 82 },
   'kuafu':        { label: '夸父', image: 'kuafu.webp', height: 156, width: 136 }, // 巨人
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=0e85906';
-import { characterURL as imageURL } from './assets.js?v=0e85906';
+export { characterURL as imageURL } from './assets.js?v=f54ffc1';
+import { characterURL as imageURL } from './assets.js?v=f54ffc1';
 
 // 甲蟲(程式繪製,WY29):側面看,分節(頭、胸、鞘翅)、六隻腳(遠側三隻較淡)、觸角、大顎。
 // 原點在腳底中央、面向右,長約 22 單位;s=縮放,flip=面向左。圖文故事與動畫第 6 幕共用。
