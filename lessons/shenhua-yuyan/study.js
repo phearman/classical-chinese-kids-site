@@ -1,10 +1,10 @@
 // 〈古代神話與寓言選〉課文學習版:神話與寓言是什麼 → 兩則原典一句一頁(原文、點詞詞卡、白話)→ 故事卡(盤古、女媧與共工、驚弓之鳥)
 // → 比喻、想一想、出處各自成頁。一屏版(比照第 7 課):上方段落籤可跳段;頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=f54ffc1';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=f54ffc1';
-import { setupGlossary } from '../../shared/sheet.js?v=f54ffc1';
-import { initPage } from '../../shared/page.js?v=f54ffc1';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=f54ffc1';
+import { lesson, glossary, study } from './data.js?v=b1d73d1';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=b1d73d1';
+import { setupGlossary } from '../../shared/sheet.js?v=b1d73d1';
+import { initPage } from '../../shared/page.js?v=b1d73d1';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=b1d73d1';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

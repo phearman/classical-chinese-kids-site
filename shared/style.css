@@ -101,6 +101,14 @@ body { overflow: hidden; }
 }
 .menu h2 { font-size: 13px; letter-spacing: .1em; color: var(--ink-soft); margin: 12px 8px 4px; font-weight: 600; }
 .menu h2:first-child { margin-top: 2px; }
+/* 每課一組可收合(WY36):課名是可點的標題,▸ 收合、▾ 展開;沒有展開動畫(減少動態也不必另外處理) */
+.menu-group > summary { list-style: none; display: flex; align-items: center; gap: 6px; min-height: 40px; margin: 6px 0 2px; padding: 4px 8px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 700; color: var(--ink); }
+.menu-group > summary::-webkit-details-marker { display: none; }
+.menu-group > summary::before { content: "▸"; color: var(--accent); flex: none; }
+.menu-group[open] > summary::before { content: "▾"; }
+.menu-group > summary:hover { background: var(--quote-bg); }
+.menu-group > summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.menu-group > a { padding-left: 26px; } /* 頁籤比課名內縮一格 */
 .menu a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; line-height: 1.4; }
 .menu a:hover { background: var(--quote-bg); }
 .menu a[aria-current="page"] { background: var(--cur-bg); color: var(--cur-fg); font-weight: 700; }
@@ -437,7 +445,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 }
 .stage .actor {
   position: absolute; left: var(--x); bottom: calc(100% - var(--y)); height: var(--h); width: auto;
-  transform: translateX(-50%); z-index: 2;
+  transform: translateX(-50%) scaleX(var(--flip, 1)); z-index: 2;
 }
 .stage .ftext {
   position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
@@ -623,7 +631,6 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .m-art .m-lake { fill: var(--myth-sea); stroke: #5f93ad; stroke-width: .6; }
 .m-art .m-staff path { stroke: #7a5a34; stroke-width: 2.2; stroke-linecap: round; } .m-art .m-staff { transform-box: fill-box; transform-origin: 0% 50%; }
 .m-art .m-trunk { fill: #7a5a34; } .m-art .m-bloom, .m-art .m-petal { fill: #f2b6c0; } .m-art .m-bloom2 { fill: #e88a9a; }
-.m-art .m-tree { transform-box: fill-box; transform-origin: 50% 100%; }
 /* 動畫(只在舞台上播) */
 .stage .m-crack { stroke-dasharray: 60; animation: mDraw60 calc(1s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 2s / var(--speed)); }
 .stage .m-egg-top, .stage .m-egg-bot { animation: mEggOpen calc(2s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 4s / var(--speed)); }
@@ -653,7 +660,9 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .stage .m-river { animation: mDry calc(4s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 3s / var(--speed)); }
 .stage .m-north { animation: mPop calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 8s / var(--speed)); }
 .stage .m-staff { animation: mStaff calc(1s / var(--speed)) ease-in both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)); }
-.stage .m-tree { animation: mGrow calc(1.5s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + (8s + var(--i) * .6s) / var(--speed)); }
+/* WY34 桃林:手杖倒下後,第 8 秒桃林背景淡入、手杖淡出(背景圖裡已有冒芽的舊杖) */
+.m-grove .m-staff { opacity: 0; } .stage .m-grove .m-staff { opacity: 1; animation: mStaff calc(1s / var(--speed)) ease-in both, mGone calc(1s / var(--speed)) linear both; animation-delay: calc(var(--d, 0s) + 6s / var(--speed)), calc(var(--d, 0s) + 8.5s / var(--speed)); }
+.stage .m-grove-bg { animation: mBgIn calc(2s / var(--speed)) ease-out both; animation-delay: calc(var(--d, 0s) + 8s / var(--speed)); }
 .stage .m-petal { animation: mPetal calc(3s / var(--speed)) linear infinite; animation-delay: calc(var(--d, 0s) + (11s + var(--i) * .5s) / var(--speed)); }
 .stage .m-icon { animation: mPop calc(.5s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (1s + var(--i) * .5s) / var(--speed)); }
 @keyframes mDraw60 { from { stroke-dashoffset: 60; } to { stroke-dashoffset: 0; } }
@@ -673,7 +682,8 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 @keyframes mSunDown { from { transform: translate(-24px, -40px); } }
 @keyframes mDry { from { stroke-width: 4; opacity: 1; } }
 @keyframes mStaff { from { transform: rotate(-90deg); } }
-@keyframes mGrow { from { transform: scale(0); } }
+@keyframes mBgIn { from { opacity: 0; } }
+@keyframes mGone { to { opacity: 0; } }
 @keyframes mPetal { 0% { transform: translate(0, -10px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-6px, 30px); opacity: 0; } }
 /* 角色動作(神話) */
 .anim-riseUp { animation: riseUp calc(2s / var(--speed)) ease-out both; }
@@ -717,7 +727,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 @keyframes slideL { from { opacity: 0; transform: translate(-90%, -50%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 @keyframes slideR { from { opacity: 0; transform: translate(-10%, -50%); } to { opacity: 1; transform: translate(-50%, -50%); } }
 @media (prefers-reduced-motion: reduce) {
-  .stage .actor { animation: none !important; transform: translateX(-50%); }
+  .stage .actor { animation: none !important; transform: translateX(-50%) scaleX(var(--flip, 1)); }
   .p-coin-in, .p-dot, .p-glow, .p-mosq g, .p-fight-l, .p-fight-r, .p-world, .p-toad-hop, .p-toad-gulp { animation: none !important; }
   /* WY33:吐舌改成兩張靜態——12.4 秒「吐舌、蟲不見」、13.8 秒切回閉嘴(只切換顯示,不移動、不縮放) */
   .p-toad-tongue { animation: rmShow calc(1.4s / var(--speed)) linear both !important; animation-delay: calc(var(--d, 0s) + 12.4s / var(--speed)) !important; transform: none; }
@@ -1011,3 +1021,52 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .home-group > summary small { display: none; }
   .home-title { flex: 0 1 auto; min-width: 0; }
 }
+/* WY26 寓言篇(濫竽充數、驚弓之鳥;CD3 版面修整):道具在 shared/fable-props.js,圖文故事與動畫共用。
+   整幅道具鋪滿舞台;小件依位置擺,寬度在這裡定。顏色:背景用色票(跟著深淺色),道具用固定的中間色(兩種底色上都看得清楚)。 */
+.p-fable { display: block; overflow: visible; }
+.p-fable-full, .p-fable-story { width: 100%; height: auto; }
+.stage .prop:has(> .p-fable-full) { width: 100%; height: 100%; }
+.stage .prop-yu { width: 15%; } .stage .prop-goose { width: 20%; } .stage .prop-fallingGoose { width: 20%; } .stage .prop-gooseLeft { width: 14%; }
+.stage .prop-grain { width: 15%; } .stage .prop-magnifier { width: 11%; } .stage .prop-emptySeat { width: 17%; }
+.p-fable-small { width: 100%; height: auto; }
+/* 宮廷背景:兩根朱紅柱+牆+木地板(動畫舞台;圖文故事由 backdrop() 畫) */
+.stage.bg-court { background: linear-gradient(90deg, #9c3b2c 0 2.5%, transparent 2.5% 97.5%, #9c3b2c 97.5%), linear-gradient(var(--art-hall) 0 86%, var(--art-floor) 86%); }
+.f-bg-court .f-wall { fill: var(--art-hall); } .f-bg-court .f-floor { fill: var(--art-floor); }
+.f-bg-court .f-col { fill: #9c3b2c; } .f-bg-court .f-beam { stroke: #8b5a3c; stroke-width: 2; }
+.f-bg-sky .f-sky { fill: var(--art-sky); } .f-bg-sky .f-grass { fill: var(--art-floor); } .f-bg-sky .f-cloud { fill: #fff; opacity: .55; }
+.f-bg-paper .f-paper { fill: var(--art-paper); } .f-bg-paper .f-floorline { stroke: var(--line); stroke-width: 1; }
+/* 樂工:後排小而淡,前排清楚;每人捧一支小竽 */
+.fable-art .f-robe { stroke: #3a3328; stroke-width: .4; }
+.fable-art .f-tone-0 .f-robe { fill: #7d8f7a; } .fable-art .f-tone-1 .f-robe { fill: #8a7aa0; } .fable-art .f-tone-2 .f-robe { fill: #a08a6a; } .fable-art .f-tone-3 .f-robe { fill: #6f8aa0; }
+.fable-art .f-sleeve { fill: #000; opacity: .15; }
+.fable-art .f-head { fill: #e8c9a8; stroke: #3a3328; stroke-width: .3; } .fable-art .f-hair { fill: #2b2620; }
+.fable-art .f-row-back { opacity: .55; } .fable-art .f-row-mid { opacity: .8; }
+/* 竽:葫蘆形音斗、彎吹嘴、一排竹管 */
+.fable-art .f-yu-body { fill: #c9a24f; stroke: #6b4e2a; stroke-width: .6; }
+.fable-art .f-yu-pipe { stroke: #8a6a3a; stroke-width: .9; stroke-linecap: round; }
+.f-yu .f-yu-pipe { stroke-width: 1.3; } .f-yu .f-yu-band { stroke: #6b4e2a; stroke-width: .8; }
+.f-yu .f-yu-mouth { fill: none; stroke: #6b4e2a; stroke-width: 1.4; stroke-linecap: round; } .f-yu .f-yu-tip { fill: #6b4e2a; }
+/* 京臺 */
+.f-terrace .f-stone { fill: #cbbd9f; stroke: #7a6a50; stroke-width: .8; }
+.f-terrace .f-stone-line path, .f-terrace .f-stone-line { fill: none; stroke: #7a6a50; stroke-width: .5; opacity: .7; }
+.f-terrace .f-step { fill: none; stroke: #7a6a50; stroke-width: .8; } .f-terrace .f-stair { fill: #b9aa8a; stroke: #7a6a50; stroke-width: .6; }
+.f-terrace .f-rail, .f-terrace .f-rail path { fill: none; stroke: #8b5a3c; stroke-width: 1.2; stroke-linecap: round; }
+.f-terrace .f-pillar { stroke: #9c3b2c; stroke-width: 2.4; } .f-terrace .f-roof { fill: #6b4e3a; stroke: #3a2a1e; stroke-width: .6; } .f-terrace .f-roof-ridge { stroke: #3a2a1e; stroke-width: 1.4; }
+/* 推理線索:一列一條,字不壓框 */
+.f-reasoning .fp-card path { fill: var(--surface); stroke: var(--line); stroke-width: .8; }
+.f-reasoning text { font-family: inherit; font-size: 6.4px; text-anchor: middle; }
+.f-reasoning .fp-see { fill: var(--accent); font-weight: 700; } .f-reasoning .fp-arrow { fill: var(--ink-soft); } .f-reasoning .fp-mean { fill: var(--ink); }
+/* 大雁 */
+.f-goose .f-goose-body { fill: #9a8f80; stroke: #3a3530; stroke-width: .5; }
+.f-goose .f-wing-near { fill: #7d7466; stroke: #3a3530; stroke-width: .5; } .f-goose .f-wing-far { fill: #b8ae9e; }
+.f-goose .f-goose-neck { fill: none; stroke: #3a3530; stroke-width: 1.6; stroke-linecap: round; } .f-goose .f-goose-head { fill: #3a3530; } .f-goose .f-goose-beak { fill: #d9a03a; }
+.f-goose .f-shake { fill: none; stroke: var(--ink-soft); stroke-width: .9; stroke-linecap: round; } .f-goose .f-ground-line { stroke: var(--line); stroke-width: .8; }
+/* 糧袋、放大鏡、空位子 */
+.f-grain .f-sack { fill: #d8c39a; stroke: #8a6a3a; stroke-width: .7; } .f-grain .f-rope { stroke: #8a6a3a; stroke-width: 1.2; } .f-grain .f-kernel { fill: #e0b84a; }
+.f-magnifier .f-lens { fill: rgb(170 210 230 / .35); stroke: #6b4e2a; stroke-width: 2; } .f-magnifier .f-handle { stroke: #8b5a3c; stroke-width: 3.2; stroke-linecap: round; } .f-magnifier .f-glint { fill: none; stroke: #fff; stroke-width: 1; }
+.f-seat .f-cushion { fill: #9c3b2c; opacity: .85; } .f-seat .f-gone { fill: none; stroke: var(--ink-soft); stroke-width: .9; stroke-dasharray: 2 1.6; }
+/* 掉落(只在舞台上播;圖文故事與減少動態直接看結果) */
+.f-falling .fp-fall { transform: translateY(8px); }
+.stage .f-falling .fp-fall { animation: fable-fall calc(1.4s / var(--speed, 1)) ease-in both; animation-delay: var(--d, 0s); }
+@keyframes fable-fall { from { transform: translate(-6px, -14px) rotate(-30deg); } }
+@media (prefers-reduced-motion: reduce) { .stage .f-falling .fp-fall { animation: none; } }

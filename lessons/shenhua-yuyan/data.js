@@ -279,7 +279,7 @@ export const storyPages = [
   },
   {
     title: '想一想',
-    art: { bg: 'paper', figures: [], props: ['mythIcons'], caption: '盤古、女媧、共工、夸父' },
+    art: { bg: 'paper', figures: [], props: ['mythIcons'], caption: '盤古、女媧、共工、夸父(正面像)' },
     text: [
       '天地怎麼來的？天為什麼會下雨打雷？河水為什麼往東流？古人用想像力，為身邊的世界找到了答案。',
     ],

@@ -1,9 +1,9 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=f54ffc1';
-import { version } from './version.js?v=f54ffc1';
-import { catalog } from '../catalog.js?v=f54ffc1';
-import { siteMusic } from './sound.js?v=f54ffc1';
+import { escapeHTML } from './terms.js?v=b1d73d1';
+import { version } from './version.js?v=b1d73d1';
+import { catalog } from '../catalog.js?v=b1d73d1';
+import { siteMusic } from './sound.js?v=b1d73d1';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
@@ -56,9 +56,15 @@ function menuHTML(here) {
   };
   const lessons = catalog.filter((c) => c.section !== 'site');
   const site = catalog.filter((c) => c.section === 'site');
+  // 每課一組可收合(WY36,比照首頁 WY19 的 <details>):預設只展開目前所在的課;
+  // 不在任何一課時(首頁、孔子講堂)展開上次看的課,沒有紀錄就展開最新一課
+  let last = null;
+  try { last = localStorage.getItem(PREF_KEYS.lesson); } catch { /* 讀不到就用預設 */ }
+  const openId = here.lesson ?? (lessons.some((c) => c.id === last) ? last : lessons.at(-1)?.id);
   return `
     <button type="button" class="menu-close" id="menu-close" aria-label="關閉選單">✕ 關閉</button>
-    ${lessons.map((c) => `<h2>${escapeHTML(c.title)}</h2>${c.pages.map((p) => link(p.href, p.label)).join('')}`).join('')}
+    ${lessons.map((c) => `<details class="menu-group" data-menu-lesson="${escapeHTML(c.id)}"${c.id === openId ? ' open' : ''}>
+      <summary>${escapeHTML(c.title)}</summary>${c.pages.map((p) => link(p.href, p.label)).join('')}</details>`).join('')}
     <h2>全站</h2>
     ${site.map((c) => link(c.pages[0].href, c.title)).join('')}
     ${link('index.html', '課程目錄')}
@@ -116,6 +122,10 @@ export function initPage({ paged = false } = {}) {
   if (!siteMusic().supported()) disableSetting('set-music', '這個瀏覽器不支援');
 }
 
+// 抽屜裡看得到、可以 Tab 到的項目(收合的課裡的連結不算)
+const focusables = (menu) => [...menu.querySelectorAll('a[href], button:not([disabled]), summary')]
+  .filter((e) => (e.checkVisibility ? e.checkVisibility() : e.getClientRects().length > 0));
+
 function setupMenu(shell) {
   const btn = shell.querySelector('#menu-btn');
   const menu = shell.querySelector('#menu');
@@ -129,7 +139,7 @@ function setupMenu(shell) {
     document.getElementById('app').inert = open;
     shell.querySelector('#set-btn').inert = open;
     if (!focus) return;
-    if (open) menu.querySelector('a')?.focus();
+    if (open) (menu.querySelector('a[aria-current="page"]') ?? focusables(menu)[0])?.focus();
     else btn.focus();
   };
   btn.addEventListener('click', () => set(!menu.classList.contains('open')));
@@ -140,7 +150,7 @@ function setupMenu(shell) {
     if (e.key === 'Escape') { e.preventDefault(); set(false); return; }
     if (e.key !== 'Tab') return;
     // 抽屜開著時,Tab / Shift+Tab 只在抽屜內循環
-    const items = [...menu.querySelectorAll('a[href], button:not([disabled])')];
+    const items = focusables(menu);
     const first = items[0];
     const last = items.at(-1);
     const i = items.indexOf(document.activeElement);

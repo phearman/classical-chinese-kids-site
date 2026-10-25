@@ -4,7 +4,7 @@
 // (只在 .stage 裡播,見 style.css「神話道具」),所以減少動態時關掉動畫就直接看到結果。
 // 安全(CPM 2026-10-22 核准):撞山只畫「砰」、震動、裂痕與暈頭小星星,不畫受傷;女媧只畫天柱立起、海龜游走(WY34 起海龜用 AI 生成圖,四肢完整、背上無物)。
 
-import { characterURL } from './assets.js?v=f54ffc1';
+import { characterURL, backgroundURL } from './assets.js?v=b1d73d1';
 
 const wrap = (cls, body) => `<g class="m-art ${cls}">${body}</g>`;
 
@@ -130,22 +130,20 @@ export function rivers() {
       <ellipse class="m-lake" cx="140" cy="26" rx="17" ry="6"/><text class="m-lakename" x="140" y="28">大澤</text></g>`);
 }
 
-// 手杖變桃林:手杖倒地、冒芽、長成桃林,花瓣飄落
+// 手杖變桃林:手杖倒地,之後淡入 AI 生成的桃林背景(P1,WY34;舊杖冒芽長成第一棵桃樹),花瓣飄落。
+// 最後畫面=桃林背景+花瓣(圖文故事直接看到);程式畫的手杖只在動畫裡、桃林出現前看得到。
 export function grove() {
-  const trees = [60, 82, 104, 126, 148].map((x, i) => `<g class="m-tree" style="--i:${i}"><path class="m-trunk" d="M${x - 1.5} 88 V${70 - (i % 2) * 4} H${x + 1.5} V88Z"/>
-    <circle class="m-bloom" cx="${x}" cy="${64 - (i % 2) * 4}" r="${10 + (i % 3)}"/><circle class="m-bloom2" cx="${x - 4}" cy="${61 - (i % 2) * 4}" r="2"/><circle class="m-bloom2" cx="${x + 5}" cy="${66 - (i % 2) * 4}" r="1.6"/></g>`).join('');
   const petals = [[66, 40], [92, 30], [118, 44], [140, 34], [78, 52], [132, 56]]
     .map(([x, y], i) => `<ellipse class="m-petal" style="--i:${i}" cx="${x}" cy="${y}" rx="1.6" ry="1"/>`).join('');
-  return wrap('m-grove', `<g class="m-staff"><path d="M30 87 H58"/></g>${trees}${petals}`);
+  return wrap('m-grove', `<image class="m-grove-bg" href="${backgroundURL('peach-grove.webp')}" x="0" y="0" width="160" height="90" preserveAspectRatio="xMidYMid slice"/>
+    <g class="m-staff"><path d="M30 87 H58"/></g>${petals}`);
 }
 
-// 收尾:四個故事的小圖示(雞蛋、五色石、山、桃花)
+// 收尾:四位神話人物的正面像(WY34,使用者待裁 74 A;取代雞蛋、五色石、山、桃花圖示),名字在下方。
+// 正面像以各自定稿圖為參照由 AI 生成;圖框 30×44,等比縮放置底對齊。
 export function icons() {
-  const items = [
-    [32, '盤古', '<ellipse class="m-shell" cx="32" cy="44" rx="8" ry="10"/>'],
-    [64, '女媧', [0, 1, 2, 3, 4].map((i) => `<ellipse class="m-stone m-stone-${i}" cx="${58 + (i % 3) * 6}" cy="${40 + Math.floor(i / 3) * 7}" rx="3.2" ry="2.6"/>`).join('')],
-    [96, '共工', '<path class="m-mountain" d="M84 54 L94 36 L100 42 L106 34 L110 54Z"/>'],
-    [128, '夸父', '<path class="m-trunk" d="M127 54 V44 H129 V54Z"/><circle class="m-bloom" cx="128" cy="40" r="7"/>'],
-  ];
-  return wrap('m-icons', items.map(([x, name, svg], i) => `<g class="m-icon" style="--i:${i}">${svg}<text class="m-iname" x="${x}" y="64">${name}</text></g>`).join(''));
+  const items = [[26, '盤古', 'pangu'], [63, '女媧', 'nuwa'], [100, '共工', 'gonggong'], [137, '夸父', 'kuafu']];
+  return wrap('m-icons', items.map(([x, name, key], i) => `<g class="m-icon" style="--i:${i}">`
+    + `<image class="m-front" href="${characterURL(`${key}-front.webp`)}" x="${x - 17}" y="12" width="34" height="44" preserveAspectRatio="xMidYMax meet"/>`
+    + `<text class="m-iname" x="${x}" y="64">${name}</text></g>`).join(''));
 }

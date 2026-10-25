@@ -1,7 +1,7 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=f54ffc1';
-import * as Myth from './myth-props.js?v=f54ffc1';
+import { escapeHTML } from './terms.js?v=b1d73d1';
+import * as Myth from './myth-props.js?v=b1d73d1';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -31,12 +31,24 @@ export const ROLES = {
   'gonggong':     { label: '共工', image: 'gonggong.webp', height: 136, width: 122 },
   'zhurong':      { label: '祝融', image: 'zhurong.webp', height: 140, width: 140 }, // WY34 換成 D2(年輕、無鬍、騎兩龍),和共工區分
   'zhuanxu':      { label: '顓頊', image: 'zhuanxu.webp', height: 140, width: 82 },
-  'kuafu':        { label: '夸父', image: 'kuafu.webp', height: 156, width: 136 }, // 巨人
+  // 片尾四人正面像(WY34,神話篇第 12 幕與故事第 12 頁,由 myth-props 直接引用)
+  'pangu-front':  { label: '盤古', image: 'pangu-front.webp', height: 100 },
+  'nuwa-front':   { label: '女媧', image: 'nuwa-front.webp', height: 100 },
+  'gonggong-front': { label: '共工', image: 'gonggong-front.webp', height: 100 },
+  'kuafu-front':  { label: '夸父', image: 'kuafu-front.webp', height: 100 },
+  'kuafu':        { label: '夸父', image: 'kuafu.webp', height: 156, width: 136 }, // 巨人(WY34 換成 K4 成年精壯版)
+  // 自學選文一寓言篇(WY26 PR-B2):六張定稿圖，對照與授權見 assets/CREDITS.md
+  'nanguo-n1':    { label: '南郭處士', image: 'nanguo-n1.webp', height: 136, width: 112 },
+  'nanguo-n2':    { label: '南郭處士', image: 'nanguo-n2.webp', height: 136, width: 112 },
+  'qi-xuan':      { label: '齊宣王', image: 'qi-xuan.webp', height: 134, width: 118 },
+  'qi-min':       { label: '齊湣王', image: 'qi-min.webp', height: 134, width: 108 },
+  'genglei':      { label: '更羸', image: 'genglei.webp', height: 142, width: 116 },
+  'wei-wang':     { label: '魏王', image: 'wei-wang.webp', height: 136, width: 114 },
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=f54ffc1';
-import { characterURL as imageURL } from './assets.js?v=f54ffc1';
+export { characterURL as imageURL } from './assets.js?v=b1d73d1';
+import { characterURL as imageURL } from './assets.js?v=b1d73d1';
 
 // 甲蟲(程式繪製,WY29):側面看,分節(頭、胸、鞘翅)、六隻腳(遠側三隻較淡)、觸角、大顎。
 // 原點在腳底中央、面向右,長約 22 單位;s=縮放,flip=面向左。圖文故事與動畫第 6 幕共用。
@@ -78,7 +90,7 @@ function figure(id, x) {
 // 神話插圖:對照圖與收尾小圖示在故事插圖裡放大置中(字才夠大);其他照動畫的位置放大兩倍
 const MYTH_FIT = {
   mythChart: 'translate(-131 -88) scale(2.8)', // 對照圖(x 52~156、y 43~88)放大置中
-  mythIcons: 'translate(-48 -30) scale(2.6)', // 小圖示(x 22~138、y 30~66)放大置中
+  mythIcons: 'translate(-12 6) scale(2.1)', // 四人正面像(x 9~154、y 12~66,WY34)放大置中
 };
 
 const PROPS = {
