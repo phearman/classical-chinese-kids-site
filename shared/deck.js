@@ -1,7 +1,7 @@
 // 翻頁式內容(WY13):一頁一張卡;上一頁/下一頁按鈕、←→ 鍵、手機左右滑;目前頁記在網址 #key(瀏覽器返回鍵可用)。
 // 各頁自己畫卡片內容,這裡只管「現在是哪一頁」與翻頁操作。
-import { escapeHTML } from './terms.js?v=b1d73d1';
-import { overlayOpen, onSwipe } from './page.js?v=b1d73d1';
+import { escapeHTML } from './terms.js?v=ad37985';
+import { overlayOpen, onSwipe } from './page.js?v=ad37985';
 
 // keys:頁的代號(網址 # 後面那段);onShow(key, index, total) 由各頁畫出目前頁
 // aliases:舊網址的錨點對應到頁(如 people.html#zengzi → p2),外部舊連結仍可用
@@ -21,6 +21,7 @@ export function createPaging({ root, keys, onShow, focusSel = '#deck-title', ali
   const index = () => list.indexOf(cur());
   function show({ focus = false } = {}) {
     onShow(cur(), index(), list.length);
+    revealSection(root);
     if (!focus) return;
     const title = root.querySelector(focusSel);
     title?.focus();
@@ -48,6 +49,9 @@ export function createPaging({ root, keys, onShow, focusSel = '#deck-title', ali
     else if (e.key === 'ArrowLeft') step(-1);
   });
   onSwipe(root, step);
+  // 段落籤橫向捲動時,更新左右兩端的淡出提示(還有沒看到的籤)
+  root.addEventListener('scroll', (e) => { if (e.target.classList?.contains('deck-sections')) edgeHints(e.target); }, true);
+  addEventListener('resize', () => root.querySelectorAll('.deck-sections').forEach(edgeHints));
 
   return {
     show, go, step, cur, index,
@@ -64,6 +68,24 @@ export function pagerHTML(i, total, { prev = '← 上一頁', next = '下一頁 
       <p class="deck-count">${escapeHTML(label ?? `${i + 1} / ${total}`)}</p>
       <button type="button" class="next"${i >= total - 1 ? ' disabled' : ''}>${escapeHTML(next)}</button>
     </nav>`;
+}
+
+// 段落籤列可以左右滑(WY37,使用者 Android 實機:第 4 顆被切掉、滑不動):
+// 目前這段的籤捲進看得到的地方(只捲籤列本身,整頁不動);兩端還有籤時顯示淡出提示
+function edgeHints(nav) {
+  nav.classList.toggle('more-left', nav.scrollLeft > 2);
+  nav.classList.toggle('more-right', nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 2);
+}
+export function revealSection(root) {
+  root.querySelectorAll('.deck-sections').forEach((nav) => {
+    const b = nav.querySelector('[aria-current]');
+    if (b) {
+      const left = b.offsetLeft - nav.offsetLeft;
+      if (left < nav.scrollLeft) nav.scrollLeft = left - 32;
+      else if (left + b.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = left + b.offsetWidth - nav.clientWidth + 32;
+    }
+    edgeHints(nav);
+  });
 }
 
 // 段落籤:sections = [{ label, key(該段第一頁), current }]

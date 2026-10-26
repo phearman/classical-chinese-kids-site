@@ -50,6 +50,16 @@ export const catalog = [
         { href: 'lessons/shenhua-yuyan/fable-animation.html', label: '寓言動畫', desc: '約 2 分 14 秒，兩則寓言有字幕和朗讀旁白' },
         { href: 'lessons/shenhua-yuyan/study.html', label: '課文學習', desc: '兩則原文逐句白話、逐詞解釋，加上三張故事卡' },
       { href: 'lessons/shenhua-yuyan/quiz.html', label: '隨堂測驗', desc: '選擇、填充、問答和素養題，作答只存在這台裝置' },
+      { href: 'idioms/index.html', label: '成語集', desc: '搜尋成語、查看四格漫畫與《成語典》連結' },
+    ],
+  },
+  {
+    id: 'idioms',
+    section: 'site',
+    title: '成語集',
+    subtitle: '依常用程度排序的成語填空題庫',
+    pages: [
+      { href: 'idioms/index.html', label: '成語集', desc: '搜尋成語、查看四格漫畫與《成語典》連結' },
     ],
   },
   {

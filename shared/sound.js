@@ -117,6 +117,7 @@ export const SONG_LEVEL = Object.freeze({ story: 0.77, read: 0.51, quiz: 0.84 })
 export const LEVELS = Object.freeze({ master: 0.25, music: 0.7, duck: 0.3 });
 const DUCK_DOWN = 0.15, DUCK_UP = 0.6; // 秒:降下快、回升慢
 const FADE_IN = 1.5, FADE_OUT = 0.5, LOOKAHEAD = 0.25, TICK_MS = 60;
+export const MEDIA_TITLE = '文言文小幫手 背景音樂'; // 系統媒體控制條上顯示的名稱(WY38)
 // 軟限幅(總線後):|x| ≤ knee 原樣通過,超過才平滑壓縮,疊音也不削波;⛔ 內建 DynamicsCompressor(會吃起音)
 const LIMIT = { knee: 0.6, width: 1, range: 4, size: 2049 };
 export function limiterCurve({ knee, width, range, size } = LIMIT) {
@@ -286,7 +287,7 @@ export function createMusic(env = globalThis, { song = songForPath(env.location?
     if (stored === null || stored === on) return;
     on = stored;
     doc?.dispatchEvent?.(new (env.CustomEvent ?? CustomEvent)('ccc:music', { detail: { on } }));
-    if (!on) { stopTrack(); try { context?.suspend(); } catch { /* 忽略 */ } }
+    if (!on) { stopTrack(); mediaStopped(); try { context?.suspend(); } catch { /* 忽略 */ } }
   }
   function wake() {
     refresh();
@@ -313,6 +314,31 @@ export function createMusic(env = globalThis, { song = songForPath(env.location?
   doc?.addEventListener('narration:pause', () => { held = true; applyDuck(); });
   doc?.addEventListener('narration:resume', () => { held = false; applyDuck(); });
 
+  // ---- 系統媒體控制條(WY38,使用者 Android 實機:播放時系統跳出「…+音符」長條)
+  // 播放時給它正確的名稱;關掉背景音樂時讓音訊真的停(淡出後 suspend),控制條才會消失。
+  // 系統控制條上按暫停=關掉背景音樂(同 ⚙);旁白朗讀是另一條路(speechSynthesis/Audio),不受影響。
+  const media = () => env.navigator?.mediaSession ?? null;
+  function mediaPlaying() {
+    const ms = media();
+    if (!ms) return;
+    try {
+      if (env.MediaMetadata && !ms.metadata) ms.metadata = new env.MediaMetadata({ title: MEDIA_TITLE, artist: '文言文小幫手' });
+      ms.playbackState = 'playing';
+      ms.setActionHandler?.('pause', () => { setEnabled(false); doc?.dispatchEvent?.(new (env.CustomEvent ?? CustomEvent)('ccc:music', { detail: { on } })); });
+    } catch { /* 不支援就算了 */ }
+  }
+  function mediaStopped() {
+    const ms = media();
+    if (!ms) return;
+    try { ms.playbackState = 'none'; ms.metadata = null; ms.setActionHandler?.('pause', null); } catch { /* 不支援就算了 */ }
+  }
+  let suspendTimer = null;
+  // 關掉後等淡出做完才 suspend(避免喀一聲);期間又打開就取消
+  function suspendSoon() {
+    if (suspendTimer !== null) env.clearTimeout?.(suspendTimer);
+    suspendTimer = env.setTimeout?.(() => { suspendTimer = null; if (!on) { try { context?.suspend(); } catch { /* 忽略 */ } } }, FADE_OUT * 1000 + 80) ?? null;
+  }
+
   // ---- 前瞻排程:每 60ms 排未來 0.25 秒的音;計時器被延遲時跳過已過時的格子,⛔ 補排
   function startTrack() {
     for (const old of [...fading]) release(old);
@@ -321,6 +347,7 @@ export function createMusic(env = globalThis, { song = songForPath(env.location?
     track.bus.gain.setValueAtTime(0, at);
     track.bus.gain.linearRampToValueAtTime(track.level, at + FADE_IN);
     tick();
+    mediaPlaying();
   }
   function tick() {
     const t = track;
@@ -348,6 +375,7 @@ export function createMusic(env = globalThis, { song = songForPath(env.location?
     } catch { /* 停止失敗不影響頁面 */ }
     fading.add(t);
     t.cleanup = env.setTimeout?.(() => { t.cleanup = null; release(t); }, FADE_OUT * 1000 + 50) ?? null;
+    if (!on) { mediaStopped(); suspendSoon(); }
   }
   function release(t) {
     fading.delete(t);
@@ -366,6 +394,7 @@ export function createMusic(env = globalThis, { song = songForPath(env.location?
   // 開關:由 ⚙ 設定呼叫;event 是那次點擊(手勢內才能啟動音訊)
   function setEnabled(value, event) {
     on = !!value;
+    if (on && suspendTimer !== null) { env.clearTimeout?.(suspendTimer); suspendTimer = null; }
     try { env.localStorage?.setItem(MUSIC_KEY, on ? 'on' : 'off'); } catch { /* 只在本頁有效 */ }
     if (on) unlock(event);
     sync();

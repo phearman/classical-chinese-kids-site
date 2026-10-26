@@ -880,7 +880,13 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
 }
 .deck-view, .deck-view *, .hall { touch-action: pan-y pinch-zoom; }
-.deck-sections { flex: none; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.deck-sections { flex: none; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+/* 段落籤列可以左右滑(WY37):覆蓋上面 .deck-view * 的只准上下;兩端還有籤時淡出提示 */
+.deck-view .deck-sections, .deck-view .deck-sections * { touch-action: pan-x pinch-zoom; }
+.deck-sections::-webkit-scrollbar { display: none; }
+.deck-sections.more-right { mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+.deck-sections.more-left { mask-image: linear-gradient(90deg, transparent, #000 28px); }
+.deck-sections.more-left.more-right { mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent); }
 .deck-sections button {
   flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line);
   background: var(--surface); color: var(--ink); font: inherit; font-size: 15px; cursor: pointer;
@@ -1070,3 +1076,26 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .stage .f-falling .fp-fall { animation: fable-fall calc(1.4s / var(--speed, 1)) ease-in both; animation-delay: var(--d, 0s); }
 @keyframes fable-fall { from { transform: translate(-6px, -14px) rotate(-30deg); } }
 @media (prefers-reduced-motion: reduce) { .stage .f-falling .fp-fall { animation: none; } }
+
+/* 成語集：資料多，列表每次只畫 50 筆；所有色彩沿用共用 token。 */
+.idiom-view, .comic-view { width: min(100%, 760px); margin: 0 auto; padding: 16px; }
+.idiom-view h1, .comic-view h1 { margin: 0; font-family: var(--serif); font-size: 26px; }
+.idiom-note, .idiom-count, .idiom-license { color: var(--ink-soft); font-size: 14px; }
+.idiom-search { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; }
+.idiom-search:focus-visible, .idiom-chip:focus-visible, .idiom-more:focus-visible, .comic-back:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.idiom-filters { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }
+.idiom-chip { min-height: 36px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.idiom-chip.is-current { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+.idiom-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.idiom-list li { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 54px; padding: 7px 2px; border-bottom: 1px solid var(--line); }
+.idiom-word { font-family: var(--serif); font-size: 19px; font-weight: 700; }
+.idiom-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.idiom-tag { display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 12px; text-decoration: none; white-space: nowrap; }
+.idiom-ready { background: var(--ok-bg); color: var(--ok-fg); }.idiom-waiting { background: var(--quote-bg); color: var(--ink-soft); }.idiom-dict { border: 1px solid var(--line); color: var(--ink); }
+.idiom-more, .comic-back { display: block; width: 100%; min-height: 44px; margin: 14px 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; text-align: center; text-decoration: none; cursor: pointer; }
+.idiom-empty { padding-top: 32px; }.comic-panels { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 16px 0; padding: 0; list-style: none; }
+.comic-panels li { min-width: 0; }.comic-panels p { margin: 4px 2px 0; font-size: 14px; }.comic-panels img, .comic-placeholder { display: grid; width: 100%; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 10px; object-fit: cover; }
+.comic-placeholder { place-items: center; align-content: center; gap: 4px; padding: 10px; background: var(--art-paper); color: var(--ink-soft); text-align: center; }.comic-placeholder b { color: var(--accent); font-size: 20px; }
+.idiom-quote { margin: 16px 0; padding: 10px 12px; border-left: 4px solid var(--accent); border-radius: 8px; background: var(--quote-bg); font-family: var(--serif); font-size: 17px; }.idiom-quote cite { display: block; margin-top: 4px; color: var(--ink-soft); font-family: var(--sans); font-size: 13px; font-style: normal; }
+.comic-details > div { margin: 10px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }.comic-details dt { color: var(--moss); font-weight: 700; }.comic-details dd { margin: 2px 0 0; }
+@media (max-width: 360px) { .idiom-view, .comic-view { padding: 12px; }.idiom-list li { align-items: flex-start; flex-direction: column; }.idiom-actions { justify-content: flex-start; }.comic-panels { grid-template-columns: 1fr; } }

@@ -1,9 +1,9 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=b1d73d1';
-import { version } from './version.js?v=b1d73d1';
-import { catalog } from '../catalog.js?v=b1d73d1';
-import { siteMusic } from './sound.js?v=b1d73d1';
+import { escapeHTML } from './terms.js?v=ad37985';
+import { version } from './version.js?v=ad37985';
+import { catalog } from '../catalog.js?v=ad37985';
+import { siteMusic } from './sound.js?v=ad37985';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
@@ -38,10 +38,18 @@ const samePage = (a, b) => a.replace(/\/index\.html$/, '/') === b.replace(/\/ind
 
 export function whereAmI(loc = globalThis.location) {
   const here = new URL(loc.href).pathname;
-  for (const c of catalog) {
+  // 全站專區(如成語集)優先:課程頁籤裡也可能放了連到專區的入口
+  for (const c of [...catalog].sort((a, b) => (b.section === 'site') - (a.section === 'site'))) {
     for (const p of c.pages) {
       if (!samePage(new URL(siteURL(p.href)).pathname, here)) continue;
       return c.section === 'site' ? { title: c.title, sub: '', lesson: null } : { title: c.title, sub: p.label, lesson: c.id };
+    }
+  }
+  // 同一資料夾、但不在目錄頁籤裡的頁(例如成語集的單條漫畫頁 idioms/comic.html):歸到該資料夾所屬的那一組
+  const dir = here.replace(/[^/]*$/, '');
+  for (const c of [...catalog].sort((a, b) => (b.section === 'site') - (a.section === 'site'))) {
+    if (c.pages.some((p) => new URL(siteURL(p.href)).pathname.replace(/[^/]*$/, '') === dir && dir !== new URL(siteURL('index.html')).pathname.replace(/[^/]*$/, ''))) {
+      return { title: c.title, sub: '', lesson: c.section === 'site' ? null : c.id };
     }
   }
   return { title: '文言文小幫手', sub: '課程目錄', lesson: null };
@@ -139,7 +147,7 @@ function setupMenu(shell) {
     document.getElementById('app').inert = open;
     shell.querySelector('#set-btn').inert = open;
     if (!focus) return;
-    if (open) (menu.querySelector('a[aria-current="page"]') ?? focusables(menu)[0])?.focus();
+    if (open) (focusables(menu).find((item) => item.matches('a[aria-current="page"]')) ?? focusables(menu)[0])?.focus();
     else btn.focus();
   };
   btn.addEventListener('click', () => set(!menu.classList.contains('open')));
@@ -217,7 +225,8 @@ export function onSwipe(el, cb, { edge = 20 } = {}) {
   const reset = () => { start = null; axis = null; };
   el.addEventListener('touchstart', (e) => {
     const t = e.touches[0];
-    if (e.touches.length !== 1 || e.target.closest('input, textarea, select')
+    // 可以左右捲的列(段落籤)裡滑動是捲那一列,不是翻頁(WY37)
+    if (e.touches.length !== 1 || e.target.closest('input, textarea, select, .deck-sections')
       || t.clientX < edge || t.clientX > globalThis.innerWidth - edge) { reset(); return; }
     start = { x: t.clientX, y: t.clientY };
     axis = null;
