@@ -2,6 +2,7 @@
 export const COMICS = Object.freeze([
   {
     word: '守株待兔', slug: 'shouzhu-daitu', ready: true,
+    book: '《韓非子》', era: '先秦(戰國)',
     images: [1, 2, 3, 4].map((n) => `img/shouzhu-daitu-${n}.webp`),
     panels: [
       '宋國有個農夫，田裡有一截樹樁。',
@@ -17,6 +18,7 @@ export const COMICS = Object.freeze([
   },
   {
     word: '亡羊補牢', slug: 'wangyang-bulao', ready: true,
+    book: '《戰國策》', era: '先秦(戰國;西漢劉向編定)',
     images: [1, 2, 3, 4].map((n) => `img/wangyang-bulao-${n}.webp`),
     panels: [
       '牧羊人發現羊圈的木欄破了一個洞，幾隻羊已經從洞口走失。',
@@ -33,6 +35,7 @@ export const COMICS = Object.freeze([
   },
   {
     word: '自相矛盾', slug: 'zixiang-maodun', ready: true,
+    book: '《韓非子》', era: '先秦(戰國)',
     images: [1, 2, 3, 4].map((n) => `img/zixiang-maodun-${n}.webp`),
     panels: [
       '市集裡，商人舉起盾牌，大聲說它堅固得沒有東西能刺穿。',
@@ -48,6 +51,7 @@ export const COMICS = Object.freeze([
   },
   {
     word: '掩耳盜鈴', slug: 'yaner-daoling', ready: true,
+    book: '《呂氏春秋》', era: '先秦(戰國末)',
     images: [1, 2, 3, 4].map((n) => `img/yaner-daoling-${n}.webp`),
     panels: [
       '一個人看見一口大鐘，想把它搬走。',
@@ -64,6 +68,7 @@ export const COMICS = Object.freeze([
   },
   {
     word: '愚公移山', slug: 'yugong-yishan', ready: true,
+    book: '《列子》', era: '先秦(舊題戰國列禦寇;今本一般認為魏晉時編成)',
     images: [1, 2, 3, 4].map((n) => `img/yugong-yishan-${n}.webp`),
     panels: [
       '九十歲的愚公住在大山前，出門總得繞很遠的路。',
@@ -79,6 +84,7 @@ export const COMICS = Object.freeze([
   },
   {
     word: '畫龍點睛', slug: 'hualong-dianjing', ready: true,
+    book: '《太平廣記》引《名畫記》', era: '南北朝(故事為南朝梁張僧繇;書為北宋)',
     images: [1, 2, 3, 4].map((n) => `img/hualong-dianjing-${n}.webp`),
     panels: [
       '梁朝畫家張僧繇在寺壁上畫了四條栩栩如生的龍，卻沒畫眼睛。',

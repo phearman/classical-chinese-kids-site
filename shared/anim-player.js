@@ -1,9 +1,9 @@
 // 動畫故事播放器(共用,WY16 由第一課播放器抽出):逐幕播放 CSS/SVG 動畫,字幕同步顯示,
 // 旁白:有 AI 配音音檔就播音檔,否則用瀏覽器內建朗讀(speechSynthesis);不支援朗讀或關掉旁白時,照時間軸顯示字幕。
 // 各課的 animation.js 只負責提供資料與道具(PROPS),呼叫 mountAnimation()。網址 ?speed=N 可加速(測試用)。
-import { escapeHTML } from './terms.js?v=9bb0ba7';
-import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=9bb0ba7';
-import { characterURL as imageURL } from './assets.js?v=9bb0ba7';
+import { escapeHTML } from './terms.js?v=c037c72';
+import { initPage, narrationOn, disableSetting, overlayOpen, onSwipe } from './page.js?v=c037c72';
+import { characterURL as imageURL } from './assets.js?v=c037c72';
 
 // 語音:只選華語。先 zh-TW,再其他華語(zh-CN、zh-SG、cmn、zh-Hans、zh-Hant、單獨的 zh);
 // ⛔ 粵語(zh-HK、yue)等其他語言。語音清單可能晚一點才載入,所以每次朗讀時重找。

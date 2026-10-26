@@ -1,23 +1,38 @@
-import { initPage } from '../shared/page.js?v=9bb0ba7';
-import { escapeHTML } from '../shared/terms.js?v=9bb0ba7';
-import { WORDS } from './words-data.js?v=9bb0ba7';
-import { COMICS } from './comics.js?v=9bb0ba7';
-import { PAGE_SIZE, idiomURL, filterWords, visibleWords } from './list.js?v=9bb0ba7';
+import { initPage } from '../shared/page.js?v=c037c72';
+import { escapeHTML } from '../shared/terms.js?v=c037c72';
+import { WORDS } from './words-data.js?v=c037c72';
+import { COMICS } from './comics.js?v=c037c72';
+import { TOPIC_LABELS } from './categories.js?v=c037c72';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=c037c72';
 
 initPage();
 const app = document.getElementById('app');
 let query = '';
 let filter = 'all';
+let era = '';
+let book = '';
 let shown = PAGE_SIZE;
 const byWord = new Map(COMICS.map((comic) => [comic.word, comic]));
 const readyCount = COMICS.filter((comic) => comic.ready === true).length;
+const readyComics = COMICS.filter((comic) => comic.ready === true);
+const eras = [...new Set(readyComics.map((comic) => eraOf(comic.era)))];
+const books = [...new Set(readyComics.map((comic) => comic.book))];
+const filterLabels = [
+  ['all', '全部'], ['common', '最常用 100 條'], ...Object.entries(TOPIC_LABELS),
+  ['comic', `有漫畫（${readyCount}）`], ['waiting', '施工中'],
+];
 
 // 控制項、搜尋框與 live region 只建立一次：中文輸入法組字與游標都不會被重繪打斷。
 app.innerHTML = `<main class="idiom-view">
   <h1>成語集</h1><p class="idiom-note">依常用程度排序，收錄 ${WORDS.length.toLocaleString('zh-Hant')} 條成語。</p>
   <label class="sr-only" for="idiom-search">搜尋成語</label><input id="idiom-search" class="idiom-search" type="search" placeholder="搜尋成語，例如：守株" autocomplete="off">
-  <div class="idiom-filters" role="group" aria-label="漫畫篩選">
-    ${[['all', '全部'], ['comic', `有漫畫（${readyCount}）`], ['waiting', '施工中']].map(([id, label]) => `<button type="button" class="idiom-chip" data-filter="${id}" aria-pressed="false">${label}</button>`).join('')}
+  <p class="idiom-note">主題分類依字面，僅供參考。</p>
+  <div class="idiom-filters" role="group" aria-label="成語分類篩選">
+    ${filterLabels.map(([id, label]) => `<button type="button" class="idiom-chip" data-filter="${id}" aria-pressed="false">${label}</button>`).join('')}
+  </div>
+  <div class="idiom-source-filters" hidden aria-label="漫畫出處篩選">
+    <label>時代<select class="idiom-select" data-source-filter="era"><option value="">全部時代</option>${eras.map((value) => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join('')}</select></label>
+    <label>出處書名<select class="idiom-select" data-source-filter="book"><option value="">全部書名</option>${books.map((value) => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join('')}</select></label>
   </div><p class="idiom-count" aria-live="polite" aria-atomic="true"></p>
   <ul class="idiom-list"></ul><div class="idiom-more-wrap"></div>
   <footer class="idiom-license">題庫來源：THUOCL（MIT 授權，全文見 <a href="LICENSE-THUOCL.txt">授權</a>）與教育部《成語典》詞目交集；釋義請見《成語典》。</footer>
@@ -28,9 +43,11 @@ const count = app.querySelector('.idiom-count');
 const list = app.querySelector('.idiom-list');
 const moreWrap = app.querySelector('.idiom-more-wrap');
 const chips = app.querySelectorAll('[data-filter]');
+const sourceFilters = app.querySelector('.idiom-source-filters');
+const sourceSelects = app.querySelectorAll('[data-source-filter]');
 
 function renderResults({ keepMoreFocus = false } = {}) {
-  const words = filterWords(WORDS, COMICS, query, filter);
+  const words = filterWords(WORDS, COMICS, query, filter, { era, book });
   const visible = visibleWords(words, shown);
   list.innerHTML = visible.map((word) => {
     const comic = byWord.get(word);
@@ -43,6 +60,7 @@ function renderResults({ keepMoreFocus = false } = {}) {
     button.classList.toggle('is-current', current);
     button.setAttribute('aria-pressed', String(current));
   });
+  sourceFilters.hidden = filter !== 'comic';
   moreWrap.innerHTML = visible.length < words.length ? '<button type="button" class="idiom-more" id="idiom-more">再顯示 50 條</button>' : '';
   const more = moreWrap.querySelector('#idiom-more');
   more?.addEventListener('click', () => { shown += PAGE_SIZE; renderResults({ keepMoreFocus: true }); });
@@ -63,6 +81,17 @@ search.addEventListener('compositionend', (event) => {
 });
 chips.forEach((button) => button.addEventListener('click', () => {
   filter = button.dataset.filter;
+  if (filter !== 'comic') {
+    era = '';
+    book = '';
+    sourceSelects.forEach((select) => { select.value = ''; });
+  }
+  shown = PAGE_SIZE;
+  renderResults();
+}));
+sourceSelects.forEach((select) => select.addEventListener('change', () => {
+  if (select.dataset.sourceFilter === 'era') era = select.value;
+  else book = select.value;
   shown = PAGE_SIZE;
   renderResults();
 }));

@@ -1,8 +1,8 @@
 // 寓言篇動畫故事(WY26 PR-B2):道具全部程式繪製(shared/fable-props.js)。
 // 整幅道具(樂工、京臺、推理線索)鋪滿舞台;小件(竽、大雁、糧袋、放大鏡、空位子)依資料的 x、y 放,寬度由 CSS 決定。
-import { animMeta, roles, scenes } from './fable-anim-data.js?v=9bb0ba7';
-import { mountAnimation } from '../../shared/anim-player.js?v=9bb0ba7';
-import { FULL, SMALL_NAMES, smallSVG } from '../../shared/fable-props.js?v=9bb0ba7';
+import { animMeta, roles, scenes } from './fable-anim-data.js?v=c037c72';
+import { mountAnimation } from '../../shared/anim-player.js?v=c037c72';
+import { FULL, SMALL_NAMES, smallSVG } from '../../shared/fable-props.js?v=c037c72';
 
 const PROPS = {
   ...Object.fromEntries(Object.entries(FULL).map(([name, draw]) => [name, () => `<svg viewBox="0 0 160 90" class="p-fable p-fable-full fable-${name}">${draw()}</svg>`])),
