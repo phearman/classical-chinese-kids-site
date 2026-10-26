@@ -1,8 +1,8 @@
-import { initPage } from '../shared/page.js?v=ad37985';
-import { escapeHTML } from '../shared/terms.js?v=ad37985';
-import { WORDS } from './words-data.js?v=ad37985';
-import { COMICS } from './comics.js?v=ad37985';
-import { PAGE_SIZE, idiomURL, filterWords, visibleWords } from './list.js?v=ad37985';
+import { initPage } from '../shared/page.js?v=9bb0ba7';
+import { escapeHTML } from '../shared/terms.js?v=9bb0ba7';
+import { WORDS } from './words-data.js?v=9bb0ba7';
+import { COMICS } from './comics.js?v=9bb0ba7';
+import { PAGE_SIZE, idiomURL, filterWords, visibleWords } from './list.js?v=9bb0ba7';
 
 initPage();
 const app = document.getElementById('app');

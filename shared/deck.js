@@ -1,7 +1,7 @@
 // 翻頁式內容(WY13):一頁一張卡;上一頁/下一頁按鈕、←→ 鍵、手機左右滑;目前頁記在網址 #key(瀏覽器返回鍵可用)。
 // 各頁自己畫卡片內容,這裡只管「現在是哪一頁」與翻頁操作。
-import { escapeHTML } from './terms.js?v=ad37985';
-import { overlayOpen, onSwipe } from './page.js?v=ad37985';
+import { escapeHTML } from './terms.js?v=9bb0ba7';
+import { overlayOpen, onSwipe } from './page.js?v=9bb0ba7';
 
 // keys:頁的代號(網址 # 後面那段);onShow(key, index, total) 由各頁畫出目前頁
 // aliases:舊網址的錨點對應到頁(如 people.html#zengzi → p2),外部舊連結仍可用
