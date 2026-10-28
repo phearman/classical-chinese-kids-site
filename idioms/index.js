@@ -1,9 +1,9 @@
-import { initPage } from '../shared/page.js?v=c037c72';
-import { escapeHTML } from '../shared/terms.js?v=c037c72';
-import { WORDS } from './words-data.js?v=c037c72';
-import { COMICS } from './comics.js?v=c037c72';
-import { TOPIC_LABELS } from './categories.js?v=c037c72';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=c037c72';
+import { initPage } from '../shared/page.js?v=1c6b6ad';
+import { escapeHTML } from '../shared/terms.js?v=1c6b6ad';
+import { WORDS } from './words-data.js?v=1c6b6ad';
+import { COMICS } from './comics.js?v=1c6b6ad';
+import { TOPIC_LABELS } from './categories.js?v=1c6b6ad';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=1c6b6ad';
 
 initPage();
 const app = document.getElementById('app');

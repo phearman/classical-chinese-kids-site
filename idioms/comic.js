@@ -1,8 +1,8 @@
-import { initPage } from '../shared/page.js?v=c037c72';
-import { escapeHTML } from '../shared/terms.js?v=c037c72';
-import { COMICS, comicBySlug } from './comics.js?v=c037c72';
-import { idiomURL } from './list.js?v=c037c72';
-import { missingComicHTML } from './comic-view.js?v=c037c72';
+import { initPage } from '../shared/page.js?v=1c6b6ad';
+import { escapeHTML } from '../shared/terms.js?v=1c6b6ad';
+import { COMICS, comicBySlug } from './comics.js?v=1c6b6ad';
+import { idiomURL } from './list.js?v=1c6b6ad';
+import { missingComicHTML } from './comic-view.js?v=1c6b6ad';
 
 export const getComic = (id, comics = COMICS) => comicBySlug(id, comics);
 initPage();
