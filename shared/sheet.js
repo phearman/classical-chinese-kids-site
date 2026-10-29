@@ -1,5 +1,5 @@
 // 詞條小卡:點原文裡的詞,從下方滑出讀音、意思、作用、比喻。
-import { escapeHTML } from './terms.js?v=571e329';
+import { escapeHTML } from './terms.js?v=c96ea99';
 
 export function setupGlossary(glossary, root = document) {
   const dialog = document.createElement('dialog');

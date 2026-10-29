@@ -7,7 +7,7 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 
-import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=571e329';
+import { TW, narrator, kongzi, zengzi } from '../../shared/roles.js?v=c96ea99';
 
 export const animMeta = {
   title: '動畫故事：一聲「唯」',
