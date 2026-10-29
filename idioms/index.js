@@ -1,9 +1,9 @@
-import { initPage } from '../shared/page.js?v=c96ea99';
-import { escapeHTML } from '../shared/terms.js?v=c96ea99';
-import { WORDS } from './words-data.js?v=c96ea99';
-import { COMICS } from './comics.js?v=c96ea99';
-import { TOPIC_LABELS } from './categories.js?v=c96ea99';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=c96ea99';
+import { initPage } from '../shared/page.js?v=5c3538d';
+import { escapeHTML } from '../shared/terms.js?v=5c3538d';
+import { WORDS } from './words-data.js?v=5c3538d';
+import { COMICS } from './comics.js?v=5c3538d';
+import { TOPIC_LABELS } from './categories.js?v=5c3538d';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=5c3538d';
 
 initPage();
 const app = document.getElementById('app');
@@ -15,7 +15,10 @@ let shown = PAGE_SIZE;
 const byWord = new Map(COMICS.map((comic) => [comic.word, comic]));
 const readyCount = COMICS.filter((comic) => comic.ready === true).length;
 const readyComics = COMICS.filter((comic) => comic.ready === true);
-const eras = [...new Set(readyComics.map((comic) => eraOf(comic.era)))];
+// 時代依朝代先後排列(第 7 批起有「唐」),不照漫畫登記順序。
+const ERA_ORDER = ['先秦', '西漢', '東漢', '三國', '魏晉', '南北朝', '唐', '宋', '元', '明', '清'];
+const eraRank = (era) => { const i = ERA_ORDER.indexOf(era); return i < 0 ? ERA_ORDER.length : i; };
+const eras = [...new Set(readyComics.map((comic) => eraOf(comic.era)))].sort((a, b) => eraRank(a) - eraRank(b) || a.localeCompare(b, 'zh-Hant'));
 const books = [...new Set(readyComics.map((comic) => comic.book))];
 const filterLabels = [
   ['all', '全部'], ['common', '最常用 100 條'], ...Object.entries(TOPIC_LABELS),

@@ -1,8 +1,8 @@
 // 〈古代神話與寓言選〉「神話」動畫故事(WY26 PR-B1):本課的資料與道具;播放器共用 shared/anim-player.js。
 // 道具全部是程式繪製,和圖文故事共用 shared/myth-props.js(座標 160×90=舞台,鋪滿整個舞台)。旁白只用內建朗讀。
-import { animMeta, roles, scenes } from './anim-data.js?v=c96ea99';
-import { mountAnimation } from '../../shared/anim-player.js?v=c96ea99';
-import * as M from '../../shared/myth-props.js?v=c96ea99';
+import { animMeta, roles, scenes } from './anim-data.js?v=5c3538d';
+import { mountAnimation } from '../../shared/anim-player.js?v=5c3538d';
+import * as M from '../../shared/myth-props.js?v=5c3538d';
 
 const full = (name, body) => `<svg viewBox="0 0 160 90" class="p-myth p-${name}">${body}</svg>`;
 

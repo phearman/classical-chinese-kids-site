@@ -4,7 +4,7 @@
 // (只在 .stage 裡播,見 style.css「神話道具」),所以減少動態時關掉動畫就直接看到結果。
 // 安全(CPM 2026-10-22 核准):撞山只畫「砰」、震動、裂痕與暈頭小星星,不畫受傷;女媧只畫天柱立起、海龜游走(WY34 起海龜用 AI 生成圖,四肢完整、背上無物)。
 
-import { characterURL, backgroundURL } from './assets.js?v=c96ea99';
+import { characterURL, backgroundURL } from './assets.js?v=5c3538d';
 
 const wrap = (cls, body) => `<g class="m-art ${cls}">${body}</g>`;
 

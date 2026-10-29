@@ -1,11 +1,11 @@
 // 〈兒時記趣〉課文學習版:四段原文一句一頁(原文、點詞詞卡、白話),比喻、想一想、延伸閱讀、作者小檔案各自成頁。
 // 一屏版(比照第 4 課):上方段落籤可跳段;頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=c96ea99';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=c96ea99';
-import { setupGlossary } from '../../shared/sheet.js?v=c96ea99';
-import { initPage } from '../../shared/page.js?v=c96ea99';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=c96ea99';
-import { characterURL } from '../../shared/assets.js?v=c96ea99';
+import { lesson, glossary, study } from './data.js?v=5c3538d';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=5c3538d';
+import { setupGlossary } from '../../shared/sheet.js?v=5c3538d';
+import { initPage } from '../../shared/page.js?v=5c3538d';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=5c3538d';
+import { characterURL } from '../../shared/assets.js?v=5c3538d';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
