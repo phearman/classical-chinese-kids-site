@@ -1,4 +1,4 @@
-import { narrator } from '../../shared/roles.js?v=62dbb37';
+import { narrator } from '../../shared/roles.js?v=5f31c62';
 export const animMeta = { title: '動畫故事：古代寓言', note: '情節為教學改編；旁白依原典摘句與故事卡改寫成白話。' };
 export const roles = { narrator };
 const L = (text) => ({ at: 1, role: 'narrator', text });

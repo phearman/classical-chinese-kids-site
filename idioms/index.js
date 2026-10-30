@@ -1,9 +1,11 @@
-import { initPage } from '../shared/page.js?v=62dbb37';
-import { escapeHTML } from '../shared/terms.js?v=62dbb37';
-import { WORDS } from './words-data.js?v=62dbb37';
-import { COMICS } from './comics.js?v=62dbb37';
-import { TOPIC_LABELS } from './categories.js?v=62dbb37';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords } from './list.js?v=62dbb37';
+import { initPage } from '../shared/page.js?v=5f31c62';
+import { escapeHTML } from '../shared/terms.js?v=5f31c62';
+import { WORDS } from './words-data.js?v=5f31c62';
+import { COMICS } from './comics.js?v=5f31c62';
+import { TOPIC_LABELS } from './categories.js?v=5f31c62';
+import { ZHUYIN } from './zhuyin.js?v=5f31c62';
+import { zhuyinHTML } from './comic-view.js?v=5f31c62';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=5f31c62';
 
 initPage();
 const app = document.getElementById('app');
@@ -49,13 +51,22 @@ const chips = app.querySelectorAll('[data-filter]');
 const sourceFilters = app.querySelector('.idiom-source-filters');
 const sourceSelects = app.querySelectorAll('[data-source-filter]');
 
+// 網址參數:?filter=comic&era=先秦&book=《韓非子》&q=守株;不認得的值一律忽略。
+({ filter, era, book, query } = readFilterParams(new URLSearchParams(location.search), { filterIds: filterLabels.map(([id]) => id), eras, books }));
+search.value = query;
+sourceSelects.forEach((select) => { select.value = select.dataset.sourceFilter === 'era' ? era : book; });
+
+function syncURL() {
+  history.replaceState(null, '', filterSearch({ filter, era, book, query }) || location.pathname);
+}
+
 function renderResults({ keepMoreFocus = false } = {}) {
   const words = filterWords(WORDS, COMICS, query, filter, { era, book });
   const visible = visibleWords(words, shown);
   list.innerHTML = visible.map((word) => {
     const comic = byWord.get(word);
     const comicLink = comic?.ready === true ? `<a class="idiom-tag idiom-ready" href="comic.html?id=${encodeURIComponent(comic.slug)}">四格漫畫</a>` : '<span class="idiom-tag idiom-waiting">漫畫施工中</span>';
-    return `<li><span class="idiom-word">${escapeHTML(word)}</span><span class="idiom-actions">${comicLink}<a class="idiom-tag idiom-dict" href="${idiomURL(word)}" target="_blank" rel="noopener">成語典↗</a></span></li>`;
+    return `<li><span class="idiom-word">${comic?.ready === true ? zhuyinHTML(word, ZHUYIN[word]) : escapeHTML(word)}</span><span class="idiom-actions">${comicLink}<a class="idiom-tag idiom-dict" href="${idiomURL(word)}" target="_blank" rel="noopener">成語典↗</a></span></li>`;
   }).join('');
   count.textContent = `找到 ${words.length.toLocaleString('zh-Hant')} 條，目前顯示 ${visible.length.toLocaleString('zh-Hant')} 條`;
   chips.forEach((button) => {
@@ -64,6 +75,7 @@ function renderResults({ keepMoreFocus = false } = {}) {
     button.setAttribute('aria-pressed', String(current));
   });
   sourceFilters.hidden = filter !== 'comic';
+  syncURL();
   moreWrap.innerHTML = visible.length < words.length ? '<button type="button" class="idiom-more" id="idiom-more">再顯示 50 條</button>' : '';
   const more = moreWrap.querySelector('#idiom-more');
   more?.addEventListener('click', () => { shown += PAGE_SIZE; renderResults({ keepMoreFocus: true }); });

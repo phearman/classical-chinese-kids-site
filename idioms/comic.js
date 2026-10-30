@@ -1,8 +1,10 @@
-import { initPage } from '../shared/page.js?v=62dbb37';
-import { escapeHTML } from '../shared/terms.js?v=62dbb37';
-import { COMICS, comicBySlug } from './comics.js?v=62dbb37';
-import { idiomURL } from './list.js?v=62dbb37';
-import { missingComicHTML } from './comic-view.js?v=62dbb37';
+import { initPage } from '../shared/page.js?v=5f31c62';
+import { escapeHTML } from '../shared/terms.js?v=5f31c62';
+import { COMICS, comicBySlug } from './comics.js?v=5f31c62';
+import { idiomURL } from './list.js?v=5f31c62';
+import { WORDS } from './words-data.js?v=5f31c62';
+import { ZHUYIN, ZHUYIN_NOTES } from './zhuyin.js?v=5f31c62';
+import { missingComicHTML, comicNeighbors, comicNavHTML, zhuyinHTML } from './comic-view.js?v=5f31c62';
 
 export const getComic = (id, comics = COMICS) => comicBySlug(id, comics);
 initPage();
@@ -12,11 +14,13 @@ if (!comic) {
   app.innerHTML = missingComicHTML();
 } else {
   document.title = `${comic.word}｜成語漫畫｜文言文小幫手`;
-  app.innerHTML = `<main class="comic-view"><h1>${escapeHTML(comic.word)}</h1><p class="idiom-note">成語漫畫</p>
+  const nav = comicNeighbors(comic.slug, COMICS, WORDS);
+  app.innerHTML = `<main class="comic-view"><h1 class="zhuyin-word">${zhuyinHTML(comic.word, ZHUYIN[comic.word])}</h1>${ZHUYIN_NOTES[comic.word] ? `<p class="zhuyin-note">讀音提醒：${escapeHTML(ZHUYIN_NOTES[comic.word])}</p>` : ''}<p class="idiom-note">成語漫畫</p>
+    ${comicNavHTML(nav, '切換漫畫（頁首）')}
     <ol class="comic-panels">${comic.panels.map((text, i) => `<li>${comic.images[i] ? `<img src="${escapeHTML(comic.images[i])}" alt="第 ${i + 1} 格：${escapeHTML(text)}">` : `<div class="comic-placeholder" aria-label="第 ${i + 1} 格漫畫尚在製作"><b>${i + 1}</b><span>漫畫施工中</span></div>`}<p>${escapeHTML(text)}</p></li>`).join('')}</ol>
     <blockquote class="idiom-quote">${escapeHTML(comic.original)}<cite>${escapeHTML(comic.source)}</cite></blockquote>
     ${comic.note ? `<p class="idiom-note">${escapeHTML(comic.note)}</p>` : ''}
     <dl class="comic-details"><div><dt>出處</dt><dd>${escapeHTML(comic.book)}<br><span class="comic-era">${escapeHTML(comic.era)}</span></dd></div><div><dt>意思</dt><dd>${escapeHTML(comic.meaning)}</dd></div><div><dt>例句</dt><dd>${escapeHTML(comic.example)}</dd></div><div><dt>生活情境</dt><dd>${escapeHTML(comic.situation)}</dd></div></dl>
-    <a class="idiom-more" href="${idiomURL(comic.word)}" target="_blank" rel="noopener">教育部《成語典》查「${escapeHTML(comic.word)}」↗</a><a class="comic-back" href="index.html">← 回成語集</a>
+    <a class="idiom-more" href="${idiomURL(comic.word)}" target="_blank" rel="noopener">教育部《成語典》查「${escapeHTML(comic.word)}」↗</a>${comicNavHTML(nav, '切換漫畫（頁尾）')}<a class="comic-back" href="index.html?filter=comic">← 回成語集（有漫畫）</a>
     <p class="idiom-license">漫畫與文字：本站依古籍原文自行改寫；原典屬公有領域。</p></main>`;
 }
