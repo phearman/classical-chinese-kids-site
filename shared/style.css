@@ -1110,3 +1110,22 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .idiom-quote { margin: 16px 0; padding: 10px 12px; border-left: 4px solid var(--accent); border-radius: 8px; background: var(--quote-bg); font-family: var(--serif); font-size: 17px; }.idiom-quote cite { display: block; margin-top: 4px; color: var(--ink-soft); font-family: var(--sans); font-size: 13px; font-style: normal; }
 .comic-details > div { margin: 10px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }.comic-details dt { color: var(--moss); font-weight: 700; }.comic-details dd { margin: 2px 0 0; }.comic-era { color: var(--ink-soft); font-size: 14px; }
 @media (max-width: 360px) { .idiom-view, .comic-view { padding: 12px; }.idiom-list li { align-items: flex-start; flex-direction: column; }.idiom-actions { justify-content: flex-start; }.comic-panels { grid-template-columns: 1fr; } }
+/* 〈賣油翁〉(WY41 PR-B):故事插圖的草靶、銅錢特寫;動畫的草靶(箭一支支插上)、十支箭計數、倒油特寫 */
+.prop-target2 .stand, .p-target .stand { fill: none; stroke: var(--prop); stroke-width: 4; stroke-linecap: round; }
+.prop-target2 .ring, .p-target .ring { fill: var(--glow); stroke: var(--prop); stroke-width: 3; }
+.prop-target2 .ring2, .p-target .ring2 { fill: var(--art-floor); stroke: var(--prop); stroke-width: 2; }
+.prop-target2 .eye, .p-target .eye { fill: var(--accent); }
+.prop-target2 .arrow, .p-target .arrow { fill: none; stroke: var(--prop); stroke-width: 2.5; stroke-linecap: round; }
+.prop-coinlens2 .lens, .p-coinlens .lens { fill: var(--surface); stroke: var(--prop); stroke-width: 3; }
+.prop-coinlens2 .coin, .p-coinlens .coin { fill: #c9a24a; stroke: var(--prop); stroke-width: 2.5; }
+.prop-coinlens2 .hole, .p-coinlens .hole { fill: var(--surface); stroke: var(--prop); stroke-width: 2; }
+.prop-coinlens2 .oil, .p-coinlens .oil { fill: none; stroke: #d9a521; stroke-width: 3; stroke-linecap: round; }
+.prop-target { width: 15%; } .prop-tally { width: 30%; } .prop-coinlens { width: 22%; }
+.prop-target svg, .prop-tally svg, .prop-coinlens svg { width: 100%; display: block; }
+.p-target .p-arrow { opacity: 0; animation: fadeIn calc(.25s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (1s + var(--i) * 1.6s) / var(--speed)); }
+.p-tally .hit { fill: var(--accent); } .p-tally .miss { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.p-tally g { opacity: 0; animation: fadeIn calc(.3s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + (.5s + var(--i) * .5s) / var(--speed)); }
+.p-coinlens .drip { stroke-dasharray: 60; stroke-dashoffset: 60; animation: oilDrip calc(3s / var(--speed)) linear both; animation-delay: calc(var(--d, 0s) + 1s / var(--speed)); }
+.p-coinlens .dry { fill: var(--moss); opacity: 0; animation: fadeIn calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 4.5s / var(--speed)); }
+@keyframes oilDrip { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .p-target .p-arrow, .p-tally g, .p-coinlens .dry { animation: none; opacity: 1; } .p-coinlens .drip { animation: none; stroke-dashoffset: 0; } }

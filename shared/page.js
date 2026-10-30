@@ -1,9 +1,9 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=5f31c62';
-import { version } from './version.js?v=5f31c62';
-import { catalog } from '../catalog.js?v=5f31c62';
-import { siteMusic } from './sound.js?v=5f31c62';
+import { escapeHTML } from './terms.js?v=7c26351';
+import { version } from './version.js?v=7c26351';
+import { catalog } from '../catalog.js?v=7c26351';
+import { siteMusic } from './sound.js?v=7c26351';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
@@ -75,9 +75,7 @@ function menuHTML(here) {
       <summary>${escapeHTML(c.title)}</summary>${c.pages.map((p) => link(p.href, p.label)).join('')}</details>`).join('')}
     <h2>全站</h2>
     ${site.map((c) => link(c.pages[0].href, c.title)).join('')}
-    ${link('index.html', '課程目錄')}
-    <h2>其他課程</h2>
-    <span class="soon" aria-disabled="true">下一課<small>即將推出</small></span>`;
+    ${link('index.html', '課程目錄')}`;
 }
 
 const sw = (id, label, on, extra = '') =>

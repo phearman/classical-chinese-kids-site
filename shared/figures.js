@@ -1,7 +1,7 @@
 // 情境插圖:定稿的 Q 版角色圖(shared/characters/*.webp)+程式繪製的背景與道具。
 // 沒有定稿圖的角色才用程式繪製剪影(目前所有角色都有定稿圖)。
-import { escapeHTML } from './terms.js?v=5f31c62';
-import * as Myth from './myth-props.js?v=5f31c62';
+import { escapeHTML } from './terms.js?v=7c26351';
+import * as Myth from './myth-props.js?v=7c26351';
 
 // 角色 → 圖檔(定稿,見 assets/CREDITS.md)或剪影參數
 // height:同框時的身高(SVG 單位);width:畫框寬(可省,預設 110,橫向的圖才需要放寬)。孔子依《史記》「長九尺有六寸」約 190 公分以上,取學生的 1.2 倍。
@@ -44,11 +44,20 @@ export const ROLES = {
   'qi-min':       { label: '齊湣王', image: 'qi-min.webp', height: 134, width: 108 },
   'genglei':      { label: '更羸', image: 'genglei.webp', height: 142, width: 116 },
   'wei-wang':     { label: '魏王', image: 'wei-wang.webp', height: 136, width: 114 },
+  // 〈賣油翁〉(WY41 PR-B):使用者 2026-10-30 挑定陳堯咨 A、賣油翁 B、歐陽修 A;補姿勢與定稿同一人
+  'chenyaozi':       { label: '陳堯咨', image: 'chenyaozi.webp', height: 140 }, // 年輕官人,持弓
+  'chenyaozi-shoot': { label: '陳堯咨', image: 'chenyaozi-shoot.webp', height: 140 }, // 拉弓(不搭箭,朝畫面右邊的靶)
+  'chenyaozi-pout':  { label: '陳堯咨', image: 'chenyaozi-pout.webp', height: 140 }, // 鼓臉叉腰(忿然)
+  'chenyaozi-wave':  { label: '陳堯咨', image: 'chenyaozi-wave.webp', height: 140 }, // 笑著揮手(笑而遣之)
+  'maiyouweng':      { label: '賣油翁', image: 'maiyouweng.webp', height: 124, width: 100 }, // 瘦小的老人,比陳堯咨矮;擔子放在腳邊
+  'maiyouweng-nod':  { label: '賣油翁', image: 'maiyouweng-nod.webp', height: 124 }, // 斜看點頭(睨之、微頷之)
+  'maiyouweng-pour': { label: '賣油翁', image: 'maiyouweng-pour.webp', height: 100 }, // 蹲下倒油
+  'ouyangxiu':       { label: '歐陽修', image: 'ouyangxiu.webp', height: 120, width: 124 }, // 作者,伏案寫書
 };
 
 // 以模組位置為基準組圖檔網址,哪一層的頁面引用都對
-export { characterURL as imageURL } from './assets.js?v=5f31c62';
-import { characterURL as imageURL } from './assets.js?v=5f31c62';
+export { characterURL as imageURL } from './assets.js?v=7c26351';
+import { characterURL as imageURL } from './assets.js?v=7c26351';
 
 // 甲蟲(程式繪製,WY29):側面看,分節(頭、胸、鞘翅)、六隻腳(遠側三隻較淡)、觸角、大顎。
 // 原點在腳底中央、面向右,長約 22 單位;s=縮放,flip=面向左。圖文故事與動畫第 6 幕共用。
@@ -143,6 +152,13 @@ const PROPS = {
       + `<circle class="thread-ring" cx="${cx}" cy="${cy}" r="${r}"/>${small}${strung}`
       + `<text class="label" x="${cx}" y="168">紅線＝一以貫之</text></g>`;
   },
+  // 〈賣油翁〉(WY41):草靶(箭只插在靶上)、銅錢特寫(油線穿過方孔,錢面乾淨)
+  target: () => '<g class="prop-target2"><path class="stand" d="M270 176 L284 120 L298 176 M276 150 H292"/>'
+    + '<circle class="ring" cx="284" cy="104" r="26"/><circle class="ring2" cx="284" cy="104" r="17"/><circle class="eye" cx="284" cy="104" r="8"/>'
+    + '<path class="arrow" d="M284 102 L262 98 M287 108 L265 110 M280 97 L259 90 M289 101 L268 92 M283 111 L262 118"/></g>',
+  coinlens: () => '<g class="prop-coinlens2"><circle class="lens" cx="250" cy="70" r="44"/>'
+    + '<path class="oil" d="M250 26 V70"/><circle class="coin" cx="250" cy="74" r="26"/><rect class="hole" x="242" y="66" width="16" height="16"/>'
+    + '<path class="oil" d="M250 70 V80"/></g>',
 
 };
 

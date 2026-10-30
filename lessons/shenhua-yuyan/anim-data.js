@@ -7,7 +7,7 @@
 //        items 畫面元件:actor 角色 / text 浮字 / prop 道具(見 animation.js 的 PROPS)
 // 位置一律用舞台百分比:x=水平中心、y=底部(角色)或中心(文字),h=角色高度。
 // 安全處理(CPM 核准):共工只衝不傷;盤古化身用對照圖;「斷鼇足」只用旁白帶過;不放猛獸食人與殺黑龍;夸父只畫跪下。
-import { narrator } from '../../shared/roles.js?v=5f31c62';
+import { narrator } from '../../shared/roles.js?v=7c26351';
 
 export const animMeta = {
   title: '動畫故事：古代神話',
