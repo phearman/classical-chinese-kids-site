@@ -74,6 +74,15 @@ export const catalog = [
     ],
   },
   {
+    id: 'map',
+    section: 'site',
+    title: '文言文地圖',
+    subtitle: '課文、人物、成語故事發生在哪個朝代、哪裡',
+    pages: [
+      { href: 'map/index.html', label: '文言文地圖', desc: '依朝代看故事發生的地方,地圖可拖曳看同時期的其他國家' },
+    ],
+  },
+  {
     id: 'classroom',
     section: 'site', // 全站頁面(選單放在「全站」,不是一課)
     title: '孔子講堂',

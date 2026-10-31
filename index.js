@@ -1,9 +1,9 @@
 // 課程目錄頁。一屏版(WY13):選單式首頁。WY19 起每課一列、可收合(<details>):
 // 預設只顯示課名和一行說明,點開才出現各頁按鈕;一次只開一課;預設展開上次看過的課(ccc:lesson,由 page.js 記),
 // 沒有紀錄就展開目錄最後一課。課再多也維持一屏。
-import { catalog } from './catalog.js?v=7c26351';
-import { escapeHTML } from './shared/terms.js?v=7c26351';
-import { initPage, PREF_KEYS } from './shared/page.js?v=7c26351';
+import { catalog } from './catalog.js?v=64f7467';
+import { escapeHTML } from './shared/terms.js?v=64f7467';
+import { initPage, PREF_KEYS } from './shared/page.js?v=64f7467';
 
 // 先讀上次看過的課,再呼叫 initPage(首頁本身不屬於任何一課,不會改寫紀錄)
 let last = null;
