@@ -138,3 +138,53 @@
   .cmap-detail { max-height: 34%; }
   .cmap-legend { display: none; }
 }
+
+/* WY47:完整朝代序列——捲軸一律單行橫捲;沒有故事的年代灰色;朝代/臺灣時間線切換 */
+.cmap-track { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; scroll-behavior: smooth; }
+.cmap-stop { flex: 0 0 auto; min-width: 64px; }
+.cmap-stop.none:not(.cur) { color: var(--ink-soft); background: var(--surface); border-style: dashed; }
+.cmap-stop.none:not(.cur) b { font-weight: 400; }
+.cmap-era.none > button { color: var(--ink-soft); }
+.cmap-era.none > button b { font-weight: 400; }
+.cmap-era.none .cmap-cnt { font-size: 11px; }
+.cmap-trk { display: flex; flex: none; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.cmap-trk button { border: 0; background: var(--bg); color: var(--ink); padding: 0 8px; min-height: 36px; cursor: pointer; font: inherit; font-size: 13px; }
+.cmap-trk button[aria-pressed="true"] { background: var(--accent-soft); font-weight: 700; }
+.cmap-none-msg { color: var(--ink-soft); font-size: 13px; margin: 8px 2px; }
+.cmap-chips button.none:not([aria-pressed="true"]) { color: var(--ink-soft); background: transparent; border-style: dashed; }
+.cmap-chips button small { font-size: 11px; }
+/* 縮放鈕永遠在最上層;很窄的畫面(如 375 寬放大 200%)頁腳出處讓出右邊縮放鈕那一欄,避免連結蓋住按鈕 */
+.cmap-tools { z-index: 2; }
+@media (max-width: 479px) { .cmap-credit { right: 46px; font-size: 9px; } }
+
+/* WY48:臺灣時期線「當時的世界」說明卡、示意航線的站 */
+.cmap-tw h2 { flex-wrap: wrap; gap: 6px; }
+.cmap-tw h3 { font-size: 14px; margin: 10px 0 2px; color: var(--accent); }
+.cmap-tw p { margin: 2px 0 6px; line-height: 1.7; }
+.cmap-tw details { margin-top: 8px; }
+.cmap-tw details ul { margin: 4px 0; padding-left: 18px; }
+.cmap-tw details li { margin: 2px 0; }
+.cmap-tw details a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.cmap-tw-tabs { display: flex; gap: 6px; margin-bottom: 6px; }
+.cmap-tw-tabs button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 2px 12px; min-height: 32px; font: inherit; font-size: 14px; cursor: pointer; }
+.cmap-tw-tabs button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+.cmap-ok { display: inline-block; font-size: 11px; line-height: 1.4; border-radius: 4px; padding: 0 4px; font-weight: 400; white-space: nowrap; color: #2f6b3a; background: #e8f3ea; border: 1px solid #9cc8a5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cmap-ok { color: #a9dbb3; background: #1f3324; border-color: #44704d; } }
+:root[data-theme="dark"] .cmap-ok { color: #a9dbb3; background: #1f3324; border-color: #44704d; }
+.m-stop { fill: var(--accent); stroke: var(--bg); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.cmap-tw button.cmap-go { border: 0; cursor: pointer; font: inherit; font-size: 14px; }
+/* WY49:說明卡的條列與示意圖(南島語族族譜樹) */
+.cmap-tw-tabs { flex-wrap: wrap; }
+.cmap-tw-list { margin: 2px 0 6px; padding-left: 20px; line-height: 1.7; }
+.cmap-fig { margin: 8px 0; }
+.cmap-fig svg { width: 100%; max-width: 460px; height: auto; display: block; }
+.cmap-fig figcaption { font-size: 12px; color: var(--ink-soft); }
+.cmap-fig .t-tw, .cmap-fig .t-mp { fill: none; stroke-width: 2; }
+.cmap-fig .t-tw { stroke: var(--accent); }
+.cmap-fig .t-mp { stroke: var(--ink-soft); stroke-width: 1.4; }
+.cmap-fig .t-root { fill: var(--ink); }
+.cmap-fig .t-twd { fill: var(--accent); }
+.cmap-fig .t-lab { font-size: 11px; fill: var(--ink); }
+.cmap-fig .t-lab.b { font-weight: 700; }
+.cmap-fig .t-lab.s { font-size: 9.5px; fill: var(--ink-soft); }
+.cmap-fig .t-box { fill: var(--accent-soft); opacity: .45; stroke: var(--accent); stroke-dasharray: 3 3; }

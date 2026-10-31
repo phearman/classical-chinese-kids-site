@@ -3,7 +3,7 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=985c7ed';
+import { COMICS } from '../idioms/comics.js?v=96152c1';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -54,37 +54,69 @@ export const PLACES = Object.freeze([
 ]);
 const placeById = Object.fromEntries(PLACES.map((p) => [p.id, p]));
 
-// 年代(依故事發生的時代);time 是通行分法,待查證。清單可往後加(WY43 台灣)。
+// 年代:完整朝代序列(WY47,使用者「地圖要以歷史的角度來看」);time 是通行分法。
+// track:沒寫=中國朝代(預設);tw=臺灣時期線(WY47 mockup 選項,待使用者確認);note:圖例補充說明
 export const ERAS = Object.freeze([
   { id: 'myth', name: '神話傳說', time: '遠古' },
+  { id: 'xia', name: '夏', time: '約前2070~前1600', note: '傳說/考古推定;疆界資料沒有夏,不畫疆界' },
+  { id: 'shang', name: '商', time: '約前1600~前1046', note: '考古推定;疆界是大致範圍' },
+  { id: 'xz', name: '西周', time: '前1046~前771' },
   { id: 'cq', name: '春秋', time: '前770~前476' },
   { id: 'zg', name: '戰國', time: '前475~前221' },
-  { id: 'qin', name: '秦', time: '前221~前207' }, // 疆界用前 210 年切片(WY46)
-  { id: 'xh', name: '西漢', time: '前202~8' },
+  { id: 'qin', name: '秦', time: '前221~前207' },
+  { id: 'xh', name: '西漢', time: '前202~23(含新朝)' },
   { id: 'dh', name: '東漢', time: '25~220' },
-  { id: 'njb', name: '魏晉南北朝', time: '220~589' },
-  { id: 'song', name: '宋', time: '960~1279' },
+  { id: 'sg', name: '三國', time: '220~280' },
+  { id: 'xj', name: '西晉', time: '266~316' },
+  { id: 'dj', name: '東晉十六國', time: '317~420' },
+  { id: 'nbc', name: '南北朝', time: '420~589' },
+  { id: 'sui', name: '隋', time: '581~618' },
+  { id: 'tang', name: '唐', time: '618~907' },
+  { id: 'wd', name: '五代十國', time: '907~979' },
+  { id: 'bs', name: '北宋', time: '960~1127' },
+  { id: 'ns', name: '南宋', time: '1127~1279' },
+  { id: 'yuan', name: '元', time: '1271~1368' },
+  { id: 'ming', name: '明', time: '1368~1644' },
   { id: 'qing', name: '清', time: '1644~1912' },
+  { id: 'roc', name: '中華民國', time: '1912~1949', note: '疆界是當年實際控制範圍(臺灣當時屬日本)' },
+  { id: 'prc', name: '中華人民共和國', time: '1949~', note: '與「中華民國(臺灣)」同一張當代疆界' },
+  { id: 'roctw', name: '中華民國(臺灣)', time: '1949~', note: '與「中華人民共和國」同一張當代疆界' },
   { id: 'out', name: '中國以外', time: '佛經故事' },
+  { id: 'tw-pre', name: '原住民族', time: '~1624', track: 'tw', note: '疆界資料沒有這時期的臺灣政權,不畫疆界' },
+  { id: 'tw-hx', name: '荷西', time: '1624~1662', track: 'tw', note: '荷蘭在南、西班牙在北(1626~1642)' },
+  { id: 'tw-mz', name: '明鄭', time: '1662~1683', track: 'tw' },
+  { id: 'tw-ql', name: '清領', time: '1683~1895', track: 'tw' },
+  { id: 'tw-rz', name: '日治', time: '1895~1945', track: 'tw' },
+  { id: 'tw-zh', name: '戰後', time: '1945~', track: 'tw' },
 ]);
 
-// 各年代用哪一份疆界切片(site/map/borders/{slice}-world|detail.json);魏晉南北朝依國別分兩份;神話、中國以外不畫疆界
-// 秦:前 210 年切片(WY46;秦二世即位那年,天下仍統一,指鹿為馬的時代)
-export const SLICE_OF = { cq: 'bc500', zg: 'bc300', qin: 'bc210', xh: 'bc100', dh: '150', njb: { jin: '300', liang: '530', _: '300' }, song: '1050', qing: '1780' };
+// 各年代用哪一份疆界切片(site/map/borders/{slice}-world|detail.json);神話、夏、中國以外、臺灣原住民族時期不畫疆界
+export const SLICE_OF = { shang: 'bc1250', xz: 'bc900', cq: 'bc500', zg: 'bc300', qin: 'bc210', xh: 'bc100', dh: '150', sg: '230', xj: '300', dj: '380', nbc: '530',
+  sui: '610', tang: '740', wd: '940', bs: '1050', ns: '1180', yuan: '1300', ming: '1550', qing: '1780', roc: '1930', prc: '2000', roctw: '2000',
+  'tw-hx': '1640', 'tw-mz': '1670', 'tw-ql': '1780', 'tw-rz': '1930', 'tw-zh': '2000' };
 export const sliceFor = (era, state) => { const s = SLICE_OF[era]; return typeof s === 'object' ? s[state] || s._ : s || null; };
 
 // 各年代的國別與都城;clio=對應到 site/map/borders 切片裡的政權英文名(Cliopatria),地圖用來加深該國疆界(null=切片裡沒有)
 const S = (id, name, capital, clio = null) => ({ id, name, capital, clio });
 export const STATES = Object.freeze({
-  myth: [], out: [],
+  myth: [], out: [], xia: [], 'tw-pre': [],
+  shang: [S('shang', '商', null, 'Shang Dynasty')], xz: [S('zhou', '西周', null, 'Zhou Dynasty')],
   cq: [S('lu', '魯', 'qufu', 'Lu'), S('qi', '齊', 'linzi', 'Qi'), S('wei4', '衛', 'diqiu', 'Wey'), S('jin', '晉', 'xintian', 'Jin'), S('chen', '陳', 'wanqiu', 'Chen'), S('qii', '杞', 'qi'),
     S('song', '宋', 'shangqiu', 'Song'), S('zheng', '鄭', 'xinzheng', 'Zheng'), S('chu', '楚', 'ying', 'Chu'), S('wu', '吳', 'gusu', 'Wu'), S('yue', '越', 'kuaiji', 'Yue'), S('qin', '秦', 'yong', 'Qin'), S('yan', '燕', 'ji', 'Yan')],
   zg: [S('zhao', '趙', 'handan', 'Zhao'), S('wei', '魏', 'daliang', null /* 切片裡的 Wei 位置在河北北部,與史書不符(見 borders 的 nt),不加深 */), S('han', '韓', 'xinzheng', 'Han'), S('qi', '齊', 'linzi', 'Qi'), S('yan', '燕', 'ji', 'Yan'), S('song', '宋', 'shangqiu', 'Song'),
     S('chu', '楚', 'ying', 'Chu'), S('qin', '秦', 'xianyang', 'Qin')],
   qin: [S('qin', '秦', 'xianyang', 'Qin Dynasty')],
   xh: [S('han', '西漢', 'changan', 'Han Dynasty')], dh: [S('han', '東漢', 'luoyang', 'Han Dynasty')],
-  njb: [S('jin', '西晉', 'luoyang', 'Western Jin'), S('liang', '南朝梁', 'jiankang', 'Liang Dynasty')],
-  song: [S('bs', '北宋', 'kaifeng', 'Northern Song')], qing: [S('qing', '清', null, 'Qing Dynasty')],
+  sg: [S('wei', '曹魏', null, 'Cao Wei'), S('shu', '蜀漢', null, 'Shu Han'), S('wu', '東吳', null, 'Eastern Wu')],
+  xj: [S('jin', '西晉', 'luoyang', 'Western Jin')],
+  dj: [S('dj', '東晉', 'jiankang', 'Western Jin' /* 原資料 317 年後仍叫 Western Jin,中文名已依年代改為東晉(見 borders 的 nt) */), S('qq', '前秦', null, 'Former Qin')],
+  nbc: [S('liang', '南朝梁', 'jiankang', 'Liang Dynasty')],
+  sui: [S('sui', '隋', null, 'Sui Dynasty')], tang: [S('tang', '唐', null, 'Tang Dynasty')], wd: [S('hj', '後晉', null, 'Later Jin')],
+  bs: [S('bs', '北宋', 'kaifeng', 'Northern Song')], ns: [S('ns', '南宋', null, 'Southern Song')], yuan: [S('yuan', '元', null, 'Yuan Dynasty')], ming: [S('ming', '明', null, 'Ming Dynasty')],
+  qing: [S('qing', '清', null, 'Qing Dynasty')], roc: [S('roc', '中華民國', null, 'Republic of China')],
+  prc: [S('prc', '中華人民共和國', null, "People's Republic of China")], roctw: [S('roctw', '中華民國(臺灣)', null, 'Republic of China')],
+  'tw-hx': [S('nl', '荷蘭', null, 'Dutch Republic'), S('es', '西班牙', null, 'Spanish Empire')], 'tw-mz': [S('mz', '明鄭', null, 'Southern Ming')],
+  'tw-ql': [S('qing', '清', null, 'Qing Dynasty')], 'tw-rz': [S('jp', '日本', null, 'Empire of Japan')], 'tw-zh': [S('roc', '中華民國', null, 'Republic of China')],
 });
 
 const comicHref = (word) => { const c = COMICS.find((x) => x.word === word); return c ? `idioms/comic.html?id=${encodeURIComponent(c.slug)}` : null; };
@@ -126,6 +158,7 @@ export const ITEMS = Object.freeze([
   C('東施效顰', 'cq', 'yue', 'kuaiji', '西施的鄰里(原文沒寫國別)', '《莊子‧天運》', '只寫西施,沒寫年代;師金對顏淵說', 'speaker', '原文沒寫國別;西施是越國人為通行說法,點標在越國都城'),
   C('杞人憂天', 'cq', 'qii', 'qi', '杞國', '《列子‧天瑞》', '只寫杞國,沒寫年代', 'book', CAP),
   C('韋編三絕', 'cq', 'lu', 'qufu', '孔子晚年讀《易》(原文沒寫地點)', '《史記‧孔子世家》', '孔子晚而喜《易》', 'text', '原文沒寫地點,依孔子晚年在魯國推算'),
+  C('百步穿楊', 'cq', 'chu', 'ying', '楚國養由基射柳葉', '《戰國策‧西周策》', '楚國養由基(蘇厲勸白起時說的故事,沒寫年代)', 'text', CAP),
   // 戰國
   C('守株待兔', 'zg', 'song', 'shangqiu', '宋國', '《韓非子‧五蠹》', '只寫宋人,沒寫年代', 'book', CAP),
   C('揠苗助長', 'zg', 'song', 'shangqiu', '宋國', '《孟子‧公孫丑上》', '只寫宋人,沒寫年代;孟子說的比喻', 'speaker', CAP),
@@ -145,9 +178,11 @@ export const ITEMS = Object.freeze([
   C('負荊請罪', 'zg', 'zhao', 'handan', '趙國', '《史記‧廉頗藺相如列傳》', '趙惠文王時', 'text', CAP),
   C('完璧歸趙', 'zg', 'zhao', 'handan', '趙國→秦國', '《史記‧廉頗藺相如列傳》', '趙惠文王時', 'text', '原文寫趙、秦兩國,點標在兩國都城', { to: 'xianyang' }),
   C('毛遂自薦', 'zg', 'zhao', 'handan', '秦圍邯鄲,平原君到楚國求救', '《史記‧平原君虞卿列傳》', '秦圍邯鄲,平原君求救於楚', 'text', '', { to: 'ying' }),
+  C('一字千金', 'zg', 'qin', 'xianyang', '咸陽市門', '《史記‧呂不韋列傳》', '呂不韋為秦相時', 'text'),
   C('鷸蚌相爭', 'zg', 'yan', 'yishui', '「過易水」', '《戰國策‧燕策二》', '蘇代為燕國勸趙惠王', 'speaker'),
   C('井底之蛙', 'zg', null, null, '寓言,沒有地點', '《莊子‧秋水》', '寓言,沒寫年代', 'book'),
   C('朝三暮四', 'zg', null, null, '寓言,沒有地點', '《莊子‧齊物論》', '寓言,沒寫年代', 'book'),
+  C('望洋興嘆', 'zg', null, null, '寓言(河伯到北海),沒有實際地點', '《莊子‧秋水》', '寓言,沒寫年代', 'book'),
   // 秦
   C('指鹿為馬', 'qin', 'qin', 'xianyang', '秦二世的朝廷', '《史記‧秦始皇本紀》', '秦二世時,趙高為丞相', 'text', '原文沒寫地點,依秦都咸陽推算'),
   // 西漢、東漢
@@ -155,17 +190,19 @@ export const ITEMS = Object.freeze([
   C('曲突徙薪', 'xh', 'han', 'changan', '上書漢宣帝時說的比喻', '《漢書‧霍光金日磾傳》', '有人為徐福上書漢宣帝時說的比喻', 'speaker', '上書地點依西漢都城推算'),
   C('杯弓蛇影', 'dh', 'han', 'jixian', '應郴任汲令', '《風俗通義‧怪神》', '應劭的祖父應郴任汲令時', 'text'),
   C('梁上君子', 'dh', 'han', 'xu', '陳寔家', '《後漢書‧陳寔傳》', '陳寔', 'text', '陳寔為潁川許人(待查證),點標在許昌示意'),
+  C('投筆從戎', 'dh', 'han', 'luoyang', '班超隨母到洛陽', '《後漢書‧班超傳》', '永平五年,兄班固被召為校書郎', 'text'),
   C('吳下阿蒙', 'dh', 'han', null, '魯肅赴陸口途中「過蒙屯下」(原文沒寫確切地點)', '《三國志‧吳書‧呂蒙傳》裴注引《江表傳》', '孫權勸呂蒙讀書;魯肅代周瑜後(東漢末)', 'text'),
   C('望梅止渴', 'dh', 'han', null, '曹操行軍途中(原文沒寫地點)', '《世說新語‧假譎》', '魏武(曹操)行軍', 'text'),
   C('對牛彈琴', 'dh', null, null, '比喻,沒有地點', '牟子《理惑論》', '公明儀的故事,沒寫年代;牟子引用', 'book'),
   // 魏晉南北朝、宋、清
-  C('聞雞起舞', 'njb', 'jin', 'luoyang', '祖逖、劉琨任司州主簿', '《晉書‧祖逖傳》', '祖逖、劉琨任司州主簿時', 'text', '依司州治所在洛陽推算(待查證)'),
-  C('洛陽紙貴', 'njb', 'jin', 'luoyang', '洛陽', '《晉書‧文苑傳‧左思》', '左思作〈三都賦〉,皇甫謐作序、張華讚賞', 'text'),
-  C('畫龍點睛', 'njb', 'liang', 'jiankang', '金陵安樂寺', '《太平廣記》卷二一一引《名畫記》', '張僧繇在金陵安樂寺畫龍', 'text'),
-  C('胸有成竹', 'song', 'bs', 'yangzhou', '篔簹谷(洋州)', '蘇軾〈文與可畫篔簹谷偃竹記〉', '文與可(文同)', 'text'),
-  C('名落孫山', 'song', 'bs', 'gusu', '「吳人孫山」', '范公偁《過庭錄》', '只寫「吳人孫山」,沒寫年代', 'book', '依「吳人」推算在今蘇州一帶'),
-  I('lesson', '賣油翁', 'song', 'bs', null, '陳堯咨家的園子(原文沒寫地點)', '歐陽修〈賣油翁〉(《歸田錄》)', '陳康肅公堯咨', 'text', '', 'lessons/maiyouweng/story.html', { sub: '熟能生巧的出處' }),
-  C('熟能生巧', 'song', 'bs', null, '陳堯咨家的園子(原文沒寫地點)', '歐陽修〈賣油翁〉(《歸田錄》)', '陳康肅公堯咨', 'text'),
+  C('聞雞起舞', 'xj', 'jin', 'luoyang', '祖逖、劉琨任司州主簿', '《晉書‧祖逖傳》', '祖逖、劉琨任司州主簿時', 'text', '依司州治所在洛陽推算(待查證)'),
+  C('洛陽紙貴', 'xj', 'jin', 'luoyang', '洛陽', '《晉書‧文苑傳‧左思》', '左思作〈三都賦〉,皇甫謐作序、張華讚賞', 'text'),
+  C('入木三分', 'dj', 'dj', 'jiankang', '「祭北郊」(原文沒寫地點)', '《太平廣記》卷二〇七引《筆陣圖》', '晉帝時(東晉)王羲之書祭北郊文', 'text', '原文沒寫地點,依東晉都城建康推算'),
+  C('畫龍點睛', 'nbc', 'liang', 'jiankang', '金陵安樂寺', '《太平廣記》卷二一一引《名畫記》', '張僧繇在金陵安樂寺畫龍', 'text'),
+  C('胸有成竹', 'bs', 'bs', 'yangzhou', '篔簹谷(洋州)', '蘇軾〈文與可畫篔簹谷偃竹記〉', '文與可(文同)', 'text'),
+  C('名落孫山', 'bs', 'bs', 'gusu', '「吳人孫山」', '范公偁《過庭錄》', '只寫「吳人孫山」,沒寫年代', 'book', '依「吳人」推算在今蘇州一帶'),
+  I('lesson', '賣油翁', 'bs', 'bs', null, '陳堯咨家的園子(原文沒寫地點)', '歐陽修〈賣油翁〉(《歸田錄》)', '陳康肅公堯咨', 'text', '', 'lessons/maiyouweng/story.html', { sub: '熟能生巧的出處' }),
+  C('熟能生巧', 'bs', 'bs', null, '陳堯咨家的園子(原文沒寫地點)', '歐陽修〈賣油翁〉(《歸田錄》)', '陳康肅公堯咨', 'text'),
   I('lesson', '兒時記趣', 'qing', 'qing', 'canglang', '沈復家(蘇州滄浪亭旁)', '沈復《浮生六記》卷一', '沈復自述「余憶童稚時」', 'text', '原文沒寫童年住處;依卷一自述家在滄浪亭旁推算', LESSON.ershi, { sub: '翰林七上第 7 課' }),
   I('person', '沈復', 'qing', 'qing', 'canglang', '「居蘇州滄浪亭畔」', '《浮生六記》卷一自述', '《浮生六記》自述生於乾隆癸未年', 'text', '', 'lessons/ershi-jiqu/people.html'),
   // 中國以外
