@@ -3,7 +3,7 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=79dca84';
+import { COMICS } from '../idioms/comics.js?v=985c7ed';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -59,7 +59,7 @@ export const ERAS = Object.freeze([
   { id: 'myth', name: '神話傳說', time: '遠古' },
   { id: 'cq', name: '春秋', time: '前770~前476' },
   { id: 'zg', name: '戰國', time: '前475~前221' },
-  { id: 'qin', name: '秦', time: '前221~前207', borderNote: '疆界暫用戰國末,秦朝疆界施工中' }, // CPM 裁 A(2026-10-31):秦代切片另開工項
+  { id: 'qin', name: '秦', time: '前221~前207' }, // 疆界用前 210 年切片(WY46)
   { id: 'xh', name: '西漢', time: '前202~8' },
   { id: 'dh', name: '東漢', time: '25~220' },
   { id: 'njb', name: '魏晉南北朝', time: '220~589' },
@@ -69,8 +69,8 @@ export const ERAS = Object.freeze([
 ]);
 
 // 各年代用哪一份疆界切片(site/map/borders/{slice}-world|detail.json);魏晉南北朝依國別分兩份;神話、中國以外不畫疆界
-// 秦:目前沒有秦代切片,暫用 bc300(戰國末)且不加深國界,圖例改標 borderNote(CPM 2026-10-31 裁 A;秦代切片另開工項)
-export const SLICE_OF = { cq: 'bc500', zg: 'bc300', qin: 'bc300', xh: 'bc100', dh: '150', njb: { jin: '300', liang: '530', _: '300' }, song: '1050', qing: '1780' };
+// 秦:前 210 年切片(WY46;秦二世即位那年,天下仍統一,指鹿為馬的時代)
+export const SLICE_OF = { cq: 'bc500', zg: 'bc300', qin: 'bc210', xh: 'bc100', dh: '150', njb: { jin: '300', liang: '530', _: '300' }, song: '1050', qing: '1780' };
 export const sliceFor = (era, state) => { const s = SLICE_OF[era]; return typeof s === 'object' ? s[state] || s._ : s || null; };
 
 // 各年代的國別與都城;clio=對應到 site/map/borders 切片裡的政權英文名(Cliopatria),地圖用來加深該國疆界(null=切片裡沒有)
@@ -81,7 +81,7 @@ export const STATES = Object.freeze({
     S('song', '宋', 'shangqiu', 'Song'), S('zheng', '鄭', 'xinzheng', 'Zheng'), S('chu', '楚', 'ying', 'Chu'), S('wu', '吳', 'gusu', 'Wu'), S('yue', '越', 'kuaiji', 'Yue'), S('qin', '秦', 'yong', 'Qin'), S('yan', '燕', 'ji', 'Yan')],
   zg: [S('zhao', '趙', 'handan', 'Zhao'), S('wei', '魏', 'daliang', null /* 切片裡的 Wei 位置在河北北部,與史書不符(見 borders 的 nt),不加深 */), S('han', '韓', 'xinzheng', 'Han'), S('qi', '齊', 'linzi', 'Qi'), S('yan', '燕', 'ji', 'Yan'), S('song', '宋', 'shangqiu', 'Song'),
     S('chu', '楚', 'ying', 'Chu'), S('qin', '秦', 'xianyang', 'Qin')],
-  qin: [S('qin', '秦', 'xianyang')],
+  qin: [S('qin', '秦', 'xianyang', 'Qin Dynasty')],
   xh: [S('han', '西漢', 'changan', 'Han Dynasty')], dh: [S('han', '東漢', 'luoyang', 'Han Dynasty')],
   njb: [S('jin', '西晉', 'luoyang', 'Western Jin'), S('liang', '南朝梁', 'jiankang', 'Liang Dynasty')],
   song: [S('bs', '北宋', 'kaifeng', 'Northern Song')], qing: [S('qing', '清', null, 'Qing Dynasty')],

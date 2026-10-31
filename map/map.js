@@ -1,10 +1,10 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記分兩種:「AI 推算」=原文沒寫、AI 推算的年代或地點;「都城示意」=原文只寫國別,點標在該國都城。
-import { initPage } from '../shared/page.js?v=79dca84';
-import { escapeHTML as esc } from '../shared/terms.js?v=79dca84';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor } from './places.js?v=79dca84';
-import { WORLD_BASE as B } from './world-base.js?v=79dca84';
+import { initPage } from '../shared/page.js?v=985c7ed';
+import { escapeHTML as esc } from '../shared/terms.js?v=985c7ed';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor } from './places.js?v=985c7ed';
+import { WORLD_BASE as B } from './world-base.js?v=985c7ed';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -19,7 +19,7 @@ const CCBY = 'https://creativecommons.org/licenses/by/4.0/';
 const L = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
 const FILLS = ['#c9a27e', '#9fb38a', '#a9b7c9', '#d1a7a0', '#c2b37a', '#b3a2c4', '#8fb3ad', '#d4b48c', '#a8b98f', '#c7a3b4'];
 // 各年代一開始看的範圍 [西經, 南緯, 東經, 北緯]
-const VIEW = { myth: [104, 30, 122, 40.5], cq: [105, 28.5, 122.5, 41], zg: [104, 28.5, 122.5, 41.5], xh: [96, 20, 126, 45], dh: [96, 20, 126, 45],
+const VIEW = { myth: [104, 30, 122, 40.5], cq: [105, 28.5, 122.5, 41], zg: [104, 28.5, 122.5, 41.5], qin: [98, 20, 126, 44], xh: [96, 20, 126, 45], dh: [96, 20, 126, 45],
   njb: [100, 20, 125, 44], song: [96, 18, 128, 46], qing: [88, 16, 130, 52], out: [62, 5, 125, 45] };
 const viewOf = (era) => { const [w, s, e, n] = VIEW[era]; const [x1, y1] = P([w, n]), [x2, y2] = P([e, s]); return [x1, y1, x2 - x1, y2 - y1]; };
 
