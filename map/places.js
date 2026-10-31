@@ -3,7 +3,7 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=64f7467';
+import { COMICS } from '../idioms/comics.js?v=79dca84';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -59,6 +59,7 @@ export const ERAS = Object.freeze([
   { id: 'myth', name: '神話傳說', time: '遠古' },
   { id: 'cq', name: '春秋', time: '前770~前476' },
   { id: 'zg', name: '戰國', time: '前475~前221' },
+  { id: 'qin', name: '秦', time: '前221~前207', borderNote: '疆界暫用戰國末,秦朝疆界施工中' }, // CPM 裁 A(2026-10-31):秦代切片另開工項
   { id: 'xh', name: '西漢', time: '前202~8' },
   { id: 'dh', name: '東漢', time: '25~220' },
   { id: 'njb', name: '魏晉南北朝', time: '220~589' },
@@ -68,7 +69,8 @@ export const ERAS = Object.freeze([
 ]);
 
 // 各年代用哪一份疆界切片(site/map/borders/{slice}-world|detail.json);魏晉南北朝依國別分兩份;神話、中國以外不畫疆界
-export const SLICE_OF = { cq: 'bc500', zg: 'bc300', xh: 'bc100', dh: '150', njb: { jin: '300', liang: '530', _: '300' }, song: '1050', qing: '1780' };
+// 秦:目前沒有秦代切片,暫用 bc300(戰國末)且不加深國界,圖例改標 borderNote(CPM 2026-10-31 裁 A;秦代切片另開工項)
+export const SLICE_OF = { cq: 'bc500', zg: 'bc300', qin: 'bc300', xh: 'bc100', dh: '150', njb: { jin: '300', liang: '530', _: '300' }, song: '1050', qing: '1780' };
 export const sliceFor = (era, state) => { const s = SLICE_OF[era]; return typeof s === 'object' ? s[state] || s._ : s || null; };
 
 // 各年代的國別與都城;clio=對應到 site/map/borders 切片裡的政權英文名(Cliopatria),地圖用來加深該國疆界(null=切片裡沒有)
@@ -79,6 +81,7 @@ export const STATES = Object.freeze({
     S('song', '宋', 'shangqiu', 'Song'), S('zheng', '鄭', 'xinzheng', 'Zheng'), S('chu', '楚', 'ying', 'Chu'), S('wu', '吳', 'gusu', 'Wu'), S('yue', '越', 'kuaiji', 'Yue'), S('qin', '秦', 'yong', 'Qin'), S('yan', '燕', 'ji', 'Yan')],
   zg: [S('zhao', '趙', 'handan', 'Zhao'), S('wei', '魏', 'daliang', null /* 切片裡的 Wei 位置在河北北部,與史書不符(見 borders 的 nt),不加深 */), S('han', '韓', 'xinzheng', 'Han'), S('qi', '齊', 'linzi', 'Qi'), S('yan', '燕', 'ji', 'Yan'), S('song', '宋', 'shangqiu', 'Song'),
     S('chu', '楚', 'ying', 'Chu'), S('qin', '秦', 'xianyang', 'Qin')],
+  qin: [S('qin', '秦', 'xianyang')],
   xh: [S('han', '西漢', 'changan', 'Han Dynasty')], dh: [S('han', '東漢', 'luoyang', 'Han Dynasty')],
   njb: [S('jin', '西晉', 'luoyang', 'Western Jin'), S('liang', '南朝梁', 'jiankang', 'Liang Dynasty')],
   song: [S('bs', '北宋', 'kaifeng', 'Northern Song')], qing: [S('qing', '清', null, 'Qing Dynasty')],
@@ -122,6 +125,7 @@ export const ITEMS = Object.freeze([
   C('螳螂捕蟬', 'cq', 'wu', 'gusu', '吳王後園', '《說苑‧正諫》', '吳王欲伐荊(沒寫哪一位吳王)', 'text', '「吳王後園」沒有位置,點標在吳國都城'),
   C('東施效顰', 'cq', 'yue', 'kuaiji', '西施的鄰里(原文沒寫國別)', '《莊子‧天運》', '只寫西施,沒寫年代;師金對顏淵說', 'speaker', '原文沒寫國別;西施是越國人為通行說法,點標在越國都城'),
   C('杞人憂天', 'cq', 'qii', 'qi', '杞國', '《列子‧天瑞》', '只寫杞國,沒寫年代', 'book', CAP),
+  C('韋編三絕', 'cq', 'lu', 'qufu', '孔子晚年讀《易》(原文沒寫地點)', '《史記‧孔子世家》', '孔子晚而喜《易》', 'text', '原文沒寫地點,依孔子晚年在魯國推算'),
   // 戰國
   C('守株待兔', 'zg', 'song', 'shangqiu', '宋國', '《韓非子‧五蠹》', '只寫宋人,沒寫年代', 'book', CAP),
   C('揠苗助長', 'zg', 'song', 'shangqiu', '宋國', '《孟子‧公孫丑上》', '只寫宋人,沒寫年代;孟子說的比喻', 'speaker', CAP),
@@ -133,6 +137,7 @@ export const ITEMS = Object.freeze([
   C('買櫝還珠', 'zg', 'chu', 'xinzheng', '楚人到鄭國賣珠', '《韓非子‧外儲說左上》', '田鳩對楚王說的比喻', 'speaker', '原文只寫「於鄭」,點標在鄭國都城'),
   C('濫竽充數', 'zg', 'qi', 'linzi', '齊國(齊宣王)', '《韓非子‧內儲說上》', '齊宣王、齊湣王', 'text', CAP, { sub: '也在〈古代神話與寓言選〉' }),
   C('一鳴驚人', 'zg', 'qi', 'linzi', '齊國(齊威王)', '《史記‧滑稽列傳》', '齊威王', 'text', CAP),
+  C('狡兔三窟', 'zg', 'qi', 'linzi', '孟嘗君與封地薛', '《戰國策‧齊策四》', '孟嘗君為齊相時,馮諼為他焚券市義', 'text', '封地「薛」不在地點表,點標在齊國都城'),
   C('驚弓之鳥', 'zg', 'wei', 'daliang', '更羸與魏王「處京臺之下」', '《戰國策‧楚策四》', '更羸與魏王(沒寫哪一位魏王);魏加對春申君說', 'text', '「京臺」沒有位置,點標在魏國都城', { sub: '也在〈古代神話與寓言選〉' }),
   C('南轅北轍', 'zg', 'wei', 'daliang', '季梁勸魏王', '《戰國策‧魏策四》', '季梁勸魏王(沒寫哪一位魏王)', 'text', CAP),
   C('三人成虎', 'zg', 'wei', 'daliang', '龐蔥對魏王', '《戰國策‧魏策二》', '龐蔥對魏王(沒寫哪一位魏王)', 'text', CAP),
@@ -143,15 +148,19 @@ export const ITEMS = Object.freeze([
   C('鷸蚌相爭', 'zg', 'yan', 'yishui', '「過易水」', '《戰國策‧燕策二》', '蘇代為燕國勸趙惠王', 'speaker'),
   C('井底之蛙', 'zg', null, null, '寓言,沒有地點', '《莊子‧秋水》', '寓言,沒寫年代', 'book'),
   C('朝三暮四', 'zg', null, null, '寓言,沒有地點', '《莊子‧齊物論》', '寓言,沒寫年代', 'book'),
+  // 秦
+  C('指鹿為馬', 'qin', 'qin', 'xianyang', '秦二世的朝廷', '《史記‧秦始皇本紀》', '秦二世時,趙高為丞相', 'text', '原文沒寫地點,依秦都咸陽推算'),
   // 西漢、東漢
   C('塞翁失馬', 'xh', 'han', null, '「近塞上之人」', '《淮南子‧人間訓》', '只寫「近塞上之人」,沒寫年代', 'book', '原文只說「近塞上」,點的位置是推算的', { at: [112.0, 40.3] }),
   C('曲突徙薪', 'xh', 'han', 'changan', '上書漢宣帝時說的比喻', '《漢書‧霍光金日磾傳》', '有人為徐福上書漢宣帝時說的比喻', 'speaker', '上書地點依西漢都城推算'),
   C('杯弓蛇影', 'dh', 'han', 'jixian', '應郴任汲令', '《風俗通義‧怪神》', '應劭的祖父應郴任汲令時', 'text'),
   C('梁上君子', 'dh', 'han', 'xu', '陳寔家', '《後漢書‧陳寔傳》', '陳寔', 'text', '陳寔為潁川許人(待查證),點標在許昌示意'),
+  C('吳下阿蒙', 'dh', 'han', null, '魯肅赴陸口途中「過蒙屯下」(原文沒寫確切地點)', '《三國志‧吳書‧呂蒙傳》裴注引《江表傳》', '孫權勸呂蒙讀書;魯肅代周瑜後(東漢末)', 'text'),
   C('望梅止渴', 'dh', 'han', null, '曹操行軍途中(原文沒寫地點)', '《世說新語‧假譎》', '魏武(曹操)行軍', 'text'),
   C('對牛彈琴', 'dh', null, null, '比喻,沒有地點', '牟子《理惑論》', '公明儀的故事,沒寫年代;牟子引用', 'book'),
   // 魏晉南北朝、宋、清
   C('聞雞起舞', 'njb', 'jin', 'luoyang', '祖逖、劉琨任司州主簿', '《晉書‧祖逖傳》', '祖逖、劉琨任司州主簿時', 'text', '依司州治所在洛陽推算(待查證)'),
+  C('洛陽紙貴', 'njb', 'jin', 'luoyang', '洛陽', '《晉書‧文苑傳‧左思》', '左思作〈三都賦〉,皇甫謐作序、張華讚賞', 'text'),
   C('畫龍點睛', 'njb', 'liang', 'jiankang', '金陵安樂寺', '《太平廣記》卷二一一引《名畫記》', '張僧繇在金陵安樂寺畫龍', 'text'),
   C('胸有成竹', 'song', 'bs', 'yangzhou', '篔簹谷(洋州)', '蘇軾〈文與可畫篔簹谷偃竹記〉', '文與可(文同)', 'text'),
   C('名落孫山', 'song', 'bs', 'gusu', '「吳人孫山」', '范公偁《過庭錄》', '只寫「吳人孫山」,沒寫年代', 'book', '依「吳人」推算在今蘇州一帶'),

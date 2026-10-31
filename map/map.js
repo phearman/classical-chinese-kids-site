@@ -1,10 +1,10 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記分兩種:「AI 推算」=原文沒寫、AI 推算的年代或地點;「都城示意」=原文只寫國別,點標在該國都城。
-import { initPage } from '../shared/page.js?v=64f7467';
-import { escapeHTML as esc } from '../shared/terms.js?v=64f7467';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor } from './places.js?v=64f7467';
-import { WORLD_BASE as B } from './world-base.js?v=64f7467';
+import { initPage } from '../shared/page.js?v=79dca84';
+import { escapeHTML as esc } from '../shared/terms.js?v=79dca84';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor } from './places.js?v=79dca84';
+import { WORLD_BASE as B } from './world-base.js?v=79dca84';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -185,7 +185,7 @@ async function drawMap() {
   }
   svg.replaceChildren(frag);
   const era = ERAS.find((e) => e.id === st.era);
-  $('m-legend').innerHTML = `<p><b>${era.name}</b> ${era.time}${name ? `・疆界是 ${yearText(+name.replace('bc', '-'))}左右的樣子` : ''}・國名加虛線=AI 整理・帶「?」=原資料有疑問,點國家看說明</p>`;
+  $('m-legend').innerHTML = `<p><b>${era.name}</b> ${era.time}${era.borderNote ? `・${era.borderNote}` : name ? `・疆界是 ${yearText(+name.replace('bc', '-'))}左右的樣子` : ''}・國名加虛線=AI 整理・帶「?」=原資料有疑問,點國家看說明</p>`;
 }
 function star(x, y, r) {
   let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + (x + Math.cos(a) * rr).toFixed(1) + ' ' + (y + Math.sin(a) * rr).toFixed(1); }
