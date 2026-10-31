@@ -204,3 +204,35 @@
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cmap-sw.bare { background: repeating-linear-gradient(45deg, #6e6e6e 0 3px, #4a4a4a 3px 6px); } }
 :root[data-theme="dark"] .cmap-sw.bare { background: repeating-linear-gradient(45deg, #6e6e6e 0 3px, #4a4a4a 3px 6px); }
 .cmap-keys { font-size: 13px; color: var(--ink-soft); }
+
+/* WY50/51 各朝代說明卡:類型標示(史料/見聞/逸事)用不同顏色、原文與白話對照、難詞、國旗圖 */
+.cmap-kindline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 4px; font-size: 13px; color: var(--ink-soft); }
+.cmap-kind { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 4px; padding: 0 6px; border: 1px solid; }
+.cmap-label { font-size: 12px; border: 1px dashed var(--line); border-radius: 4px; padding: 0 6px; }
+.cmap-kind.k-history { color: #2f5a7a; background: #e6eff6; border-color: #9dbbd2; }
+.cmap-kind.k-report { color: #2d6b55; background: #e3f2ec; border-color: #94c7b2; }
+.cmap-kind.k-anecdote { color: #8a4b12; background: #fbeedd; border-color: #e0b27e; }
+.cmap-tw.k-history { border-left: 4px solid #9dbbd2; }
+.cmap-tw.k-report { border-left: 4px solid #94c7b2; }
+.cmap-tw.k-anecdote { border-left: 4px solid #e0b27e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cmap-kind.k-history { color: #b7d3ea; background: #1f2f3c; border-color: #46677f; }
+  :root:not([data-theme="light"]) .cmap-kind.k-report { color: #aee0cb; background: #1d322a; border-color: #44705f; }
+  :root:not([data-theme="light"]) .cmap-kind.k-anecdote { color: #f3c99a; background: #3a2a1a; border-color: #7f5a33; }
+}
+:root[data-theme="dark"] .cmap-kind.k-history { color: #b7d3ea; background: #1f2f3c; border-color: #46677f; }
+:root[data-theme="dark"] .cmap-kind.k-report { color: #aee0cb; background: #1d322a; border-color: #44705f; }
+:root[data-theme="dark"] .cmap-kind.k-anecdote { color: #f3c99a; background: #3a2a1a; border-color: #7f5a33; }
+.cmap-pair { border-top: 1px solid var(--line); padding-top: 6px; margin-top: 6px; }
+.cmap-orig { font-family: var(--font-serif, serif); font-size: 17px; line-height: 1.8; color: var(--ink); }
+.cmap-tr summary { cursor: pointer; color: var(--accent); font-size: 14px; }
+.cmap-tr p { color: var(--ink-soft); }
+.cmap-note { font-size: 13px; color: var(--ink-soft); border-left: 3px solid var(--line); padding-left: 8px; }
+.cmap-gloss { display: grid; grid-template-columns: max-content 1fr; gap: 2px 10px; font-size: 14px; margin: 0; }
+.cmap-gloss dt { font-weight: 700; }
+.cmap-gloss dd { margin: 0; color: var(--ink-soft); }
+.cmap-flags { display: flex; flex-wrap: wrap; gap: 10px; }
+.cmap-flags > div { flex: 1 1 120px; max-width: 200px; display: flex; flex-direction: column; gap: 2px; }
+.cmap-flags svg { width: 100%; height: auto; display: block; }
+.cmap-flags figcaption { flex-basis: 100%; }
+.f-edge { fill: none; stroke: var(--line); stroke-width: 1; }

@@ -1,11 +1,12 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=81c892b';
-import { escapeHTML as esc } from '../shared/terms.js?v=81c892b';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=81c892b';
-import { WORLD_BASE as B } from './world-base.js?v=81c892b';
-import { twCards, checkOf } from './taiwan-world.js?v=81c892b';
+import { initPage } from '../shared/page.js?v=7375d06';
+import { escapeHTML as esc } from '../shared/terms.js?v=7375d06';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=7375d06';
+import { WORLD_BASE as B } from './world-base.js?v=7375d06';
+import { twCards, checkOf } from './taiwan-world.js?v=7375d06';
+import { eraCards, KINDS } from './era-cards.js?v=7375d06';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -53,6 +54,7 @@ const pre = ITEMS.find((i) => i.title === sp.get('item'));
 if (pre) Object.assign(st, { era: pre.era, region: pre.state, item: pre });
 const eras = () => erasOf(trackOf(ERAS.find((e) => e.id === st.era)));
 const cnt = (e) => itemsOf(e.id).length;
+const has = (e) => cnt(e) || cardsOf(e.id).length; // 有故事或說明卡的年代不標灰
 const mobile = () => matchMedia('(max-width: 767px)').matches;
 
 app.innerHTML = `
@@ -75,10 +77,25 @@ const $ = (id) => app.querySelector(`#${id}`);
 const root = app.querySelector('.cmap'), svg = $('m-svg'), box = $('m-box');
 
 // ---------------------------------------------------------------- 臺灣時期線「當時的世界」說明卡(WY48)
-const curCard = () => { const cs = twCards(st.era); return cs.find((c) => c.id === st.twc) || cs[0]; };
+// 說明卡:臺灣時期線(WY48/49)+各朝代(WY50/51)
+const cardsOf = (era) => [...twCards(era), ...eraCards(era)];
+const curCard = () => { const cs = cardsOf(st.era); return cs.find((c) => c.id === st.twc) || cs[0]; };
 // 示意圖(WY49 卡 2):南島語族的語言族譜樹。依 Blust(1999)的分法,第一層 10 根大枝裡 9 根只在臺灣(左邊九行),
 // 其他一千多種語言都在第 10 根「馬來—玻里尼西亞語族」上(最下面那根再分出許多小枝)。程式繪製,不是比例圖。
 const FIGS = {
+  // 國旗變遷(WY50):依《中華民國國徽國旗法》第 2~4 條——旗面 3:2、青天占 1/4、白日半徑:青天橫長=1:8、光芒頂點到圓心=白日半徑 2 倍、
+  // 青圈寬=白日直徑 1/15、12 道光芒各 30 度且一道朝正上方。配色:內政部只給參考色(青 C100 M80 K20、紅 Y100 M100 K5~10%),本站換算。
+  // 五色旗:由上而下紅黃藍白黑(國立歷史博物館說明);比例與各條寬度沒有找到出處,畫成等寬示意。
+  flags: () => {
+    const W = 150, H = 100, cx = W / 4, cy = H / 4, r = W / 2 / 8, R = 2 * r, ri = R / (2 * Math.cos(Math.PI / 12)), ring = r + (2 * r) / 15;
+    const star = Array.from({ length: 24 }, (_, i) => { const a = -Math.PI / 2 + (i * Math.PI) / 12, d = i % 2 ? ri : R; return `${(cx + d * Math.cos(a)).toFixed(2)} ${(cy + d * Math.sin(a)).toFixed(2)}`; }).join('L');
+    const five = ['#d7262b', '#f2c018', '#2f5fa8', '#ffffff', '#1d1d1d'].map((c, i) => `<rect x="0" y="${i * 20}" width="150" height="20" fill="${c}"/>`).join('');
+    return `<figure class="cmap-fig cmap-flags">
+      <div><svg viewBox="0 0 150 100" role="img" aria-label="五色旗:由上而下紅、黃、藍、白、黑五條橫條">${five}<rect x=".5" y=".5" width="149" height="99" class="f-edge"/></svg><small>五色旗(1912 年起)</small></div>
+      <div><svg viewBox="0 0 150 100" role="img" aria-label="青天白日滿地紅旗"><rect width="150" height="100" fill="#ec0000"/><rect width="75" height="50" fill="#0029cc"/>
+        <path d="M${star}Z" fill="#ffffff"/><circle cx="${cx}" cy="${cy}" r="${ring.toFixed(2)}" fill="#0029cc"/><circle cx="${cx}" cy="${cy}" r="${r.toFixed(2)}" fill="#ffffff"/><rect x=".5" y=".5" width="149" height="99" class="f-edge"/></svg><small>青天白日滿地紅(1928 年起)</small></div>
+      <figcaption>本站依《國徽國旗法》的比例繪製;五色旗各條寬度沒有找到規定,畫成等寬示意。</figcaption></figure>`;
+  },
   austronesian: () => {
     const TW = ['泰雅語群', '東臺灣語群(阿美、噶瑪蘭等)', '卑南語', '排灣語', '魯凱語', '鄒語群', '布農語', '西部平原語群', '西北臺灣語群'];
     const row = 19, top = 22, rx = 18, bx = 70, H = top + row * 10 + 84;
@@ -98,44 +115,50 @@ const FIGS = {
   },
 };
 
-// 說明卡內文的一段:字串=一段文字;{ h, p }=小標+一段;{ list }=條列;{ fig }=示意圖(WY49)
+// 說明卡內文的一段:字串=一段文字;{ h, p }=小標+一段;{ list }=條列;{ fig }=示意圖(WY49);
+// { orig, tr, h?, note? }=原文+白話對照,白話可收合(手機預設收起);{ gloss }=難詞(WY50/51)
 const block = (b) => typeof b === 'string' ? `<p>${esc(b)}</p>`
+  : b.orig ? `<div class="cmap-pair">${b.h ? `<h3>${esc(b.h)}</h3>` : ''}<p class="cmap-orig">${esc(b.orig)}</p>
+      <details class="cmap-tr"${mobile() ? '' : ' open'}><summary>白話</summary><p>${esc(b.tr)}</p></details>${b.note ? `<p class="cmap-note">${esc(b.note)}</p>` : ''}</div>`
+  : b.gloss ? `<h3>難詞</h3><dl class="cmap-gloss">${b.gloss.map(([w, d]) => `<dt>${esc(w)}</dt><dd>${esc(d)}</dd>`).join('')}</dl>`
   : b.list ? `<ul class="cmap-tw-list">${b.list.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
   : b.fig ? FIGS[b.fig]?.() || '' : `${b.h ? `<h3>${esc(b.h)}</h3>` : ''}<p>${esc(b.p)}</p>`;
 function twCardHTML() {
-  const cs = twCards(st.era), c = curCard(); if (!c) return '';
+  const cs = cardsOf(st.era), c = curCard(); if (!c) return '';
   const sec = (h, t) => (t ? `<h3>${h}</h3><p>${esc(t)}</p>` : '');
   const chk = checkOf(c);
-  return `<div class="cmap-card cmap-tw">
+  const k = c.kind && KINDS[c.kind];
+  return `<div class="cmap-card cmap-tw${k ? ` k-${c.kind}` : ''}">
     ${cs.length > 1 ? `<div class="cmap-tw-tabs" role="group" aria-label="說明卡">${cs.map((x) => `<button type="button" data-card="${x.id}" aria-pressed="${x === c}">${esc(x.tab || x.title.replace(/\(.*$/, ''))}</button>`).join('')}</div>` : ''}
+    ${k || c.label ? `<p class="cmap-kindline">${k ? `<span class="cmap-kind k-${c.kind}">${k.tag}</span>${k.note ? esc(k.note) : ''}` : ''}${c.label ? `<span class="cmap-label">${esc(c.label)}</span>` : ''}</p>` : ''}
     <h2>${c.who ? '當時的世界:' : ''}${esc(c.title)}<span class="${chk === '已查證' ? 'cmap-ok' : 'cmap-ai'}">${chk}</span></h2>
     ${c.intro ? c.intro.map(block).join('') : sec('誰來了、從哪裡來', c.who) + sec('那時的世界', c.world) + sec('為什麼是臺灣', c.why) + sec(c.endLabel || '怎麼結束', c.end)}
     ${sec('在地的人', c.people)}
     ${c.todo?.length ? `<p class="cmap-src"><span class="cmap-ai">待查證</span> ${c.todo.map(esc).join(';')}</p>` : ''}
     ${c.route.length ? `<button type="button" class="cmap-go" data-route="${c.id}">${st.route === c.id && !mobile() ? '收起航線' : '在地圖上看示意航線 →'}</button>` : ''}
     <details class="cmap-src"><summary>出處(${c.src.length})</summary><ul>${c.src.map((x) => `<li><a href="${x.u}" target="_blank" rel="noopener">${esc(x.t)}</a> ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`).join('')}</ul>
-      <p>內容由本站依上列資料自行撰寫;航線只是示意,不是真正的航路。</p></details>
+      <p>${c.route.length ? '內容由本站依上列資料自行撰寫;航線只是示意,不是真正的航路。' : c.intro?.some((b) => b.orig) ? '原文照錄維基文庫(標點依該站;簡體、異體字改為通行繁體字);白話與說明由本站依上列資料自行撰寫。' : '內容由本站依上列資料自行撰寫。'}</p></details>
   </div>`;
 }
 
 // ---------------------------------------------------------------- 清單(桌機)、卡片(手機)、時間軸
 function renderList() {
   $('m-list').innerHTML = eras().map((e) => `
-    <div class="cmap-era${e.id === st.era ? ' open cur' : ''}${cnt(e) ? '' : ' none'}"><button type="button" data-era="${e.id}" aria-expanded="${e.id === st.era}"><b>${e.name}</b><small>${e.time}</small><span class="cmap-cnt">${cnt(e) || '尚無故事'}</span></button>
+    <div class="cmap-era${e.id === st.era ? ' open cur' : ''}${has(e) ? '' : ' none'}"><button type="button" data-era="${e.id}" aria-expanded="${e.id === st.era}"><b>${e.name}</b><small>${e.time}</small><span class="cmap-cnt">${cnt(e) || (has(e) ? '說明卡' : '尚無故事')}</span></button>
       <div class="cmap-era-body">${e.id !== st.era ? '' : groupsOf(e.id).map(([s, a]) => `
         <button type="button" class="cmap-st${s && st.region === s.id ? ' sel' : ''}" ${s ? `data-state="${s.id}"` : 'disabled'}>${s ? esc(s.name) : noState(e.id)}<span class="cmap-cnt">${a.length}</span></button>
         ${a.map((it) => `<button type="button" class="cmap-it${st.item === it ? ' sel' : ''}" data-i="${ITEMS.indexOf(it)}"><span class="cmap-ty ${it.t}">${TYPE[it.t]}</span>${esc(it.title)}${badges(it)}${coordsOf(it) ? '' : '<span class="cmap-nomap">無定點</span>'}</button>`).join('')}`).join('')}</div></div>`).join('');
 }
 function renderCards() {
-  $('m-cards').innerHTML = `<div class="cmap-chips">${eras().map((e) => `<button type="button" data-era="${e.id}" aria-pressed="${e.id === st.era}"${cnt(e) ? '' : ' class="none"'}>${e.name} ${cnt(e) || '<small>尚無故事</small>'}</button>`).join('')}</div>` +
-    (twCards(st.era).length ? twCardHTML() : cnt(ERAS.find((e) => e.id === st.era)) ? '' : '<p class="cmap-none-msg">這個年代尚無故事;切到「地圖」可以看當時的疆界。</p>') +
+  $('m-cards').innerHTML = `<div class="cmap-chips">${eras().map((e) => `<button type="button" data-era="${e.id}" aria-pressed="${e.id === st.era}"${has(e) ? '' : ' class="none"'}>${e.name} ${cnt(e) || `<small>${has(e) ? '說明卡' : '尚無故事'}</small>`}</button>`).join('')}</div>` +
+    (cardsOf(st.era).length ? twCardHTML() : cnt(ERAS.find((e) => e.id === st.era)) ? '' : '<p class="cmap-none-msg">這個年代尚無故事;切到「地圖」可以看當時的疆界。</p>') +
     groupsOf(st.era).map(([s, a]) => `<h3>${s ? esc(s.name) : noState(st.era)}<span class="cmap-cnt">${a.length}</span></h3><div class="cmap-grid">${a.map((it) => `
       <button type="button" class="cmap-cardbtn" data-i="${ITEMS.indexOf(it)}"><span><span class="cmap-ty ${it.t}">${TYPE[it.t]}</span> ${badges(it)}</span><b>${esc(it.title)}</b><small>${esc(it.text)}</small></button>`).join('')}</div>`).join('');
 }
 function renderAxis() {
   const t = trackOf(ERAS.find((e) => e.id === st.era));
   for (const b of app.querySelectorAll('.cmap-trk button')) b.setAttribute('aria-pressed', b.dataset.track === t);
-  $('m-track').innerHTML = eras().map((e) => `<button type="button" class="cmap-stop${e.id === st.era ? ' cur' : ''}${cnt(e) ? '' : ' none'}" data-era="${e.id}" aria-pressed="${e.id === st.era}"><b>${e.name}</b><small>${cnt(e) ? `${cnt(e)} 則` : '尚無故事'}</small></button>`).join('');
+  $('m-track').innerHTML = eras().map((e) => `<button type="button" class="cmap-stop${e.id === st.era ? ' cur' : ''}${has(e) ? '' : ' none'}" data-era="${e.id}" aria-pressed="${e.id === st.era}"><b>${e.name}</b><small>${cnt(e) ? `${cnt(e)} 則` : has(e) ? '說明卡' : '尚無故事'}</small></button>`).join('');
   const tr = $('m-track'), cur = tr.querySelector('.cur'); // 目前的年代捲到中間、看得見(不用 scrollIntoView,免得整頁跟著捲)
   if (cur) tr.scrollLeft = cur.offsetLeft - tr.offsetLeft - (tr.clientWidth - cur.offsetWidth) / 2;
 }
@@ -148,15 +171,13 @@ function renderDetail() {
       ${p.bn ? `<p class="cmap-src">${esc(p.bn)}</p>` : ''}<p class="cmap-src">中文名${p.zs === 'ai' ? '由 AI 整理、待校' : p.zs === 'wikidata' ? '取自 Wikidata' : '還沒有,先顯示英文'}。${BORDER_NOTE}</p></div>`;
     return;
   }
-  if (!it && twCards(st.era).length) {
+  if (!it && cardsOf(st.era).length) {
     const c = curCard();
-    d.innerHTML = mobile() ? `<div class="cmap-card empty">${st.route ? `示意航線:${c.route.map((q) => esc(q[0])).join(' → ')}` : `「當時的世界」說明卡在「年代清單」分頁。`}</div>` : twCardHTML();
+    d.innerHTML = mobile() ? `<div class="cmap-card empty">${st.route ? `示意航線:${c.route.map((q) => esc(q[0])).join(' → ')}` : `說明卡在「年代清單」分頁。${mapKeys()}`}</div>` : twCardHTML();
     return;
   }
   if (!it) {
-    const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : ''].filter(Boolean);
-    d.innerHTML = `<div class="cmap-card empty">${mobile() ? '點清單裡任一則,地圖會標出它發生的地方。' : '點左邊任一則,地圖會標出它發生的地方;拖曳地圖可以看同時期的其他國家。'}
-      ${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}</div>`;
+    d.innerHTML = `<div class="cmap-card empty">${mobile() ? '點清單裡任一則,地圖會標出它發生的地方。' : '點左邊任一則,地圖會標出它發生的地方;拖曳地圖可以看同時期的其他國家。'}${mapKeys()}</div>`;
     return;
   }
   const era = ERAS.find((e) => e.id === it.era), s = stateOf(it), pl = placeOf(it);
@@ -172,6 +193,11 @@ function renderDetail() {
     <a class="cmap-go" href="../${it.href}">${GO[it.t]} →</a><button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
   $('m-back')?.addEventListener('click', () => setTab('list'));
 }
+// 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
+const mapKeys = () => {
+  const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : ''].filter(Boolean);
+  return `${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}`;
+};
 // 每張疆界切片都附的說明(CPM 2026-10-31):資料來源、示意、參考書目(只列書名,不抄任何圖)
 const BORDER_NOTE = '疆界依 Cliopatria 學術資料庫,邊界經簡化,細部與史書有出入,僅供示意;正式考據可參考譚其驤《中國歷史地圖集》。';
 const yearText = (y) => (y < 0 ? `前 ${-y} 年` : `${y} 年`);
@@ -275,7 +301,7 @@ async function drawMap() {
     frag.append(el('text', { x: lx + fs * 0.5, y: y - fs * 0.45, class: 'm-tagt', 'font-size': fs.toFixed(1) }, tag));
   }
   // 臺灣時期說明卡的示意航線(WY48):依序連線,每段一個箭頭,站名標在點旁
-  const rc = st.route && twCards(st.era).find((c) => c.id === st.route);
+  const rc = st.route && cardsOf(st.era).find((c) => c.id === st.route);
   if (rc) {
     const pts = rc.route.map((q) => P([q[1], q[2]])), fs = 13 * u;
     pts.slice(1).forEach(([x2, y2], i) => {
@@ -319,7 +345,7 @@ app.addEventListener('click', (ev) => {
   const b = ev.target.closest('button'); if (!b || !app.contains(b)) return;
   if (b.dataset.card) { st.twc = b.dataset.card; st.route = null; st.view = null; update(); return; }
   if (b.dataset.route) { // 看航線:地圖移到包住整條航線的範圍;桌機再按一次收起
-    const c = twCards(st.era).find((x) => x.id === b.dataset.route);
+    const c = cardsOf(st.era).find((x) => x.id === b.dataset.route);
     const off = st.route === c.id && !mobile();
     Object.assign(st, { twc: c.id, route: off ? null : c.id, view: off ? null : routeView(c.route), item: null, polity: null });
     if (mobile() && !off) setTab('map'); else update();

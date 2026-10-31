@@ -1,9 +1,9 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=81c892b';
-import { version } from './version.js?v=81c892b';
-import { catalog } from '../catalog.js?v=81c892b';
-import { siteMusic } from './sound.js?v=81c892b';
+import { escapeHTML } from './terms.js?v=7375d06';
+import { version } from './version.js?v=7375d06';
+import { catalog } from '../catalog.js?v=7375d06';
+import { siteMusic } from './sound.js?v=7375d06';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;

@@ -1,10 +1,10 @@
 // 課文學習版:原文逐句+白話、點詞看解釋、比喻、情境帶入、延伸章節。
 // 一屏版(WY13):主文一句一頁;比喻、情境、討論、延伸各自成頁;上方段落籤可跳段。頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=81c892b';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=81c892b';
-import { setupGlossary } from '../../shared/sheet.js?v=81c892b';
-import { initPage } from '../../shared/page.js?v=81c892b';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=81c892b';
+import { lesson, glossary, study } from './data.js?v=7375d06';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=7375d06';
+import { setupGlossary } from '../../shared/sheet.js?v=7375d06';
+import { initPage } from '../../shared/page.js?v=7375d06';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=7375d06';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
