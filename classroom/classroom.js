@@ -2,10 +2,10 @@
 // 一屏版(WY13,使用者裁定「小圖加彈框」):孔子+14 位學生的小圖依座位排進一屏(依可用高度縮放);
 // 點小圖在畫面正中央跳出彈框(上半大圖、下半人物卡),彈框內可上一位/下一位(依座位順序循環)。
 // 空間真的不夠(小圖點擊區不到 44px)時改成一排一頁、左右滑。
-import { teacher, students, rows } from './data.js?v=96152c1';
-import { escapeHTML } from '../shared/terms.js?v=96152c1';
-import { initPage, onSwipe, overlayOpen } from '../shared/page.js?v=96152c1';
-import { characterURL as imageURL } from '../shared/assets.js?v=96152c1';
+import { teacher, students, rows } from './data.js?v=81c892b';
+import { escapeHTML } from '../shared/terms.js?v=81c892b';
+import { initPage, onSwipe, overlayOpen } from '../shared/page.js?v=81c892b';
+import { characterURL as imageURL } from '../shared/assets.js?v=81c892b';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

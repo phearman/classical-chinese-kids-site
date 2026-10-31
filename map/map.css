@@ -188,3 +188,19 @@
 .cmap-fig .t-lab.b { font-weight: 700; }
 .cmap-fig .t-lab.s { font-size: 9.5px; fill: var(--ink-soft); }
 .cmap-fig .t-box { fill: var(--accent-soft); opacity: .45; stroke: var(--accent); stroke-dasharray: 3 3; }
+
+/* CPM 待裁 41 B:地點 AI 推算的點加虛線圈;當時沒有國家政權的陸地用灰色斜線(深淺模式都和政權區分) */
+.m-guess { fill: none; stroke-width: 1.6; stroke-dasharray: 3 2.5; vector-effect: non-scaling-stroke; }
+.m-polbase path { fill: var(--map-land); stroke: none; pointer-events: none; }
+.m-bare { pointer-events: none; }
+.m-hatch-bg { fill: #e4e4e4; }
+.m-hatch-ln { fill: #b8b8b8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .m-hatch-bg { fill: #4a4a4a; } :root:not([data-theme="light"]) .m-hatch-ln { fill: #6e6e6e; } }
+:root[data-theme="dark"] .m-hatch-bg { fill: #4a4a4a; }
+:root[data-theme="dark"] .m-hatch-ln { fill: #6e6e6e; }
+.cmap-sw { display: inline-block; width: 14px; height: 10px; margin-right: 3px; vertical-align: -1px; border-radius: 2px; }
+.cmap-sw.bare { background: repeating-linear-gradient(45deg, #b8b8b8 0 3px, #e4e4e4 3px 6px); border: 1px solid #999; }
+.cmap-sw.guess { width: 10px; border-radius: 50%; border: 1.5px dashed var(--ink-soft); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cmap-sw.bare { background: repeating-linear-gradient(45deg, #6e6e6e 0 3px, #4a4a4a 3px 6px); } }
+:root[data-theme="dark"] .cmap-sw.bare { background: repeating-linear-gradient(45deg, #6e6e6e 0 3px, #4a4a4a 3px 6px); }
+.cmap-keys { font-size: 13px; color: var(--ink-soft); }

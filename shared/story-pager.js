@@ -1,5 +1,5 @@
 // 圖文故事共用翻頁：只接受完整的 #p整數，集中處理鍵盤、點擊與滑動導覽。
-import { overlayOpen, onSwipe } from './page.js?v=96152c1';
+import { overlayOpen, onSwipe } from './page.js?v=81c892b';
 export function mountStoryPager({ app, pages, render, focusTitle = 'story-title' }) {
   const pageFromHash = () => {
     const match = /^#p([1-9]\d*)$/.exec(location.hash);
