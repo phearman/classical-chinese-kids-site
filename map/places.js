@@ -3,7 +3,8 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=fb91b65';
+import { COMICS } from '../idioms/comics.js?v=61c6c3d';
+import { COUNTRY_ERAS } from './countries.js?v=61c6c3d';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -88,12 +89,15 @@ export const ERAS = Object.freeze([
   { id: 'tw-ql', name: '清領', time: '1683~1895', track: 'tw' },
   { id: 'tw-rz', name: '日治', time: '1895~1945', track: 'tw' },
   { id: 'tw-zh', name: '戰後', time: '1945~', track: 'tw' },
+  // 國家視角(WY60):日本、朝鮮半島、越南、菲律賓,資料在 countries.js
+  ...COUNTRY_ERAS,
 ]);
 
 // 各年代用哪一份疆界切片(site/map/borders/{slice}-world|detail.json);神話、夏、中國以外、臺灣原住民族時期不畫疆界
 export const SLICE_OF = { shang: 'bc1250', xz: 'bc900', cq: 'bc500', zg: 'bc300', qin: 'bc210', xh: 'bc100', dh: '150', sg: '230', xj: '300', dj: '380', nbc: '530',
   sui: '610', tang: '740', wd: '940', bs: '1050', ns: '1180', yuan: '1300', ming: '1550', qing: '1780', roc: '1930', prc: '2000', roctw: '2000',
-  'tw-hx': '1640', 'tw-mz': '1670', 'tw-ql': '1780', 'tw-rz': '1930', 'tw-zh': '2000' };
+  'tw-hx': '1640', 'tw-mz': '1670', 'tw-ql': '1780', 'tw-rz': '1930', 'tw-zh': '2000',
+  ...Object.fromEntries(COUNTRY_ERAS.filter((e) => e.slice).map((e) => [e.id, e.slice])) };
 export const sliceFor = (era, state) => { const s = SLICE_OF[era]; return typeof s === 'object' ? s[state] || s._ : s || null; };
 
 // 各年代的國別與都城;clio=對應到 site/map/borders 切片裡的政權英文名(Cliopatria),地圖用來加深該國疆界(null=切片裡沒有)

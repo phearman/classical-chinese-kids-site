@@ -1,9 +1,9 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=fb91b65';
-import { version } from './version.js?v=fb91b65';
-import { catalog } from '../catalog.js?v=fb91b65';
-import { siteMusic } from './sound.js?v=fb91b65';
+import { escapeHTML } from './terms.js?v=61c6c3d';
+import { version } from './version.js?v=61c6c3d';
+import { catalog } from '../catalog.js?v=61c6c3d';
+import { siteMusic } from './sound.js?v=61c6c3d';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
@@ -156,6 +156,7 @@ function setupMenu(shell) {
     const folded = shell.classList.contains('menu-folded');
     btn.setAttribute('aria-expanded', String(!folded));
     btn.setAttribute('aria-label', folded ? '展開選單' : '收合選單');
+    btn.title = folded ? '展開選單' : '收合選單'; // 滑鼠移上去看得到這顆可以收合(WY60,使用者 2026-11-01)
   };
   if (getPref('menuFolded') === '1') shell.classList.add('menu-folded');
   syncDesk();
