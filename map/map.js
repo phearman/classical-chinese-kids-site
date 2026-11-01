@@ -1,12 +1,14 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=7375d06';
-import { escapeHTML as esc } from '../shared/terms.js?v=7375d06';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=7375d06';
-import { WORLD_BASE as B } from './world-base.js?v=7375d06';
-import { twCards, checkOf } from './taiwan-world.js?v=7375d06';
-import { eraCards, KINDS } from './era-cards.js?v=7375d06';
+import { initPage } from '../shared/page.js?v=1a9dfe2';
+import { escapeHTML as esc } from '../shared/terms.js?v=1a9dfe2';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=1a9dfe2';
+import { WORLD_BASE as B } from './world-base.js?v=1a9dfe2';
+import { twCards, checkOf } from './taiwan-world.js?v=1a9dfe2';
+import { eraCards, KINDS } from './era-cards.js?v=1a9dfe2';
+import { COMICS } from '../idioms/comics.js?v=1a9dfe2';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=1a9dfe2';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -61,6 +63,7 @@ app.innerHTML = `
   <main class="cmap" data-tab="list">
     <div class="cmap-tabs" role="tablist"><button type="button" role="tab" id="t-list" aria-selected="true">年代清單</button><button type="button" role="tab" id="t-map" aria-selected="false">地圖</button></div>
     <nav class="cmap-list" id="m-list" aria-label="年代清單"></nav>
+    <button type="button" class="cmap-fold-list" id="m-fold-list" aria-controls="m-list" aria-expanded="true"></button>
     <section class="cmap-cards" id="m-cards" aria-label="年代清單"></section>
     <section class="cmap-right">
       <div class="cmap-axis"><div class="cmap-trk" role="group" aria-label="時間線"><button type="button" data-track="cn">朝代</button><button type="button" data-track="tw">臺灣</button></div><button type="button" class="cmap-nav" id="m-prev" aria-label="上一個年代">‹</button><div class="cmap-track" id="m-track"></div><button type="button" class="cmap-nav" id="m-next" aria-label="下一個年代">›</button></div>
@@ -70,6 +73,7 @@ app.innerHTML = `
         <div class="cmap-tools"><button type="button" id="m-in" aria-label="放大">＋</button><button type="button" id="m-out" aria-label="縮小">－</button><button type="button" id="m-home" aria-label="回到這個年代的範圍">⌂</button></div>
         <p class="cmap-credit"><span>疆界:${L('https://github.com/Seshat-Global-History-Databank/cliopatria', 'Cliopatria')}(Seshat,${L(CCBY, 'CC BY 4.0')},經本站簡化)・地點座標:${L('https://www.geonames.org/', 'GeoNames')}(${L(CCBY, 'CC BY 4.0')})・部分國名:${L('https://www.wikidata.org/', 'Wikidata')}(${L('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0')})・底圖:${L('https://www.naturalearthdata.com/', 'Natural Earth')}(${L('https://www.naturalearthdata.com/about/terms-of-use/', '公有領域')})・示意,非精確疆界</span></p>
       </div>
+      <div class="cmap-dhead"><b id="m-dtitle"></b><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
       <div class="cmap-detail" id="m-detail" aria-live="polite"></div>
     </section>
   </main>`;
@@ -190,8 +194,15 @@ function renderDetail() {
   if (!coordsOf(it)) where += '<br><small class="cmap-src">這則沒有確定地點,地圖上不標點。</small>';
   d.innerHTML = `<div class="cmap-card"><h2><span class="cmap-ty ${it.t}">${TYPE[it.t]}</span>${esc(it.title)}</h2>
     <p>年代:${when}</p><p>地點:${where}</p><p class="cmap-src">出處:${esc(it.src)}${it.sub ? '　' + esc(it.sub) : ''}</p>
-    <a class="cmap-go" href="../${it.href}">${GO[it.t]} →</a><button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
+    <a class="cmap-go" href="../${it.href}"${it.t === 'comic' ? ` data-comic="${esc(new URLSearchParams(it.href.split('?')[1]).get('id'))}"` : ''}>${GO[it.t]} →</a><button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
   $('m-back')?.addEventListener('click', () => setTab('list'));
+}
+// 說明區標題列:顯示目前說明卡的標題;選了新的項目或國家時自動展開
+function syncDetailHead() {
+  $('m-dtitle').textContent = st.item?.title || st.polity?.z || curCard()?.title || '說明';
+  const key = st.item ? `i:${st.item.title}` : st.polity ? `p:${st.polity.n}` : '';
+  if (lastPick !== null && key && key !== lastPick && root.classList.contains('fold-detail')) setFold('detail', false);
+  lastPick = key;
 }
 // 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
 const mapKeys = () => {
@@ -328,7 +339,20 @@ function star(x, y, r) {
 }
 
 // ---------------------------------------------------------------- 互動
-function update() { renderList(); renderCards(); renderAxis(); renderDetail(); if (!mobile() || st.tab === 'map') drawMap(); }
+// 桌機收合(WY53):年代清單欄、下方說明區;狀態記在本機(讀寫失敗就預設展開)。收合後地圖區變大,ResizeObserver 會重畫,viewBox 不變所以中心與縮放保留。
+// 說明區收合時,點了地圖上或清單裡的項目、國家,說明區自動展開。
+const FOLD_KEY = { list: 'ccc:map-fold-list', detail: 'ccc:map-fold-detail' };
+const readFold = (k) => { try { return localStorage.getItem(FOLD_KEY[k]) === '1'; } catch { return false; } };
+function setFold(k, on, save = true) {
+  root.classList.toggle(`fold-${k}`, on);
+  if (save) { try { localStorage.setItem(FOLD_KEY[k], on ? '1' : '0'); } catch { /* 無痕或封鎖時只在本頁有效 */ } }
+  const b = $(`m-fold-${k}`);
+  b.setAttribute('aria-expanded', String(!on));
+  if (k === 'list') { b.setAttribute('aria-label', on ? '展開年代清單' : '收合年代清單'); b.innerHTML = on ? '<span aria-hidden="true">›</span><span class="cmap-fold-txt">年代清單</span>' : '<span aria-hidden="true">‹</span>'; }
+  else { b.setAttribute('aria-label', on ? '展開說明' : '收合說明'); b.innerHTML = on ? '展開 <span aria-hidden="true">▴</span>' : '收合 <span aria-hidden="true">▾</span>'; }
+}
+let lastPick = null; // null=頁面剛載入,第一次畫面不算「選了新項目」
+function update() { renderList(); renderCards(); renderAxis(); renderDetail(); syncDetailHead(); if (!mobile() || st.tab === 'map') drawMap(); }
 function setEra(id) { Object.assign(st, { era: id, region: null, item: null, view: null, polity: null, twc: null, route: null }); update(); }
 function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null }); if (mobile()) setTab('map'); else update(); }
 function setTab(t) {
@@ -341,7 +365,35 @@ $('t-map').addEventListener('click', () => setTab('map'));
 const go = (d) => { const list = eras(), i = list.findIndex((e) => e.id === st.era) + d; if (list[i]) setEra(list[i].id); };
 $('m-prev').addEventListener('click', () => go(-1));
 $('m-next').addEventListener('click', () => go(1));
+// ---------------------------------------------------------------- 看漫畫:網頁版彈出視窗(WY53)
+// 寬螢幕且用滑鼠(≥768px、pointer: fine)時,「看漫畫 →」在地圖上開彈出視窗,不離開地圖;手機照舊開漫畫頁。
+// 用原生 <dialog>:開啟時焦點留在視窗內、Esc 關閉;另加右上 × 與點背景關閉;關閉後焦點回到原本那顆按鈕;背景不捲動。
+const comicModal = () => matchMedia('(min-width: 768px) and (pointer: fine)').matches;
+let dlg = null, opener = null;
+async function openComic(slug, from) {
+  const comic = COMICS.find((c) => c.slug === slug); if (!comic) return false;
+  const [{ ZHUYIN, ZHUYIN_NOTES }, { idiomURL }] = await Promise.all([import('../idioms/zhuyin.js'), import('../idioms/list.js')]);
+  if (!dlg) {
+    dlg = document.createElement('dialog');
+    dlg.className = 'cmap-modal';
+    dlg.setAttribute('aria-labelledby', 'cmap-modal-title');
+    dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.closest('.cmap-modal-x')) dlg.close(); }); // 點背景(dialog 本身)或 × 關閉
+    dlg.addEventListener('close', () => { document.documentElement.classList.remove('cmap-noscroll'); opener?.focus(); opener = null; });
+    document.body.append(dlg);
+  }
+  const href = `../idioms/comic.html?id=${encodeURIComponent(slug)}`;
+  dlg.innerHTML = `<div class="cmap-modal-box"><button type="button" class="cmap-modal-x" aria-label="關閉">×</button>
+    <div class="comic-view">${comicBodyHTML(comic, { readings: ZHUYIN[comic.word], readingNote: ZHUYIN_NOTES[comic.word], idiomHref: idiomURL(comic.word), base: '../idioms/', page: false, headingId: 'cmap-modal-title' })}</div>
+    <a class="cmap-modal-page" href="${href}" target="_blank" rel="noopener">開新頁看完整漫畫 ↗</a></div>`;
+  opener = from;
+  document.documentElement.classList.add('cmap-noscroll');
+  dlg.showModal();
+  dlg.querySelector('.cmap-modal-x').focus();
+  return true;
+}
 app.addEventListener('click', (ev) => {
+  const a = ev.target.closest('a[data-comic]');
+  if (a && comicModal() && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey) { ev.preventDefault(); openComic(a.dataset.comic, a); return; }
   const b = ev.target.closest('button'); if (!b || !app.contains(b)) return;
   if (b.dataset.card) { st.twc = b.dataset.card; st.route = null; st.view = null; update(); return; }
   if (b.dataset.route) { // 看航線:地圖移到包住整條航線的範圍;桌機再按一次收起
@@ -389,6 +441,9 @@ box.addEventListener('wheel', (e) => { e.preventDefault(); const r = svg.getBoun
 $('m-in').addEventListener('click', () => zoom(1 / 1.5));
 $('m-out').addEventListener('click', () => zoom(1.5));
 $('m-home').addEventListener('click', () => { st.view = st.route ? routeView(curCard().route) : null; drawMap(); });
+setFold('list', readFold('list'), false); setFold('detail', readFold('detail'), false);
+$('m-fold-list').addEventListener('click', () => setFold('list', !root.classList.contains('fold-list')));
+$('m-fold-detail').addEventListener('click', () => setFold('detail', !root.classList.contains('fold-detail')));
 new ResizeObserver(() => { if (!mobile() || st.tab === 'map') drawMap(); }).observe(box);
 
 if (pre && mobile()) setTab('map'); else update();

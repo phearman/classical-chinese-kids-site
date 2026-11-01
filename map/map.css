@@ -236,3 +236,31 @@
 .cmap-flags svg { width: 100%; height: auto; display: block; }
 .cmap-flags figcaption { flex-basis: 100%; }
 .f-edge { fill: none; stroke: var(--line); stroke-width: 1; }
+
+/* WY53 看漫畫彈出視窗(網頁版):內容超過螢幕高度時在視窗內捲動;背景不捲動;深淺色跟著主題變數 */
+.cmap-noscroll, .cmap-noscroll body { overflow: hidden; }
+.cmap-modal { width: min(880px, 92vw); max-height: 90vh; padding: 0; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); overflow: auto; overscroll-behavior: contain; }
+.cmap-modal::backdrop { background: rgba(0, 0, 0, .55); }
+.cmap-modal-box { position: relative; padding: 20px 24px 18px; }
+.cmap-modal .comic-view { margin: 0; padding: 0; max-width: none; }
+.cmap-modal-x { position: sticky; top: 0; float: right; margin: -8px -10px 0 8px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer; z-index: 1; }
+.cmap-modal-x:focus-visible, .cmap-modal-page:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.cmap-modal-page { display: inline-block; margin-top: 12px; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-weight: 700; }
+.cmap-modal .comic-panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+/* WY53 桌機收合:年代清單欄(收合後留一條窄邊+展開鈕)、下方說明區(收合後留標題列);手機不顯示這些鈕 */
+.cmap { position: relative; }
+.cmap-fold-list, .cmap-dhead { display: none; }
+@media (min-width: 768px) {
+  .cmap-fold-list { display: flex; position: absolute; z-index: 3; top: 6px; left: 288px; width: 28px; height: 28px; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font: inherit; font-size: 18px; line-height: 1; cursor: pointer; padding: 0; }
+  .cmap-list { padding-top: 40px; }
+  .cmap.fold-list { grid-template-columns: 36px minmax(0, 1fr); }
+  .cmap.fold-list .cmap-list { visibility: hidden; overflow: hidden; }
+  .cmap.fold-list .cmap-fold-list { left: 4px; top: 6px; width: 28px; height: auto; min-height: 120px; flex-direction: column; padding: 8px 0; }
+  .cmap-fold-txt { writing-mode: vertical-rl; font-size: 14px; letter-spacing: .1em; }
+  .cmap-dhead { display: flex; align-items: center; gap: 8px; padding: 4px 10px; border-top: 1px solid var(--line); background: var(--surface); flex: none; }
+  .cmap-dhead b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--ink-soft); }
+  .cmap-fold-detail { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 13px; padding: 3px 10px; cursor: pointer; }
+  .cmap.fold-detail .cmap-detail { display: none; }
+  .cmap-fold-list:focus-visible, .cmap-fold-detail:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+}

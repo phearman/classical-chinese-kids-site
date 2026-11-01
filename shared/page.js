@@ -1,15 +1,15 @@
 // 每頁共用外框(WY13):固定一屏,上方工具列(☰ 選單/課名與目前頁/⚙ 設定),左側選單(手機為抽屜),
 // 內容區放各頁的 #app。另含主題(存 ccc:theme,沒設跟隨系統;網址 ?theme= 給截圖與測試用)、設定、翻頁手勢。
-import { escapeHTML } from './terms.js?v=7375d06';
-import { version } from './version.js?v=7375d06';
-import { catalog } from '../catalog.js?v=7375d06';
-import { siteMusic } from './sound.js?v=7375d06';
+import { escapeHTML } from './terms.js?v=1a9dfe2';
+import { version } from './version.js?v=1a9dfe2';
+import { catalog } from '../catalog.js?v=1a9dfe2';
+import { siteMusic } from './sound.js?v=1a9dfe2';
 
 const SITE_ROOT = new URL('../', import.meta.url);
 const siteURL = (path) => new URL(path, SITE_ROOT).href;
 
 // ---------------------------------------------------------------- 偏好(本機儲存;讀寫失敗就當沒設)
-export const PREF_KEYS = { theme: 'ccc:theme', narration: 'ccc:narration', lesson: 'ccc:lesson' }; // lesson:上次看過的課(首頁預設展開它)
+export const PREF_KEYS = { theme: 'ccc:theme', narration: 'ccc:narration', lesson: 'ccc:lesson', menuFolded: 'ccc:menu-folded' }; // lesson:上次看過的課(首頁預設展開它)
 
 export function getPref(name) {
   try { return localStorage.getItem(PREF_KEYS[name]); } catch { return null; }
@@ -148,7 +148,24 @@ function setupMenu(shell) {
     if (open) (focusables(menu).find((item) => item.matches('a[aria-current="page"]')) ?? focusables(menu)[0])?.focus();
     else btn.focus();
   };
-  btn.addEventListener('click', () => set(!menu.classList.contains('open')));
+  // 桌機(≥761px,WY53):☰ 收合/展開左側選單,狀態記在本機;手機照舊是抽屜
+  const desk = globalThis.matchMedia?.('(min-width: 761px)');
+  const isDesk = () => !!desk?.matches;
+  const syncDesk = () => {
+    if (!isDesk()) return;
+    const folded = shell.classList.contains('menu-folded');
+    btn.setAttribute('aria-expanded', String(!folded));
+    btn.setAttribute('aria-label', folded ? '展開選單' : '收合選單');
+  };
+  if (getPref('menuFolded') === '1') shell.classList.add('menu-folded');
+  syncDesk();
+  btn.addEventListener('click', () => {
+    if (!isDesk()) { set(!menu.classList.contains('open')); return; }
+    const folded = shell.classList.toggle('menu-folded');
+    try { localStorage.setItem(PREF_KEYS.menuFolded, folded ? '1' : '0'); } catch { /* 無痕或封鎖時只在本頁有效 */ }
+    syncDesk();
+    document.dispatchEvent(new CustomEvent('ccc:layout'));
+  });
   scrim.addEventListener('click', () => set(false));
   menu.querySelector('#menu-close').addEventListener('click', () => set(false));
   document.addEventListener('keydown', (e) => {
@@ -165,7 +182,7 @@ function setupMenu(shell) {
     else if (!e.shiftKey && i === items.length - 1) { e.preventDefault(); first.focus(); }
   });
   // 換到桌機寬度時收起抽屜狀態
-  globalThis.matchMedia?.('(min-width: 761px)').addEventListener?.('change', () => set(false, { focus: false }));
+  desk?.addEventListener?.('change', () => { set(false, { focus: false }); syncDesk(); });
 }
 
 function setupSettings(dialog) {

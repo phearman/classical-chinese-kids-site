@@ -1,6 +1,6 @@
 export const PAGE_SIZE = 50;
 export const idiomURL = (word) => `https://dict.idioms.moe.edu.tw/idiomList.jsp?webMd=2&la=0&idiom=${encodeURIComponent(word)}`;
-import { TOPIC_LABELS, topicsOf } from './categories.js?v=7375d06';
+import { TOPIC_LABELS, topicsOf } from './categories.js?v=1a9dfe2';
 
 export const eraOf = (era) => era.split('(')[0];
 

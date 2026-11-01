@@ -1129,3 +1129,10 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .p-coinlens .dry { fill: var(--moss); opacity: 0; animation: fadeIn calc(.6s / var(--speed)) both; animation-delay: calc(var(--d, 0s) + 4.5s / var(--speed)); }
 @keyframes oilDrip { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) { .p-target .p-arrow, .p-tally g, .p-coinlens .dry { animation: none; opacity: 1; } .p-coinlens .drip { animation: none; stroke-dashoffset: 0; } }
+
+/* WY53:桌機的左側選單可以收合(☰ 收合/展開,狀態記在本機);手機照舊是抽屜 */
+@media (min-width: 761px) {
+  #menu-btn { display: grid; }
+  .shell.menu-folded .shell-body { grid-template-columns: minmax(0, 1fr); }
+  .shell.menu-folded .menu { display: none; }
+}
