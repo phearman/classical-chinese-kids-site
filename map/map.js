@@ -1,14 +1,15 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=1a9dfe2';
-import { escapeHTML as esc } from '../shared/terms.js?v=1a9dfe2';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=1a9dfe2';
-import { WORLD_BASE as B } from './world-base.js?v=1a9dfe2';
-import { twCards, checkOf } from './taiwan-world.js?v=1a9dfe2';
-import { eraCards, KINDS } from './era-cards.js?v=1a9dfe2';
-import { COMICS } from '../idioms/comics.js?v=1a9dfe2';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=1a9dfe2';
+import { initPage } from '../shared/page.js?v=fb91b65';
+import { escapeHTML as esc } from '../shared/terms.js?v=fb91b65';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=fb91b65';
+import { WORLD_BASE as B } from './world-base.js?v=fb91b65';
+import { twCards, checkOf } from './taiwan-world.js?v=fb91b65';
+import { eraCards, KINDS } from './era-cards.js?v=fb91b65';
+import { COMICS } from '../idioms/comics.js?v=fb91b65';
+import { ECHOES } from './echoes.js?v=fb91b65';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=fb91b65';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -51,7 +52,7 @@ const pointGuess = (it) => Boolean(it.placeGuess) || placeOf(it)?.status === '�
 const badges = (it) => (isGuessed(it) ? '<span class="cmap-ai">AI 推算</span>' : '');
 
 const sp = new URLSearchParams(location.search);
-const st = { era: ERAS.some((e) => e.id === sp.get('era')) ? sp.get('era') : 'cq', region: null, item: null, view: null, tab: 'list', polity: null, twc: null, route: null };
+const st = { era: ERAS.some((e) => e.id === sp.get('era')) ? sp.get('era') : 'cq', region: null, item: null, view: null, tab: 'list', polity: null, twc: null, route: null, layers: { today: false, echo: false, bld: false, bldall: false }, echo: null, bld: null };
 const pre = ITEMS.find((i) => i.title === sp.get('item'));
 if (pre) Object.assign(st, { era: pre.era, region: pre.state, item: pre });
 const eras = () => erasOf(trackOf(ERAS.find((e) => e.id === st.era)));
@@ -70,7 +71,8 @@ app.innerHTML = `
       <div class="cmap-box" id="m-box">
         <svg class="cmap-svg" id="m-svg" role="img" aria-label="地圖"></svg>
         <div class="cmap-legend" id="m-legend"></div>
-        <div class="cmap-tools"><button type="button" id="m-in" aria-label="放大">＋</button><button type="button" id="m-out" aria-label="縮小">－</button><button type="button" id="m-home" aria-label="回到這個年代的範圍">⌂</button></div>
+        <div class="cmap-tools"><button type="button" id="m-in" aria-label="放大">＋</button><button type="button" id="m-out" aria-label="縮小">－</button><button type="button" id="m-home" aria-label="回到這個年代的範圍">⌂</button><button type="button" id="m-layers" aria-label="圖層" aria-expanded="false" aria-controls="m-layer-panel">層</button></div>
+        <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small></div>
         <p class="cmap-credit"><span>疆界:${L('https://github.com/Seshat-Global-History-Databank/cliopatria', 'Cliopatria')}(Seshat,${L(CCBY, 'CC BY 4.0')},經本站簡化)・地點座標:${L('https://www.geonames.org/', 'GeoNames')}(${L(CCBY, 'CC BY 4.0')})・部分國名:${L('https://www.wikidata.org/', 'Wikidata')}(${L('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0')})・底圖:${L('https://www.naturalearthdata.com/', 'Natural Earth')}(${L('https://www.naturalearthdata.com/about/terms-of-use/', '公有領域')})・示意,非精確疆界</span></p>
       </div>
       <div class="cmap-dhead"><b id="m-dtitle"></b><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
@@ -168,11 +170,14 @@ function renderAxis() {
 }
 function renderDetail() {
   const it = st.item, d = $('m-detail');
+  if (st.bld && !it && !st.polity) { d.innerHTML = bldHTML(st.bld); return; }
+  if (st.echo && !it && !st.polity) { d.innerHTML = echoHTML(st.echo); return; }
   if (st.polity && !it) {
     const p = st.polity;
     d.innerHTML = `<div class="cmap-card"><h2>${esc(p.z)}${p.nt ? '<span class="cmap-ai">AI 判斷</span>' : ''}${p.zs === 'ai' ? '<span class="cmap-ai">國名 AI 整理</span>' : p.zs === 'wikidata' ? '' : '<span class="cmap-cap">中文名待補</span>'}</h2>
       <p>${esc(p.n)}・這份疆界資料記它存在於 ${yearText(p.y[0])}~${yearText(p.y[1])}</p>${p.nt ? `<p class="cmap-src">${esc(p.nt)}</p>` : ''}
-      ${p.bn ? `<p class="cmap-src">${esc(p.bn)}</p>` : ''}<p class="cmap-src">中文名${p.zs === 'ai' ? '由 AI 整理、待校' : p.zs === 'wikidata' ? '取自 Wikidata' : '還沒有,先顯示英文'}。${BORDER_NOTE}</p></div>`;
+      <div class="cmap-today" id="m-today"></div>${echoesIn(p)}${p.bn ? `<p class="cmap-src">${esc(p.bn)}</p>` : ''}<p class="cmap-src">中文名${p.zs === 'ai' ? '由 AI 整理、待校' : p.zs === 'wikidata' ? '取自 Wikidata' : '還沒有,先顯示英文'}。${BORDER_NOTE}</p></div>`;
+    fillToday(p);
     return;
   }
   if (!it && cardsOf(st.era).length) {
@@ -199,16 +204,66 @@ function renderDetail() {
 }
 // 說明區標題列:顯示目前說明卡的標題;選了新的項目或國家時自動展開
 function syncDetailHead() {
-  $('m-dtitle').textContent = st.item?.title || st.polity?.z || curCard()?.title || '說明';
-  const key = st.item ? `i:${st.item.title}` : st.polity ? `p:${st.polity.n}` : '';
+  $('m-dtitle').textContent = st.item?.title || st.polity?.z || st.bld?.name || st.echo?.title || curCard()?.title || '說明';
+  const key = st.item ? `i:${st.item.title}` : st.polity ? `p:${st.polity.n}` : st.bld ? `b:${st.bld.id}` : st.echo ? `e:${st.echo.id}` : '';
   if (lastPick !== null && key && key !== lastPick && root.classList.contains('fold-detail')) setFold('detail', false);
   lastPick = key;
 }
 // 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
 const mapKeys = () => {
-  const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : ''].filter(Boolean);
+  const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : '',
+    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})` : ''].filter(Boolean);
   return `${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}`;
 };
+// ---------------------------------------------------------------- 今昔對比(WY54)
+// 點國家:列出「今日大約位於」的國家與一級行政區(比例由 docs/research/wy54/build-today.mjs 預先算好,按年代載入);
+// 圖層「今日行政區界線」:今日國界(細實線)與一級行政區(細虛線)疊在歷史疆界上。用詞一律「今日大約位於」,不寫「屬於」。
+const todayCache = new Map();
+const todayJSON = (f) => { if (!todayCache.has(f)) todayCache.set(f, fetch(`today/${f}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)); return todayCache.get(f); };
+const TODAY_SRC = '比例由本站預先計算:邊界都經過簡化,比例只是約略值。今日國界與行政區:Natural Earth(實際控制線,公有領域);臺灣縣市:內政部國土測繪中心開放資料;越南只列到國家。';
+async function fillToday(p) {
+  const name = sliceFor(st.era, st.region || st.item?.state);
+  const [rows, names] = await Promise.all([name ? todayJSON(name) : null, todayJSON('names')]);
+  const box = $('m-today'); if (!box || st.polity !== p) return;
+  const list = rows?.[p.n];
+  if (!list || !names) { box.innerHTML = ''; return; }
+  box.innerHTML = `<h3>今日大約位於</h3><ul>${list.map(([c, pct, a1]) => {
+    const sub = a1.reduce((a, x) => a + x[1], 0), rest = pct - sub;
+    return `<li><b>${esc(names[c] || c)}</b> 約 ${pct}%<i class="cmap-bar" style="width:${Math.max(4, pct)}px"></i>${a1.length ? `<small>${a1.map(([k, v]) => `${esc(names[k] || k)} ${v}%`).join('、')}${rest > 0 ? `、其他 ${rest}%` : ''}</small>` : ''}</li>`;
+  }).join('')}</ul><p class="cmap-src">${TODAY_SRC}</p>
+    <details class="cmap-src"><summary>資料來源與授權</summary><p>${TODAY_CREDIT}</p></details>`;
+}
+// 政府資料開放授權條款要求的署名格式(CPM 待裁 45 A)
+const TODAY_CREDIT = `今日國界與一級行政區:${L('https://www.naturalearthdata.com/', 'Natural Earth')} 1:10m v5.1.2(公有領域)。臺灣縣市:內政部國土測繪中心 2025 直轄市、縣市界線(TWD97經緯度)開放資料(下載日 2026-11-01)。此開放資料依政府資料開放授權條款(Open Government Data License)進行公眾釋出,使用者於遵守本條款各項規定之前提下,得利用之。授權條款:${L('https://data.gov.tw/license', 'https://data.gov.tw/license')}。本站經簡化並計算重疊比例。`;
+const LAYER_KEY = (k) => `ccc:map-layer-${k}`;
+const layerOn = (k) => { try { return localStorage.getItem(LAYER_KEY(k)) === '1'; } catch { return false; } };
+// ---------------------------------------------------------------- 以古鑑今(WY56)
+// 圖層打開時,地圖上在今日地點標「古」;點國家時,年代相符、點落在該國疆界內的條目列在「今日大約位於」下方。
+const eraName = (id) => ERAS.find((e) => e.id === id)?.name || id;
+function echoHTML(e) {
+  return `<div class="cmap-card cmap-echo"><p class="cmap-kindline"><span class="cmap-kind k-echo">以古鑑今</span>今日地點:${esc(e.place)}</p><h2>${esc(e.title)}</h2>
+    ${e.body.map((t) => `<p>${esc(t)}</p>`).join('')}
+    ${e.eras.length ? `<p>相關年代:${e.eras.map((x) => `<button type="button" class="cmap-eralink" data-era="${x}">${esc(eraName(x))} →</button>`).join(' ')}</p>` : ''}
+    <details class="cmap-src"><summary>出處(${e.src.length})</summary><ul>${e.src.map((x) => `<li>${L(x.u, esc(x.t))}</li>`).join('')}</ul><p>內容由本站依上列資料自行撰寫;說法不一的並列。座標:Wikidata(CC0)。</p></details></div>`;
+}
+// 點在不在多邊形內(SVG 路徑,偶奇規則)
+const inPath = (d, [x, y]) => { let c = false; for (const ring of d.split('M').filter(Boolean)) { const pts = ring.replace('Z', '').split('L').map((t) => t.split(' ').map(Number)); for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } } return c; };
+const echoesIn = (p) => { const list = ECHOES.filter((e) => e.eras.includes(st.era) && inPath(p.d, P(e.at))); return list.length ? `<h3>以古鑑今</h3><p>${list.map((e) => `<button type="button" class="cmap-eralink" data-echo="${e.id}">${esc(e.title)} →</button>`).join(' ')}</p>` : ''; };
+// ---------------------------------------------------------------- 重要建築(WY55)
+// 圖層打開時,只顯示目前年代結束前已經蓋好的建築(依建造年份);勾「全部年代」則全部顯示。圖示為本站 SVG 繪製的小樓閣;
+// 點位只標到城市的(approx)外加虛線圈,和 AI 推算點位同一種樣式。臺灣:文化部文化資產局開放資料;中國:各篇原文與出處。
+const bldJSON = () => todayJSON('../buildings'); // 同一個快取:today/../buildings.json
+const eraEnd = (id) => { const t = (ERAS.find((e) => e.id === id)?.time || '').split('~').pop().trim(); if (!t) return 9999; const n = Number(t.replace(/[^0-9]/g, '')); return t.startsWith('前') ? -n : n || 9999; };
+const BOCH_CREDIT = `文化部文化資產局 2026 文資局古蹟/文資局歷史建築開放資料(下載日 2026-11-01)。此開放資料依政府資料開放授權條款(Open Government Data License)進行公眾釋出,使用者於遵守本條款各項規定之前提下,得利用之。授權條款:${L('https://data.gov.tw/license', 'https://data.gov.tw/license')}。本站經摘要改寫。`;
+function bldHTML(b) {
+  return `<div class="cmap-card cmap-bld"><p class="cmap-kindline"><span class="cmap-kind k-bld">重要建築</span>${b.status ? esc(b.status) + '・' : ''}今日位置:${esc(b.where)}${b.approx ? '<span class="cmap-ai">大致位置</span>' : ''}</p><h2>${esc(b.name)}</h2>
+    <p>建造:${esc(b.built)}</p><p>${esc(b.history)}</p>
+    ${b.rebuilt ? `<p class="cmap-note">重建、遷移:${esc(b.rebuilt)}</p>` : ''}
+    ${b.inscription ? `<p>題字:${esc(b.inscription)}</p>` : ''}
+    ${b.text ? `<p>相關篇目:${[b.text, b.alsoText].filter(Boolean).map((x) => L(x.wikisource, `${esc(x.author)}〈${esc(x.title)}〉`)).join('、')}${b.quote ? `;「${esc(b.quote)}」` : ''}</p>` : ''}
+    ${b.approx ? '<p class="cmap-src">確切位置不明,點只標到城市。</p>' : ''}
+    <details class="cmap-src"><summary>出處(${b.src.length})</summary><ul>${b.src.map((x) => `<li>${L(x.u, esc(x.t))}</li>`).join('')}</ul><p>${b.region === 'tw' ? BOCH_CREDIT : '內容由本站依上列資料自行撰寫;座標:Wikidata(CC0)。'}</p></details></div>`;
+}
 // 每張疆界切片都附的說明(CPM 2026-10-31):資料來源、示意、參考書目(只列書名,不抄任何圖)
 const BORDER_NOTE = '疆界依 Cliopatria 學術資料庫,邊界經簡化,細部與史書有出入,僅供示意;正式考據可參考譚其驤《中國歷史地圖集》。';
 const yearText = (y) => (y < 0 ? `前 ${-y} 年` : `${y} 年`);
@@ -253,7 +308,7 @@ async function drawMap() {
     const g = el('g', { class: 'm-pols' + (selState?.clio || st.polity ? ' has-sel' : '') });
     data.polities.forEach((p, i) => {
       const path = el('path', { d: p.d, class: 'm-pol' + ((selState?.clio === p.n || st.polity?.n === p.n) ? ' sel' : ''), fill: FILLS[i % FILLS.length] });
-      path.addEventListener('click', () => { if (dragged) return; st.polity = st.polity?.n === p.n ? null : p; st.item = null; st.region = statesOf(st.era).find((s) => s.clio === p.n)?.id || null; update(); });
+      path.addEventListener('click', () => { if (dragged) return; st.polity = st.polity?.n === p.n ? null : p; st.item = null; st.echo = null; st.bld = null; st.region = statesOf(st.era).find((s) => s.clio === p.n)?.id || null; update(); });
       g.append(path);
     });
     frag.append(g);
@@ -272,6 +327,35 @@ async function drawMap() {
     const at = { out: [80, 22], 'tw-pre': [120.9, 23.6] }[st.era] || [113, 36];
     const [x, y] = P(at);
     frag.append(el('text', { x, y, class: 'm-none', 'font-size': (15 * u).toFixed(1) }, msg));
+  }
+  // 今日行政區界線(圖層,WY54)
+  if (st.layers.today && data) {
+    const [l1, l0] = await Promise.all([todayJSON('lines-a1'), todayJSON('lines-a0')]);
+    if (seq !== drawSeq) return;
+    if (l1) frag.append(el('path', { d: l1.d, class: 'm-today1' }));
+    if (l0) frag.append(el('path', { d: l0.d, class: 'm-today0' }));
+  }
+  // 重要建築(圖層,WY55):小樓閣圖示
+  if (st.layers.bld) {
+    const list = await bldJSON(); if (seq !== drawSeq) return;
+    const end = eraEnd(st.era);
+    for (const b of list || []) {
+      if (!st.layers.bldall && b.y > end) continue;
+      const [x, y] = P(b.at), on = st.bld?.id === b.id, s = (on ? 1.35 : 1) * u;
+      const g = el('g', { class: 'm-bld' + (on ? ' on' : '') + (b.approx ? ' approx' : '') });
+      if (b.approx) g.append(el('circle', { cx: x, cy: y, r: 12 * s, class: 'm-guess', stroke: '#8a5a2b' }));
+      g.append(el('path', { d: `M${x - 8 * s} ${y + 7 * s}h${16 * s}v${-2.5 * s}h${-3 * s}v${-5 * s}h${4 * s}l${-9 * s} ${-7 * s}l${-9 * s} ${7 * s}h${4 * s}v${5 * s}h${-3 * s}z` }), el('title', {}, `重要建築:${b.name}`));
+      g.addEventListener('click', (ev) => { ev.stopPropagation(); if (dragged) return; st.bld = b; st.item = null; st.polity = null; st.echo = null; update(); });
+      frag.append(g);
+    }
+  }
+  // 以古鑑今的「古」字標記(圖層,WY56)
+  if (st.layers.echo) for (const e of ECHOES) {
+    const [x, y] = P(e.at), on = st.echo === e;
+    const g = el('g', { class: 'm-echo' + (on ? ' on' : '') });
+    g.append(el('circle', { cx: x, cy: y, r: (on ? 12 : 10) * u }), el('text', { x, y: y + 4.2 * u, 'font-size': (12 * u).toFixed(1) }, '古'), el('title', {}, `以古鑑今:${e.title}`));
+    g.addEventListener('click', (ev) => { ev.stopPropagation(); if (dragged) return; st.echo = e; st.item = null; st.polity = null; st.bld = null; update(); });
+    frag.append(g);
   }
   // 都城(★)與數量泡泡
   for (const s of statesOf(st.era)) {
@@ -353,8 +437,8 @@ function setFold(k, on, save = true) {
 }
 let lastPick = null; // null=頁面剛載入,第一次畫面不算「選了新項目」
 function update() { renderList(); renderCards(); renderAxis(); renderDetail(); syncDetailHead(); if (!mobile() || st.tab === 'map') drawMap(); }
-function setEra(id) { Object.assign(st, { era: id, region: null, item: null, view: null, polity: null, twc: null, route: null }); update(); }
-function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null }); if (mobile()) setTab('map'); else update(); }
+function setEra(id) { Object.assign(st, { era: id, region: null, item: null, view: null, polity: null, twc: null, route: null, echo: null, bld: null }); update(); }
+function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null, echo: null, bld: null }); if (mobile()) setTab('map'); else update(); }
 function setTab(t) {
   st.tab = t; root.dataset.tab = t;
   $('t-list').setAttribute('aria-selected', t === 'list'); $('t-map').setAttribute('aria-selected', t === 'map');
@@ -395,6 +479,7 @@ app.addEventListener('click', (ev) => {
   const a = ev.target.closest('a[data-comic]');
   if (a && comicModal() && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey) { ev.preventDefault(); openComic(a.dataset.comic, a); return; }
   const b = ev.target.closest('button'); if (!b || !app.contains(b)) return;
+  if (b.dataset.echo) { st.echo = ECHOES.find((e) => e.id === b.dataset.echo); st.item = null; st.polity = null; st.bld = null; if (mobile()) setTab('map'); else update(); return; }
   if (b.dataset.card) { st.twc = b.dataset.card; st.route = null; st.view = null; update(); return; }
   if (b.dataset.route) { // 看航線:地圖移到包住整條航線的範圍;桌機再按一次收起
     const c = cardsOf(st.era).find((x) => x.id === b.dataset.route);
@@ -441,6 +526,10 @@ box.addEventListener('wheel', (e) => { e.preventDefault(); const r = svg.getBoun
 $('m-in').addEventListener('click', () => zoom(1 / 1.5));
 $('m-out').addEventListener('click', () => zoom(1.5));
 $('m-home').addEventListener('click', () => { st.view = st.route ? routeView(curCard().route) : null; drawMap(); });
+const lp = $('m-layer-panel');
+for (const k of Object.keys(st.layers)) { st.layers[k] = layerOn(k); lp.querySelector(`[data-layer="${k}"]`).checked = st.layers[k]; }
+$('m-layers').addEventListener('click', () => { const open = lp.hidden; lp.hidden = !open; $('m-layers').setAttribute('aria-expanded', String(open)); });
+lp.addEventListener('change', (e) => { const k = e.target.dataset.layer; if (!k) return; st.layers[k] = e.target.checked; try { localStorage.setItem(LAYER_KEY(k), e.target.checked ? '1' : '0'); } catch { /* 只在本頁有效 */ } update(); });
 setFold('list', readFold('list'), false); setFold('detail', readFold('detail'), false);
 $('m-fold-list').addEventListener('click', () => setFold('list', !root.classList.contains('fold-list')));
 $('m-fold-detail').addEventListener('click', () => setFold('detail', !root.classList.contains('fold-detail')));
