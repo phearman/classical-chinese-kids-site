@@ -1,16 +1,16 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=61c6c3d';
-import { escapeHTML as esc } from '../shared/terms.js?v=61c6c3d';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=61c6c3d';
-import { WORLD_BASE as B } from './world-base.js?v=61c6c3d';
-import { twCards, checkOf } from './taiwan-world.js?v=61c6c3d';
-import { eraCards, KINDS } from './era-cards.js?v=61c6c3d';
-import { COMICS } from '../idioms/comics.js?v=61c6c3d';
-import { ECHOES } from './echoes.js?v=61c6c3d';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=61c6c3d';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=61c6c3d';
+import { initPage } from '../shared/page.js?v=97723b1';
+import { escapeHTML as esc } from '../shared/terms.js?v=97723b1';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=97723b1';
+import { WORLD_BASE as B } from './world-base.js?v=97723b1';
+import { twCards, checkOf } from './taiwan-world.js?v=97723b1';
+import { eraCards, KINDS } from './era-cards.js?v=97723b1';
+import { COMICS } from '../idioms/comics.js?v=97723b1';
+import { ECHOES } from './echoes.js?v=97723b1';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=97723b1';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=97723b1';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -33,7 +33,10 @@ const LABEL_AT = { 'tw-hx': { 'Dutch Republic': [120.55, 23.3], 'Spanish Empire'
   roc: { 'Empire of Japan': [[127.6, 37.2], [120.9, 23.6]], 'United States of America': [[121.9, 16.2]] },
   // 國家視角(WY60):統治者本土在別處的時期,國名在該國再標一次
   'kr-jprule': { 'Empire of Japan': [127.6, 37.2] }, 'ph-es': { 'Spanish Empire': [122.6, 12.2] }, 'ph-us': { 'United States of America': [122.6, 12.2] },
-  'vn-han': { 'Han Dynasty': [105.6, 20.6] }, 'vn-nbc': { 'Western Jin': [105.6, 20.6] }, 'vn-tang': { 'Tang Dynasty': [105.6, 20.6] } };
+  'vn-han': { 'Han Dynasty': [105.6, 20.6] }, 'vn-nbc': { 'Western Jin': [105.6, 20.6] }, 'vn-tang': { 'Tang Dynasty': [105.6, 20.6] },
+  // WY60 段 B 新切片
+  'vn-ming': { 'Ming Dynasty': [105.6, 20.6] }, 'ph-cw': { 'United States of America': [122.6, 12.2] }, 'ph-jp': { 'Empire of Japan': [122.6, 12.2] },
+  'kr-later3': { Hubaekje: [126.9, 35.3] }, 'kr-div38': { 'United States of America': [127.8, 36.4], 'Union of Soviet Socialist Republics': [126.9, 40.2] } };
 const CN = [96, 18, 128, 46], TW = [116.5, 20.5, 124.5, 26.5];
 const VIEW = { myth: [104, 30, 122, 40.5], xia: [104, 30, 122, 40.5], shang: [104, 28, 124, 42], xz: [100, 26, 126, 44], cq: [105, 28.5, 122.5, 41], zg: [104, 28.5, 122.5, 41.5], qin: [98, 20, 126, 44],
   xh: [96, 20, 126, 45], dh: [96, 20, 126, 45], sg: [96, 18, 126, 45], xj: [96, 18, 128, 46], dj: [92, 18, 128, 46], nbc: [100, 20, 125, 44], sui: [90, 16, 130, 48], tang: [70, 14, 130, 50],
