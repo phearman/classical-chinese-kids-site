@@ -1,22 +1,45 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=822af82';
-import { escapeHTML as esc } from '../shared/terms.js?v=822af82';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=822af82';
-import { WORLD_BASE as B } from './world-base.js?v=822af82';
-import { twCards, checkOf } from './taiwan-world.js?v=822af82';
-import { eraCards, KINDS } from './era-cards.js?v=822af82';
-import { COMICS } from '../idioms/comics.js?v=822af82';
-import { ECHOES } from './echoes.js?v=822af82';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=822af82';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=822af82';
+import { initPage } from '../shared/page.js?v=79dd71a';
+import { escapeHTML as esc } from '../shared/terms.js?v=79dd71a';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=79dd71a';
+import { WORLD_BASE as B } from './world-base.js?v=79dd71a';
+import { twCards, checkOf } from './taiwan-world.js?v=79dd71a';
+import { eraCards, KINDS } from './era-cards.js?v=79dd71a';
+import { COMICS } from '../idioms/comics.js?v=79dd71a';
+import { ECHOES } from './echoes.js?v=79dd71a';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=79dd71a';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=79dd71a';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
 const NS = 'http://www.w3.org/2000/svg';
 const COS = Math.cos((B.lat0 * Math.PI) / 180), K = B.width / ((B.box.e - B.box.w) * COS);
-const P = ([lon, lat]) => [(lon - B.box.w) * COS * K, (B.box.n - lat) * K];
+// 太平洋置中(選項,記在本機):接縫切在西經 30 度,接縫以西(美洲、格陵蘭)整塊搬到亞洲右邊。
+// 路徑以「每一圈(M 開頭)」為單位搬,圈不切開,所以接縫附近的島嶼不會斷掉。
+const PREF = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v === '1'; } catch { return d; } };
+const savePref = (k, on) => { try { localStorage.setItem(k, on ? '1' : '0'); } catch { /* 無痕或封鎖時只在本頁有效 */ } };
+let pac = PREF('ccc:map-pacific', false);
+const SEAM_X = (-30 - B.box.w) * COS * K;
+const wx = (x) => (pac && x < SEAM_X ? x + B.width : x);
+const P = ([lon, lat]) => [wx((lon - B.box.w) * COS * K), (B.box.n - lat) * K];
+const wrapCache = new Map();
+const wrapD = (d) => {
+  if (!pac || !d) return d;
+  let r = wrapCache.get(d);
+  if (r === undefined) {
+    r = d.split(/(?=M)/).map((ring) => {
+      const xs = [...ring.matchAll(/(-?\d+(?:\.\d+)?) -?\d/g)].map((m) => +m[1]);
+      if (!xs.length || xs.reduce((a, b) => a + b, 0) / xs.length >= SEAM_X) return ring;
+      return ring.replace(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g, (m, a, b) => `${Math.round((+a + B.width) * 10) / 10} ${b}`);
+    }).join('');
+    wrapCache.set(d, r);
+  }
+  return r;
+};
+// 經度範圍轉成 viewBox;太平洋置中時跨過接縫的範圍,右邊界加一圈
+const boxView = ([x1, y1], [x2, y2]) => [x1, y1, (x2 < x1 ? x2 + B.width : x2) - x1, y2 - y1];
 const TYPE = { lesson: '課文', person: '人物', comic: '成語漫畫' };
 const PIN = { lesson: 'var(--accent)', person: '#4f6b8a', comic: 'var(--moss)' };
 const GO = { lesson: '讀課文', person: '看人物', comic: '看漫畫' };
@@ -44,11 +67,12 @@ const VIEW = { myth: [104, 30, 122, 40.5], xia: [104, 30, 122, 40.5], shang: [10
   out: [62, 5, 125, 45], 'tw-pre': TW, 'tw-hx': TW, 'tw-mz': TW, 'tw-ql': TW, 'tw-rz': TW, 'tw-zh': TW };
 // 航線的視野:包住所有點,四周留一點空白(WY48)
 const routeView = (r) => { const xs = r.map((q) => q[1]), ys = r.map((q) => q[2]); const pad = Math.max(5, (Math.max(...xs) - Math.min(...xs)) * 0.15);
-  const [x1, y1] = P([Math.min(...xs) - pad, Math.max(...ys) + pad]), [x2, y2] = P([Math.max(...xs) + pad, Math.min(...ys) - pad]); return [x1, y1, x2 - x1, y2 - y1]; };
+  return boxView(P([Math.min(...xs) - pad, Math.max(...ys) + pad]), P([Math.max(...xs) + pad, Math.min(...ys) - pad])); };
 // 國家視角的時期:用該國的視野(WY60)
 const COUNTRY_OF = Object.fromEntries(COUNTRIES.map((c) => [c.id, c]));
 // 時期可以有自己的視野(WY60 段 C2 美國),沒有就用該國的視野
-const viewOf = (era) => { const [w, s, e, n] = VIEW[era] || ERAS.find((x) => x.id === era)?.view || COUNTRY_OF[ERAS.find((x) => x.id === era)?.track]?.view || CN; const [x1, y1] = P([w, n]), [x2, y2] = P([e, s]); return [x1, y1, x2 - x1, y2 - y1]; };
+// 東界超過 180 度(俄羅斯的楚科奇,WY66):太平洋置中時照寫,一般模式到 180 度為止(接縫以東在地圖最左邊)
+const viewOf = (era) => { const [w, s, e, n] = VIEW[era] || ERAS.find((x) => x.id === era)?.view || COUNTRY_OF[ERAS.find((x) => x.id === era)?.track]?.view || CN; return boxView(P([w, n]), P([pac ? e : Math.min(e, 180), s])); };
 
 // 完整朝代序列(WY47):沒有故事的年代也列出(灰色、標「尚無故事」),點了照樣切換疆界;track 切換中國朝代/臺灣時期線
 const trackOf = (e) => e.track || 'cn';
@@ -80,6 +104,7 @@ app.innerHTML = `
     <div class="cmap-tabs" role="tablist"><button type="button" role="tab" id="t-list" aria-selected="true">年代清單</button><button type="button" role="tab" id="t-map" aria-selected="false">地圖</button></div>
     <nav class="cmap-list" id="m-list" aria-label="年代清單"></nav>
     <button type="button" class="cmap-fold-list" id="m-fold-list" aria-controls="m-list" aria-expanded="true"></button>
+    <div class="cmap-split-v" id="m-split-list" role="separator" aria-orientation="vertical" aria-controls="m-list" aria-label="拖拉調整年代清單寬度(方向鍵也可以)" tabindex="0"></div>
     <section class="cmap-cards" id="m-cards" aria-label="年代清單"></section>
     <section class="cmap-right">
       <div class="cmap-axis"><div class="cmap-pv" data-where="axis"></div><button type="button" class="cmap-nav" id="m-prev" aria-label="上一個年代">‹</button><div class="cmap-track" id="m-track"></div><button type="button" class="cmap-nav" id="m-next" aria-label="下一個年代">›</button></div>
@@ -87,10 +112,10 @@ app.innerHTML = `
         <svg class="cmap-svg" id="m-svg" role="img" aria-label="地圖"></svg>
         <div class="cmap-legend" id="m-legend"></div>
         <div class="cmap-tools"><button type="button" id="m-in" aria-label="放大">＋</button><button type="button" id="m-out" aria-label="縮小">－</button><button type="button" id="m-home" aria-label="回到這個年代的範圍">⌂</button><button type="button" id="m-layers" aria-label="圖層" aria-expanded="false" aria-controls="m-layer-panel">層</button></div>
-        <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small></div>
+        <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small><b>地圖</b><label><input type="checkbox" data-opt="refit"> 換時期時拉回該國範圍</label><label><input type="checkbox" data-opt="pac"> 太平洋置中</label><small>沒勾時,換時期會保留目前的縮放與位置;按 ⌂ 隨時拉回。</small></div>
         <p class="cmap-credit"><span>疆界:${L('https://github.com/Seshat-Global-History-Databank/cliopatria', 'Cliopatria')}(Seshat,${L(CCBY, 'CC BY 4.0')},經本站簡化)・地點座標:${L('https://www.geonames.org/', 'GeoNames')}(${L(CCBY, 'CC BY 4.0')})・部分國名:${L('https://www.wikidata.org/', 'Wikidata')}(${L('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0')})・底圖:${L('https://www.naturalearthdata.com/', 'Natural Earth')}(${L('https://www.naturalearthdata.com/about/terms-of-use/', '公有領域')})・示意,非精確疆界</span></p>
       </div>
-      <div class="cmap-dwrap"><div class="cmap-dhead"><b id="m-dtitle"></b><span class="cmap-tz" role="group" aria-label="說明文字大小"><button type="button" id="m-tz-dn" aria-label="文字縮小">A−</button><span id="m-tz-v">100%</span><button type="button" id="m-tz-up" aria-label="文字放大">A+</button></span><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
+      <div class="cmap-dwrap"><div class="cmap-dhead"><div class="cmap-split-h" id="m-split-detail" role="separator" aria-orientation="horizontal" aria-label="拖拉調整說明區高度(方向鍵也可以)" tabindex="0"></div><b id="m-dtitle"></b><span class="cmap-tz" role="group" aria-label="說明文字大小"><button type="button" id="m-tz-dn" aria-label="文字縮小">A−</button><span id="m-tz-v">100%</span><button type="button" id="m-tz-up" aria-label="文字放大">A+</button></span><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
       <div class="cmap-detail" id="m-detail" aria-live="polite"></div></div>
     </section>
   </main>`;
@@ -173,7 +198,7 @@ const pvHTML = (where) => {
       ${LATER.length ? '<b>之後再做</b>' : ''}${LATER.map((n) => `<button type="button" role="menuitem" class="later" disabled>${esc(n)}</button>`).join('')}</div>`;
 };
 const closePV = () => { for (const m of app.querySelectorAll('.cmap-pv-menu')) { m.hidden = true; m.previousElementSibling?.setAttribute('aria-expanded', 'false'); } };
-function setTrack(t) { const c = COUNTRY_OF[t]; if (c && t !== curTrack()) setEra(c.start); }
+function setTrack(t) { const c = COUNTRY_OF[t]; if (c && t !== curTrack()) setEra(c.start, true); }
 // 「同一時期」對照:用這個時期的代表年份,查每個視角當年是哪個時期(時期表裡沒有的寫「—」)
 const yearOf = (t) => { const s = t.replace(/約|\(.*$/, '').trim(); if (!s) return null; const n = Number(s.replace(/^前/, '')); return Number.isNaN(n) ? null : s.startsWith('前') ? -n : n; };
 const spanOf = (e) => { if (!e.time.includes('~')) return null; const [a, b] = e.time.split('~'); return [yearOf(a) ?? -Infinity, yearOf(b) ?? Infinity]; };
@@ -190,6 +215,7 @@ function periodHTML(e) {
     <p>年代:${esc(e.time.replace(/^~/, '~ ').replace(/~$/, '~ 今'))}</p>
     ${e.info.map((t) => `<p>${esc(t)}</p>`).join('')}
     <p class="cmap-src">${map}</p>
+    ${e.table ? `<div class="cmap-pvlink"><h3>${esc(e.table.h)}</h3><table class="cmap-pvtable">${e.table.rows.map(([a, b]) => `<tr><th scope="row">${esc(a)}</th><td>${esc(b)}</td></tr>`).join("")}</table><p class="cmap-src">${esc(e.table.note)}</p></div>` : ""}
     ${e.box ? `<div class="cmap-pvlink"><h3>${esc(e.box.h)}</h3><ul>${e.box.items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
     ${links.length ? `<div class="cmap-pvlink"><h3>和臺灣的淵源</h3><ul>${links.map((l) => `<li>${esc(l.text)} ${l.href ? LX(l.href, esc(l.label)) : `<button type="button" class="cmap-eralink" data-go="${l.go.join(' ')}">${esc(l.label)}</button>`}</li>`).join('')}</ul></div>` : ''}
     <div class="cmap-same"><h3>同一時期(${yearText(y)}左右)</h3><table>${sameTime(y).map(([x, list]) => `<tr${x.id === c.id ? ' class="cur"' : ''}><th scope="row">${esc(x.name)}</th><td>${list.length ? list.map((p) => (p.id === e.id ? `<b>${esc(p.name)}</b>` : `<button type="button" class="cmap-eralink" data-era="${p.id}">${esc(p.name)}</button>`)).join('、') : '—'}</td></tr>`).join('')}</table>
@@ -275,7 +301,7 @@ const mapKeys = () => {
 // 圖層「今日行政區界線」:今日國界(細實線)與一級行政區(細虛線)疊在歷史疆界上。用詞一律「今日大約位於」,不寫「屬於」。
 const todayCache = new Map();
 const todayJSON = (f) => { if (!todayCache.has(f)) todayCache.set(f, fetch(`today/${f}.json`).then((r) => (r.ok ? r.json() : null)).catch(() => null)); return todayCache.get(f); };
-const TODAY_SRC = '比例由本站預先計算:邊界都經過簡化,比例只是約略值。今日國界與行政區:Natural Earth(實際控制線,公有領域);臺灣縣市:內政部國土測繪中心開放資料;越南只列到國家。';
+const TODAY_SRC = '比例由本站預先計算:邊界都經過簡化,比例只是約略值。今日國界與行政區:Natural Earth(實際控制線,公有領域);臺灣縣市:內政部國土測繪中心開放資料。中國、臺灣、日本、南北韓、蒙古列到一級行政區,其他國家只列到國家;國名取 Wikidata(CC0)並經本站校對。';
 async function fillToday(p) {
   const name = sliceFor(st.era, st.region || st.item?.state);
   const [rows, names] = await Promise.all([name ? todayJSON(name) : null, todayJSON('names')]);
@@ -305,7 +331,7 @@ function echoHTML(e) {
 }
 // 點在不在多邊形內(SVG 路徑,偶奇規則)
 const inPath = (d, [x, y]) => { let c = false; for (const ring of d.split('M').filter(Boolean)) { const pts = ring.replace('Z', '').split('L').map((t) => t.split(' ').map(Number)); for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const [xi, yi] = pts[i], [xj, yj] = pts[j]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } } return c; };
-const echoesIn = (p) => { const list = ECHOES.filter((e) => e.eras.includes(st.era) && inPath(p.d, P(e.at))); return list.length ? `<h3>以古鑑今</h3><p>${list.map((e) => `<button type="button" class="cmap-eralink" data-echo="${e.id}">${esc(e.title)} →</button>`).join(' ')}</p>` : ''; };
+const echoesIn = (p) => { const list = ECHOES.filter((e) => e.eras.includes(st.era) && inPath(wrapD(p.d), P(e.at))); return list.length ? `<h3>以古鑑今</h3><p>${list.map((e) => `<button type="button" class="cmap-eralink" data-echo="${e.id}">${esc(e.title)} →</button>`).join(' ')}</p>` : ''; };
 // ---------------------------------------------------------------- 重要建築(WY55)
 // 圖層打開時,只顯示目前年代結束前已經蓋好的建築(依建造年份);勾「全部年代」則全部顯示。圖示為本站 SVG 繪製的小樓閣;
 // 點位只標到城市的(approx)外加虛線圈,和 AI 推算點位同一種樣式。臺灣:文化部文化資產局開放資料;中國:各篇原文與出處。
@@ -354,8 +380,8 @@ async function drawMap() {
   // 放大到東亞沿海時(WY59):改用高精度陸地,疆界填色也用它裁切,海岸線才不會有鋸齒;框外照舊用一般底圖
   const fine = v[2] < 160 ? await fineLand() : null;
   if (seq !== drawSeq) return;
-  const landD = fine ? fine.d : B.land;
-  frag.append(el('path', { d: B.land, class: 'm-land' + (fine ? ' under' : '') }));
+  const landD = fine ? fine.d : wrapD(B.land);
+  frag.append(el('path', { d: wrapD(B.land), class: 'm-land' + (fine ? ' under' : '') }));
   if (fine) {
     const [x1, y1, x2, y2] = fine.box, big = 1e5;
     const cp = el('clipPath', { id: 'm-clip' });
@@ -375,11 +401,11 @@ async function drawMap() {
   const counts = {}; for (const it of itemsOf(st.era)) if (it.state) counts[it.state] = (counts[it.state] || 0) + 1;
   if (data) {
     const base = el('g', { class: 'm-polbase', ...(fine ? { 'clip-path': 'url(#m-clip)' } : {}) });
-    for (const p of data.polities) base.append(el('path', { d: p.d }));
+    for (const p of data.polities) base.append(el('path', { d: wrapD(p.d) }));
     frag.append(base);
     const g = el('g', { class: 'm-pols' + (selState?.clio || st.polity || eraClio.length ? ' has-sel' : ''), ...(fine ? { 'clip-path': 'url(#m-clip)' } : {}) });
     data.polities.forEach((p, i) => {
-      const path = el('path', { d: p.d, class: 'm-pol' + ((selState?.clio === p.n || st.polity?.n === p.n || eraClio.includes(p.n)) ? ' sel' : ''), fill: FILLS[i % FILLS.length] });
+      const path = el('path', { d: wrapD(p.d), class: 'm-pol' + ((selState?.clio === p.n || st.polity?.n === p.n || eraClio.includes(p.n)) ? ' sel' : ''), fill: FILLS[i % FILLS.length] });
       path.addEventListener('click', () => { if (dragged) return; st.polity = st.polity?.n === p.n ? null : p; st.item = null; st.echo = null; st.bld = null; st.region = statesOf(st.era).find((s) => s.clio === p.n)?.id || null; update(); });
       g.append(path);
     });
@@ -387,7 +413,7 @@ async function drawMap() {
     const fs = 13 * u;
     for (const p of data.polities) { // 國名:畫面上太小的國家不寫字,放大後才出現
       if (p.w / u < 40 || p.h / u < 14) continue;
-      frag.append(el('text', { x: p.l[0], y: p.l[1] + fs * 0.35, class: 'm-pname' + (p.zs === 'ai' ? ' ai' : p.zs === 'wikidata' ? '' : ' en'), 'font-size': (p.w / u > 140 ? fs * 1.25 : fs).toFixed(1) }, p.nt ? `${p.z}?` : p.z));
+      frag.append(el('text', { x: wx(p.l[0]), y: p.l[1] + fs * 0.35, class: 'm-pname' + (p.zs === 'ai' ? ' ai' : p.zs === 'wikidata' ? '' : ' en'), 'font-size': (p.w / u > 140 ? fs * 1.25 : fs).toFixed(1) }, p.nt ? `${p.z}?` : p.z));
     }
     for (const [n, at] of Object.entries(LABEL_AT[st.era] || {})) { // 本土在別處的政權,在臺灣島上再標一次國名
       const p = data.polities.find((q) => q.n === n); if (!p) continue;
@@ -408,8 +434,8 @@ async function drawMap() {
   if ((st.layers.today || (st.layers.bld && layerPref('today') === null)) && data) { // 開「重要建築」時一併顯示今日行政區虛線,除非使用者另外關過「今日行政區界線」
     const [l1, l0] = await Promise.all([todayJSON('lines-a1'), todayJSON('lines-a0')]);
     if (seq !== drawSeq) return;
-    if (l1) frag.append(el('path', { d: l1.d, class: 'm-today1' }));
-    if (l0) frag.append(el('path', { d: l0.d, class: 'm-today0' }));
+    if (l1) frag.append(el('path', { d: wrapD(l1.d), class: 'm-today1' }));
+    if (l0) frag.append(el('path', { d: wrapD(l0.d), class: 'm-today0' }));
   }
   // 重要建築(圖層,WY55):小樓閣圖示
   if (st.layers.bld) {
@@ -523,8 +549,10 @@ function setFold(k, on, save = true) {
 }
 let lastPick = null; // null=頁面剛載入,第一次畫面不算「選了新項目」
 function update() { renderList(); renderCards(); renderAxis(); renderDetail(); syncDetailHead(); if (!mobile() || st.tab === 'map') drawMap(); }
-function setEra(id) {
-  Object.assign(st, { era: id, region: null, item: null, view: null, polity: null, twc: null, route: null, echo: null, bld: null });
+// 換時期(使用者 2026-11-04):預設保留目前的縮放與位置;勾「換時期時拉回該國範圍」才回到該時期的範圍。換國家視角一律拉回。
+let refit = PREF('ccc:map-refit', false);
+function setEra(id, fit = refit) {
+  Object.assign(st, { era: id, region: null, item: null, view: fit ? null : st.view, polity: null, twc: null, route: null, echo: null, bld: null });
   try { history.replaceState(null, '', `?era=${encodeURIComponent(id)}`); } catch { /* 網址改不了也不影響閱讀 */ } // 網址記住目前年代,可以直接分享(WY60)
   update();
 }
@@ -591,7 +619,7 @@ app.addEventListener('click', (ev) => {
 
 // 拖曳、雙指縮放、滾輪縮放:移動中只改 viewBox,停下來再重畫(字的大小、要載入粗/細切片都重算)
 const W = B.width, H = B.height;
-const clamp = ([x, y, w, h]) => { const r = h / w; w = Math.min(Math.max(w, MIN_W), W); h = w * r; return [Math.min(Math.max(x, -w * 0.3), W - w * 0.7), Math.min(Math.max(y, -h * 0.3), H - h * 0.7), w, h]; };
+const clamp = ([x, y, w, h]) => { const r = h / w, x0 = pac ? SEAM_X : 0; w = Math.min(Math.max(w, MIN_W), W); h = w * r; return [Math.min(Math.max(x, x0 - w * 0.3), x0 + W - w * 0.7), Math.min(Math.max(y, -h * 0.3), H - h * 0.7), w, h]; };
 // 放大上限(WY59):畫面寬最小 12 地圖單位(約經度 0.4 度),臺灣單一縣市放得下、建築圖示分得開
 const MIN_W = 12;
 // 放大到包住這些點(聚合圈用):四周留白,但不小於放大上限
@@ -634,6 +662,16 @@ $('m-home').addEventListener('click', () => { st.view = st.route ? routeView(cur
 const lp = $('m-layer-panel');
 for (const k of Object.keys(st.layers)) { st.layers[k] = layerOn(k); lp.querySelector(`[data-layer="${k}"]`).checked = st.layers[k]; }
 $('m-layers').addEventListener('click', () => { const open = lp.hidden; lp.hidden = !open; $('m-layers').setAttribute('aria-expanded', String(open)); });
+lp.querySelector('[data-opt="refit"]').checked = refit; lp.querySelector('[data-opt="pac"]').checked = pac;
+lp.addEventListener('change', (e) => {
+  const o = e.target.dataset.opt; if (!o) return;
+  savePref(o === 'pac' ? 'ccc:map-pacific' : 'ccc:map-refit', e.target.checked);
+  if (o === 'refit') { refit = e.target.checked; return; }
+  const v = st.view || vb(), cx = v[0] + v[2] / 2; // 換置中方式時,畫面停在同一個地方
+  pac = e.target.checked;
+  if (pac && cx < SEAM_X) v[0] += W; else if (!pac && cx >= W) v[0] -= W;
+  st.view = clamp(v); drawMap();
+});
 lp.addEventListener('change', (e) => { const k = e.target.dataset.layer; if (!k) return; st.layers[k] = e.target.checked; try { localStorage.setItem(LAYER_KEY(k), e.target.checked ? '1' : '0'); } catch { /* 只在本頁有效 */ } update(); });
 // 說明區文字縮放(WY59):90%、100%、125%、150%,記在本機;用 CSS zoom,版面寬度跟著縮,文字自動換行、不會橫捲
 const TZ = [0.9, 1, 1.25, 1.5];
@@ -645,6 +683,34 @@ $('m-tz-up').addEventListener('click', () => setTz(TZ[Math.min(TZ.length - 1, TZ
 setFold('list', readFold('list'), false); setFold('detail', readFold('detail'), false);
 $('m-fold-list').addEventListener('click', () => setFold('list', !root.classList.contains('fold-list')));
 $('m-fold-detail').addEventListener('click', () => setFold('detail', !root.classList.contains('fold-detail')));
+// 拖拉分隔線(使用者 2026-11-04,桌機):年代清單寬度、說明區高度;記在本機,方向鍵每次 16px
+const SPLIT = { list: { key: 'ccc:map-list-w', css: '--lw', min: 200, max: () => Math.min(600, innerWidth * 0.5) },
+  detail: { key: 'ccc:map-detail-h', css: '--dh', min: 60, max: () => { const r = root.querySelector('.cmap-right').getBoundingClientRect(); return r.bottom - box.getBoundingClientRect().top - 240; } } }; // 地圖至少留 240px
+const setSplit = (k, px, save = true) => {
+  const c = SPLIT[k], v = Math.round(Math.min(Math.max(px, c.min), Math.max(c.min, c.max())));
+  root.style.setProperty(c.css, `${v}px`); root.classList.add(`sized-${k}`);
+  $(`m-split-${k}`).setAttribute('aria-valuenow', String(v));
+  if (save) { try { localStorage.setItem(c.key, String(v)); } catch { /* 只在本頁有效 */ } }
+};
+// 讀回記住的大小;版面排好後才夾住(地圖至少 240px),視窗變小時也重新夾住
+const restoreSplits = () => { for (const k of Object.keys(SPLIT)) { try { const v = Number(localStorage.getItem(SPLIT[k].key)); if (v > 0) setSplit(k, v, false); } catch { /* 用預設 */ } } };
+addEventListener('resize', restoreSplits);
+for (const k of Object.keys(SPLIT)) {
+  const h = $(`m-split-${k}`), cur = () => (k === 'list' ? $('m-list').getBoundingClientRect().width : root.querySelector('.cmap-dwrap').getBoundingClientRect().height);
+  h.addEventListener('pointerdown', (e) => {
+    e.preventDefault(); h.setPointerCapture(e.pointerId); h.classList.add('on');
+    const p0 = k === 'list' ? e.clientX : e.clientY, v0 = cur();
+    const mv = (ev) => setSplit(k, k === 'list' ? v0 + ev.clientX - p0 : v0 - (ev.clientY - p0), false);
+    const up = () => { h.classList.remove('on'); h.removeEventListener('pointermove', mv); setSplit(k, cur()); };
+    h.addEventListener('pointermove', mv); h.addEventListener('pointerup', up, { once: true }); h.addEventListener('pointercancel', up, { once: true });
+  });
+  h.addEventListener('keydown', (e) => {
+    const d = { list: { ArrowLeft: -16, ArrowRight: 16 }, detail: { ArrowUp: 16, ArrowDown: -16 } }[k][e.key];
+    if (d) { e.preventDefault(); setSplit(k, cur() + d); }
+  });
+  h.addEventListener('dblclick', () => { root.style.removeProperty(SPLIT[k].css); root.classList.remove(`sized-${k}`); try { localStorage.removeItem(SPLIT[k].key); } catch { /* 只在本頁有效 */ } }); // 雙擊回到預設
+}
 new ResizeObserver(() => { if (!mobile() || st.tab === 'map') drawMap(); }).observe(box);
 
 if (pre && mobile()) setTab('map'); else update();
+requestAnimationFrame(restoreSplits);

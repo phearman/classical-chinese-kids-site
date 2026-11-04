@@ -360,7 +360,28 @@
 .cmap-same .cmap-src, .cmap-pvlink ul { margin: 0; padding: 6px 10px; }
 .cmap-pvlink ul { padding-left: 26px; font-size: 14px; }
 .cmap-pvlink li { margin: 4px 0; }
+/* WY66:蘇聯解體的 15 國獨立日期表 */
+.cmap-pvtable { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cmap-pvtable th, .cmap-pvtable td { padding: 4px 10px; border-top: 1px solid var(--line); text-align: left; vertical-align: top; }
+.cmap-pvtable th { font-weight: normal; white-space: nowrap; }
+.cmap-pvtable td { color: var(--ink-soft); }
+.cmap-pvlink > .cmap-src { margin: 0; padding: 6px 10px; }
 @media (min-width: 768px) {
   .cmap:not(.fold-list) .cmap-fold-list { width: auto; padding: 0 8px; }
   .cmap-fold-hint { font-size: 13px; }
 }
+
+/* 拖拉分隔線(使用者 2026-11-04,桌機):年代清單寬度(--lw)、說明區高度(--dh);雙擊回預設 */
+.cmap-split-v, .cmap-split-h { display: none; }
+@media (min-width: 768px) {
+  .cmap.sized-list:not(.fold-list) { grid-template-columns: var(--lw) minmax(0, 1fr); }
+  .cmap.sized-list:not(.fold-list) .cmap-fold-list { left: calc(var(--lw) - 32px); }
+  .cmap-split-v { display: block; position: absolute; z-index: 2; top: 0; bottom: 0; left: calc(var(--lw, 320px) - 4px); width: 8px; cursor: col-resize; touch-action: none; }
+  .cmap.fold-list .cmap-split-v { display: none; }
+  .cmap.sized-detail:not(.fold-detail) .cmap-dwrap { height: min(var(--dh), calc(100% - 240px)); max-height: none; }
+  .cmap-split-h { display: block; position: absolute; left: 0; right: 0; top: -5px; height: 10px; cursor: row-resize; touch-action: none; z-index: 2; }
+  .cmap.fold-detail .cmap-split-h { display: none; }
+  .cmap-split-v:hover, .cmap-split-v.on, .cmap-split-v:focus-visible { background: linear-gradient(90deg, transparent 3px, var(--accent) 3px, var(--accent) 5px, transparent 5px); outline: none; }
+  .cmap-split-h:hover, .cmap-split-h.on, .cmap-split-h:focus-visible { background: linear-gradient(180deg, transparent 4px, var(--accent) 4px, var(--accent) 6px, transparent 6px); outline: none; }
+}
+.cmap-layers > b:not(:first-child) { margin-top: 6px; }
