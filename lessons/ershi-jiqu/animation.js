@@ -1,9 +1,9 @@
 // 〈兒時記趣〉動畫故事:本課的資料與道具;播放器共用 shared/anim-player.js。
 // 本課尚未產生 AI 配音音檔(音訊工作另行安排),旁白只用內建朗讀。
-import { animMeta, roles, scenes } from './anim-data.js?v=97723b1';
-import { mountAnimation } from '../../shared/anim-player.js?v=97723b1';
-import { characterURL } from '../../shared/assets.js?v=97723b1';
-import { beetle } from '../../shared/figures.js?v=97723b1';
+import { animMeta, roles, scenes } from './anim-data.js?v=3eea4ed';
+import { mountAnimation } from '../../shared/anim-player.js?v=3eea4ed';
+import { characterURL } from '../../shared/assets.js?v=3eea4ed';
+import { beetle } from '../../shared/figures.js?v=3eea4ed';
 
 // 螞蟻(WY33):側面,頭、胸、腹三節,六隻腳(遠側三隻較淡)、彎折的觸角;原點在腳底中央、面向右,長約 9 單位;s=縮放,flip=面向左
 function ant(x, y, { s = 1, flip = false } = {}) {
