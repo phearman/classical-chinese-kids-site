@@ -1,16 +1,16 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=3eea4ed';
-import { escapeHTML as esc } from '../shared/terms.js?v=3eea4ed';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=3eea4ed';
-import { WORLD_BASE as B } from './world-base.js?v=3eea4ed';
-import { twCards, checkOf } from './taiwan-world.js?v=3eea4ed';
-import { eraCards, KINDS } from './era-cards.js?v=3eea4ed';
-import { COMICS } from '../idioms/comics.js?v=3eea4ed';
-import { ECHOES } from './echoes.js?v=3eea4ed';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=3eea4ed';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=3eea4ed';
+import { initPage } from '../shared/page.js?v=0ebb21d';
+import { escapeHTML as esc } from '../shared/terms.js?v=0ebb21d';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=0ebb21d';
+import { WORLD_BASE as B } from './world-base.js?v=0ebb21d';
+import { twCards, checkOf } from './taiwan-world.js?v=0ebb21d';
+import { eraCards, KINDS } from './era-cards.js?v=0ebb21d';
+import { COMICS } from '../idioms/comics.js?v=0ebb21d';
+import { ECHOES } from './echoes.js?v=0ebb21d';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=0ebb21d';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=0ebb21d';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -47,7 +47,8 @@ const routeView = (r) => { const xs = r.map((q) => q[1]), ys = r.map((q) => q[2]
   const [x1, y1] = P([Math.min(...xs) - pad, Math.max(...ys) + pad]), [x2, y2] = P([Math.max(...xs) + pad, Math.min(...ys) - pad]); return [x1, y1, x2 - x1, y2 - y1]; };
 // 國家視角的時期:用該國的視野(WY60)
 const COUNTRY_OF = Object.fromEntries(COUNTRIES.map((c) => [c.id, c]));
-const viewOf = (era) => { const [w, s, e, n] = VIEW[era] || COUNTRY_OF[ERAS.find((x) => x.id === era)?.track]?.view || CN; const [x1, y1] = P([w, n]), [x2, y2] = P([e, s]); return [x1, y1, x2 - x1, y2 - y1]; };
+// 時期可以有自己的視野(WY60 段 C2 美國),沒有就用該國的視野
+const viewOf = (era) => { const [w, s, e, n] = VIEW[era] || ERAS.find((x) => x.id === era)?.view || COUNTRY_OF[ERAS.find((x) => x.id === era)?.track]?.view || CN; const [x1, y1] = P([w, n]), [x2, y2] = P([e, s]); return [x1, y1, x2 - x1, y2 - y1]; };
 
 // 完整朝代序列(WY47):沒有故事的年代也列出(灰色、標「尚無故事」),點了照樣切換疆界;track 切換中國朝代/臺灣時期線
 const trackOf = (e) => e.track || 'cn';
@@ -169,17 +170,18 @@ const pvHTML = (where) => {
   const c = COUNTRY_OF[curTrack()], id = `m-pv-${where}`;
   return `<button type="button" class="cmap-pv-btn" aria-haspopup="true" aria-expanded="false" aria-controls="${id}">視角 <b>${esc(c.name)}</b> <span aria-hidden="true">▾</span></button>
     <div class="cmap-pv-menu" id="${id}" role="menu" aria-label="選擇國家視角" hidden>${COUNTRIES.map((x) => `<button type="button" role="menuitemradio" aria-checked="${x.id === c.id}" data-pv="${x.id}">${esc(x.name)}<small>${erasOf(x.id).length} 個時期</small></button>`).join('')}
-      <b>之後再做</b>${LATER.map((n) => `<button type="button" role="menuitem" class="later" disabled>${esc(n)}</button>`).join('')}</div>`;
+      ${LATER.length ? '<b>之後再做</b>' : ''}${LATER.map((n) => `<button type="button" role="menuitem" class="later" disabled>${esc(n)}</button>`).join('')}</div>`;
 };
 const closePV = () => { for (const m of app.querySelectorAll('.cmap-pv-menu')) { m.hidden = true; m.previousElementSibling?.setAttribute('aria-expanded', 'false'); } };
 function setTrack(t) { const c = COUNTRY_OF[t]; if (c && t !== curTrack()) setEra(c.start); }
 // 「同一時期」對照:用這個時期的代表年份,查每個視角當年是哪個時期(時期表裡沒有的寫「—」)
 const yearOf = (t) => { const s = t.replace(/約|\(.*$/, '').trim(); if (!s) return null; const n = Number(s.replace(/^前/, '')); return Number.isNaN(n) ? null : s.startsWith('前') ? -n : n; };
 const spanOf = (e) => { if (!e.time.includes('~')) return null; const [a, b] = e.time.split('~'); return [yearOf(a) ?? -Infinity, yearOf(b) ?? Infinity]; };
-const sameTime = (y) => COUNTRIES.map((c) => [c, erasOf(c.id).filter((e) => { const sp = spanOf(e); return sp && sp[0] <= y && y <= sp[1]; })]);
+const sameTime = (y) => COUNTRIES.filter((c) => !c.overview).map((c) => [c, erasOf(c.id).filter((e) => { const sp = spanOf(e); return sp && sp[0] <= y && y <= sp[1]; })]);
 function periodHTML(e) {
   const c = COUNTRY_OF[e.track], y = e.year;
-  const map = e.slice ? (e.clio.length ? `地圖:${yearText(+e.slice.replace('bc', '-'))}左右的疆界。加深的是這時統治今日${esc(c.name)}一帶的政權範圍。` : `地圖:${yearText(+e.slice.replace('bc', '-'))}左右的疆界;疆界資料沒有這時期的${esc(c.name)}政權。`)
+  const map = c.overview ? `地圖:${yearText(+e.slice.replace('bc', '-'))}左右的疆界。這個視角涵蓋好幾國,不加深單一政權;點國家可以看說明。`
+    : e.slice ? (e.clio.length ? `地圖:${yearText(+e.slice.replace('bc', '-'))}左右的疆界。加深的是這時統治今日${esc(c.name)}一帶的政權範圍。` : `地圖:${yearText(+e.slice.replace('bc', '-'))}左右的疆界;疆界資料沒有這時期的${esc(c.name)}政權。`)
     : e.need != null ? '地圖:這個時期的疆界資料還沒做好,之後補上;現在只顯示底圖。' : '地圖:疆界資料沒有這個時期,只顯示底圖。';
   const links = e.track === 'ph' ? PH_LINKS : [];
   return `<div class="cmap-card cmap-pvcard">
@@ -188,6 +190,7 @@ function periodHTML(e) {
     <p>年代:${esc(e.time.replace(/^~/, '~ ').replace(/~$/, '~ 今'))}</p>
     ${e.info.map((t) => `<p>${esc(t)}</p>`).join('')}
     <p class="cmap-src">${map}</p>
+    ${e.box ? `<div class="cmap-pvlink"><h3>${esc(e.box.h)}</h3><ul>${e.box.items.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div>` : ''}
     ${links.length ? `<div class="cmap-pvlink"><h3>和臺灣的淵源</h3><ul>${links.map((l) => `<li>${esc(l.text)} ${l.href ? LX(l.href, esc(l.label)) : `<button type="button" class="cmap-eralink" data-go="${l.go.join(' ')}">${esc(l.label)}</button>`}</li>`).join('')}</ul></div>` : ''}
     <div class="cmap-same"><h3>同一時期(${yearText(y)}左右)</h3><table>${sameTime(y).map(([x, list]) => `<tr${x.id === c.id ? ' class="cur"' : ''}><th scope="row">${esc(x.name)}</th><td>${list.length ? list.map((p) => (p.id === e.id ? `<b>${esc(p.name)}</b>` : `<button type="button" class="cmap-eralink" data-era="${p.id}">${esc(p.name)}</button>`)).join('、') : '—'}</td></tr>`).join('')}</table>
       <p class="cmap-src">「—」代表時期表裡沒有列那一年,不代表沒有人住。各國的時期表都只是通行分法,起訖各說不一。</p></div>

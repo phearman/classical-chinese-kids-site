@@ -19,6 +19,12 @@ const TECO_VN = ['駐越南台北經濟文化辦事處〈越南國情簡介〉',
 const TECO_PH = ['駐菲律賓台北經濟文化辦事處〈菲律賓國情簡介〉', 'https://www.roc-taiwan.org/ph/post/287.html'];
 const OH_US = ['美國國務院歷史文獻辦公室〈The Philippine-American War, 1899–1902〉', 'https://history.state.gov/milestones/1899-1913/war'];
 const MING321 = ['《明史》卷三百二十一〈安南〉(維基文庫)', 'https://zh.wikisource.org/zh-hant/明史/卷321'];
+const MING324 = ['《明史》卷三百二十四〈暹羅〉(維基文庫)', 'https://zh.wikisource.org/zh-hant/明史/卷324'];
+const SD = (path, t) => [`美國國務院歷史文獻辦公室〈${t}〉`, `https://history.state.gov/milestones/${path}`];
+const NPS = (path, t) => [`美國國家公園管理局〈${t}〉`, `https://www.nps.gov/${path}`];
+const LOC_CN = ['美國國會圖書館〈Chinese Collection〉', 'https://guides.loc.gov/asian-collections/chinese-collection'];
+const LOC_RE = ['美國國會圖書館〈Reconstruction: A Resource Guide〉', 'https://guides.loc.gov/reconstruction'];
+const QSG528 = ['《清史稿》卷五百二十八〈屬國三・暹羅〉(維基文庫)', 'https://zh.wikisource.org/zh-hant/清史稿/卷528'];
 
 // 國家視角:順序就是選單順序;start=切到這國時先看的時期;view=視野 [西經, 南緯, 東經, 北緯]
 export const COUNTRIES = Object.freeze([
@@ -28,9 +34,15 @@ export const COUNTRIES = Object.freeze([
   { id: 'kr', name: '朝鮮半島', start: 'kr-joseon', view: [118, 30, 136, 46] },
   { id: 'vn', name: '越南', start: 'vn-ly', view: [98, 12, 116, 28] },
   { id: 'ph', name: '菲律賓', start: 'ph-es', view: [110, 3, 132, 27] },
+  // WY60 段 C1(使用者 2026-11-04 裁 CPM 待裁 56「按建議」)
+  { id: 'th', name: '泰國', start: 'th-ayutthaya', view: [94, 5, 108, 21] },
+  // overview=整體視角:各段沒有出處明寫的起訖,只寫代表年份;不加深、不列進「同一時期」對照
+  { id: 'sea', name: '東南亞(其他)', start: 'sea-1640', view: [92, -11, 128, 24], overview: true },
+  // WY60 段 C2:美國(西經寫負數);各時期另有自己的視野
+  { id: 'us', name: '美國', start: 'us-civil', view: [-128, 22, -62, 52] },
 ]);
-// 之後再做(使用者 2026-11-01 裁:第一批四國,美國、東南亞其他國家之後)
-export const LATER = Object.freeze(['美國', '東南亞其他']);
+// 之後再做(目前沒有)
+export const LATER = Object.freeze([]);
 
 const E = (track, id, name, time, year, slice, o = {}) => ({ id: `${track}-${id}`, track, name, time, year, slice, clio: [], info: [], src: [], ...o });
 
@@ -153,6 +165,62 @@ export const COUNTRY_ERAS = Object.freeze([
     info: ['Wikidata 記 1942 年 5 月 8 日到 1945 年 7 月 5 日;1943~1945 年另有菲律賓第二共和國。', '疆界資料把這時的菲律賓畫在「日本帝國」裡。'], src: [WD('Q3175954'), WD('Q2027229')] }),
   E('ph', 'modern', '菲律賓共和國', '1946~', 2000, '2000', { clio: ['Republic of the Philippines'],
     info: ['教育部辭典「菲律賓共和國」:西元 1946 年 7 月 4 日獨立。'], src: [MOE('菲律賓共和國'), TECO_PH, WD('Q928')] }),
+  // ---------------------------------------------------------------- 泰國(時期名用 Wikidata 繁中標籤;地圖國名是全站共用的切片資料,不一樣的在說明卡寫「地圖上標為○○」)
+  E('th', 'early', '早期各國(羅渦等)', '~1238', 740, '740', { clio: ['Lavo Kingdom', 'Haripuñjaya'],
+    info: ['羅渦:Wikidata 記 700~1388 年。', '地圖用 740 年的疆界,這時今泰國一帶有羅渦與 Haripuñjaya(沒有找到有出處的中文名,先寫英文)。'], src: [WD('Q1332305'), WD('Q255931')] }),
+  E('th', 'sukhothai', '素可泰王國', '1238~1438', 1300, '1300', { clio: ['Sukhothai Kingdom'],
+    info: ['Wikidata 記 1238~1438 年。', '地圖上標為「素可泰」。'], src: [WD('Q863279')] }),
+  E('th', 'ayutthaya', '大城王國', '1350~1767', 1640, '1640', { clio: ['Ayutthaya Kingdom'],
+    info: ['Wikidata 記 1350 年到 1767 年 4 月 7 日。', '地圖上標為「阿瑜陀耶」。'], src: [WD('Q841364'), MING324, QSG528],
+    box: { h: '和中國的往來', items: ['《明史‧暹羅傳》:「洪武三年,命使臣呂宗俊等齎詔諭其國。」十年賜印,「文曰『暹羅國王之印』」。', '《清史稿‧暹羅傳》:「順治九年十二月,暹羅遣使請貢」;康熙年間「定暹羅貢期三年一次」。', '原文照錄維基文庫;教育部辭典「暹羅」:泰國的舊名。'] } }),
+  E('th', 'thonburi', 'Thonburi', '1768~1782', 1780, '1780', { clio: ['Thonburi Kingdom'], check: '待查證',
+    info: ['Wikidata 記 1768~1782 年。', '中文名待查證:教育部辭典、Wikidata 都沒有中文名,先寫英文。地圖上標為「吞武里王朝」(本站 AI 整理)。'], src: [WD('Q1115291')] }),
+  E('th', 'rattanakosin', '拉達那哥欣王國', '1782~1932', 1850, '1850', { clio: ['Rattanakosin Kingdom'],
+    info: ['Wikidata 記 1782 年到 1932 年 6 月 24 日。', '地圖上標為「暹羅」;教育部辭典「暹羅」:泰國的舊名。'], src: [WD('Q1155700'), MOE('暹羅')] }),
+  E('th', 'cm', '君主立憲以後', '1932~', 2000, '2000', { clio: ['Kingdom of Thailand'],
+    info: ['1932 年 6 月 24 日改為君主立憲(Wikidata)。', '教育部辭典「泰王國」:1939 年定國名為泰王國,簡稱「泰國」。'], src: [WD('Q2120252'), MOE('泰王國')] }),
+
+  // ---------------------------------------------------------------- 東南亞(其他):整體視角,五段只寫代表年份;越南、菲律賓、泰國另有自己的視角
+  E('sea', '740', '印度化諸王國', '740 年前後', 740, '740', {
+    info: ['疆界資料裡:今曼谷一帶屬羅渦,吳哥一帶屬真臘,蒲甘一帶屬驃國,巨港、麻六甲、新加坡一帶屬三佛齊,雅加達一帶屬巽他王國。'], src: [WD('Q1332305'), WD('Q234197')] }),
+  E('sea', '1300', '大陸區王國與滿者伯夷', '1300 年前後', 1300, '1300', {
+    info: ['疆界資料裡:今曼谷一帶屬羅渦,吳哥一帶屬高棉,仰光一帶屬勃固王朝,巨港一帶屬滿者伯夷,雅加達一帶屬巽他王國,麻六甲、新加坡一帶屬 Malaya。', '滿者伯夷:Wikidata 記 1293~1527 年。'], src: [WD('Q49326'), WD('Q863279')] }),
+  E('sea', '1640', '蘇丹國與歐洲人到來', '1640 年前後', 1640, '1640', {
+    info: ['疆界資料裡:今曼谷一帶屬阿瑜陀耶,吳哥一帶屬高棉,仰光、蒲甘一帶屬 First Toungoo Empire,巨港一帶屬巨港蘇丹國,雅加達一帶屬 Sultanate of Banten,麻六甲屬葡萄牙帝國,新加坡一帶屬柔佛蘇丹王朝,汶萊屬 Sultanate of Brunei。', '沒有找到有出處的中文名的政權,先寫英文。'], src: [WD('Q841364'), WD('Q734867'), WD('Q887803')] }),
+  E('sea', '1930', '殖民時期', '1930 年前後', 1930, '1930', {
+    info: ['疆界資料裡:今曼谷一帶屬暹羅,吳哥、永珍一帶屬法屬印度支那,仰光一帶屬英屬印度,雅加達、巨港一帶屬荷屬東印度,麻六甲、新加坡、汶萊屬大英帝國。'], src: [WD('Q185682'), WD('Q1155700')] }),
+  E('sea', '2000', '獨立以後', '2000 年前後', 2000, '2000', {
+    info: ['疆界資料裡:泰國、柬埔寨、緬甸、寮國、印度尼西亞、馬來西亞、新加坡、汶萊(Sultanate of Brunei)各自獨立。'], src: [WD('Q869'), WD('Q252'), WD('Q833')] }),
+  // ---------------------------------------------------------------- 美國(使用者 2026-11-04 裁 CPM 待裁 56):只做 1607 起;原住民族時期只放文字
+  // 分期依據:美國國務院歷史文獻辦公室 Milestones 的章節年段(docs/research/wy60/usa.md 第一、二節)
+  E('us', 'native', '原住民族時期', '~1607', 1550, null, {
+    info: ['美國國家公園管理局:原住民族在今維吉尼亞州至少已住了 1 萬 6 千年,在今俄亥俄州東北部至少 1 萬 3 千年。', '疆界資料只畫出少數幾個群體,所以這個時期只放文字、不畫地圖。'],
+    src: [NPS('articles/settlejames.htm', 'Settling the James River'), NPS('articles/000/timeline-of-native-american-cultures.htm', 'Timeline of Native American Cultures')] }),
+  E('us', 'colony', '殖民地時期', '1607~1775', 1640, '1640', { clio: ['English Colonial Empire', 'New Netherland', 'New Sweden'], view: [-100, 18, -55, 52],
+    info: ['美國國家公園管理局:1607 年在詹姆斯鎮的定居點,後來發展成繁榮的殖民地。', '地圖用 1640 年的疆界:英格蘭、荷蘭、瑞典、法國在北美東岸各有殖民地。'],
+    src: [NPS('jame/index.htm', 'Historic Jamestowne'), WD('Q179997')] }),
+  E('us', 'found', '獨立戰爭與建國', '1775~1789', 1780, '1780', { clio: ['United States of America'], view: [-95, 24, -62, 50],
+    info: ['教育部辭典「美國獨立宣言」:西元 1776 年 7 月 4 日,北美十三州殖民地的代表發表。', '1783 年 9 月 3 日在巴黎簽訂和約;憲法在 1789 年生效(美國國務院歷史文獻辦公室)。'],
+    src: [MOE('美國獨立宣言'), SD('1776-1783/treaty', 'Treaty of Paris, 1783'), SD('1784-1800/convention-and-ratification', 'Constitutional Convention and Ratification, 1787–1789'), WD('Q40949')] }),
+  E('us', 'west', '早期共和與西進', '1789~1860', 1850, '1850', { clio: ['United States of America'],
+    info: ['美國國務院歷史文獻辦公室:1803 年向法國買下路易斯安那。', '疆界資料沒有把西部部分地區畫進美國(灰色斜線)。'],
+    src: [SD('1801-1829/louisiana-purchase', 'Louisiana Purchase, 1803'), SD('1830-1860/china-1', 'The Opening to China Part I'), SD('1830-1860/opening-to-japan', 'The United States and the Opening to Japan, 1853'), WD('Q1326406')],
+    box: { h: '和中國、日本的往來', items: ['1844 年美國和清朝簽訂〈望廈條約〉,是兩國第一個正式條約(美國國務院歷史文獻辦公室)。', '1853 年 7 月 8 日美國培里率艦隊駛入今東京灣;1854 年 3 月 31 日和日本簽訂條約(美國國務院歷史文獻辦公室)。'] } }),
+  E('us', 'civil', '南北戰爭', '1861~1865', 1863, '1863', { clio: ['United States of America', 'Confederate States of America'],
+    info: ['教育部辭典「南北戰爭」:十九世紀發生於美國的內戰;1865 年南方投降,美國終告統一。', 'Wikidata 記 1861 年 4 月 12 日到 1865 年 4 月 9 日。', '疆界資料把南方各州畫成「美利堅邦聯」。'],
+    src: [MOE('南北戰爭'), WD('Q8676'), WD('Q81931')] }),
+  E('us', 'gilded', '重建與工業化', '1865~1898', 1880, '1880', { clio: ['United States of America'],
+    info: ['美國國會圖書館:重建時期從 1865 年到 1877 年。', '疆界資料沒有把西部部分地區畫進美國(灰色斜線)。'],
+    src: [LOC_RE, LOC_CN, SD('1866-1898/chinese-immigration', 'Chinese Immigration and the Chinese Exclusion Acts')],
+    box: { h: '和中國的往來', items: ['美國國會圖書館的中文館藏,從 1869 年收到清朝同治皇帝所贈 10 種 933 冊書開始;今天藏書 120 萬冊以上,最古老的是 975 年雷峰塔出土的佛經。', '1882 年美國通過法律,暫停華工移民;到 1943 年才廢止(美國國務院歷史文獻辦公室)。'] } }),
+  E('us', 'wars', '兩次世界大戰', '1898~1945', 1930, '1930', { clio: ['United States of America'],
+    info: ['第一次世界大戰 1914~1918 年、第二次世界大戰 1939~1945 年(Wikidata)。', '疆界資料把這時的菲律賓也畫在「美國」裡。'],
+    src: [WD('Q361'), WD('Q362'), SD('1866-1898/spanish-american-war', 'The Spanish-American War, 1898'), MOE('清華大學')],
+    box: { h: '和臺灣、中國、菲律賓的往來', items: ['1898 年美西戰爭後,西班牙把關島、波多黎各割讓給美國,並同意把菲律賓賣給美國(美國國務院歷史文獻辦公室)。', '教育部辭典「清華大學」:原為以美國退還的庚子賠款辦理的留美預備學校;1956 年在臺灣新竹復校。'] } }),
+  E('us', 'post', '冷戰至今', '1945~', 2000, '2000', { clio: ['United States of America'],
+    info: ['冷戰:Wikidata 記 1945 年到 1991 年 12 月 25 日。'],
+    src: [WD('Q8683'), SD('1945-1952', 'The Early Cold War'), SD('1953-1960/taiwan-strait-crises', 'The Taiwan Straits Crises: 1954–55 and 1958'), WD('Q7524749'), SD('1977-1980/china-policy', 'China Policy'), MOE('臺灣關係法')],
+    box: { h: '和臺灣、中國、日本的往來', items: ['1945~1952 年美國佔領並協助重建日本(美國國務院歷史文獻辦公室)。', '1954 年美國和中華民國簽訂〈中美共同防禦條約〉。', '1979 年 1 月 1 日美國和中華人民共和國建交;同年 4 月 10 日〈臺灣關係法〉成為美國法律。教育部辭典:為維持與臺灣的非正式官方關係而制定的國內法。'] } }),
 ]);
 
 // 菲律賓與臺灣的淵源(使用者 2026-11-01 裁按建議):每個菲律賓時期的說明卡都附,連到站上已有的說明卡,不重寫
