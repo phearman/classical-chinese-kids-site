@@ -1,11 +1,11 @@
-import { initPage } from '../shared/page.js?v=79dd71a';
-import { escapeHTML } from '../shared/terms.js?v=79dd71a';
-import { WORDS } from './words-data.js?v=79dd71a';
-import { COMICS } from './comics.js?v=79dd71a';
-import { TOPIC_LABELS } from './categories.js?v=79dd71a';
-import { ZHUYIN } from './zhuyin.js?v=79dd71a';
-import { zhuyinHTML } from './comic-view.js?v=79dd71a';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=79dd71a';
+import { initPage } from '../shared/page.js?v=7f0b17b';
+import { escapeHTML } from '../shared/terms.js?v=7f0b17b';
+import { WORDS } from './words-data.js?v=7f0b17b';
+import { COMICS } from './comics.js?v=7f0b17b';
+import { TOPIC_LABELS } from './categories.js?v=7f0b17b';
+import { ZHUYIN } from './zhuyin.js?v=7f0b17b';
+import { zhuyinHTML } from './comic-view.js?v=7f0b17b';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=7f0b17b';
 
 initPage();
 const app = document.getElementById('app');
