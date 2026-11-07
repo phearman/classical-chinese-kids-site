@@ -408,6 +408,8 @@
 .cmap-kind.k-fam { color: #245a4f; background: #e3f2ee; border-color: #9fcfc3; }
 .cmap-sw.fam { width: 11px; height: 11px; border-radius: 50%; background: #2f6f62; }
 .cmap-fam .cmap-label { margin-right: 4px; }
+.cmap-dispute { margin: 10px 0; }
+.cmap-dispute summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 4px 0; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cmap-kind.k-fam { color: #b9e6da; background: #1d3631; border-color: #3f7a6c; } :root:not([data-theme="light"]) .m-fam circle:not(.m-guess), :root:not([data-theme="light"]) .m-fclu circle { fill: #3f8f7e; } }
 :root[data-theme="dark"] .cmap-kind.k-fam { color: #b9e6da; background: #1d3631; border-color: #3f7a6c; }
 :root[data-theme="dark"] .m-fam circle:not(.m-guess), :root[data-theme="dark"] .m-fclu circle { fill: #3f8f7e; }

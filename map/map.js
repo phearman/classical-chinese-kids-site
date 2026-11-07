@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=61425eb';
-import { escapeHTML as esc } from '../shared/terms.js?v=61425eb';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=61425eb';
-import { WORLD_BASE as B } from './world-base.js?v=61425eb';
-import { twCards, checkOf } from './taiwan-world.js?v=61425eb';
-import { eraCards, KINDS } from './era-cards.js?v=61425eb';
-import { COMICS } from '../idioms/comics.js?v=61425eb';
-import { ECHOES } from './echoes.js?v=61425eb';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=61425eb';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=61425eb';
-import { POEMS } from './poems.js?v=61425eb';
-import { FAMILIES, famsOfBld } from './families.js?v=61425eb';
+import { initPage } from '../shared/page.js?v=bac9363';
+import { escapeHTML as esc } from '../shared/terms.js?v=bac9363';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=bac9363';
+import { WORLD_BASE as B } from './world-base.js?v=bac9363';
+import { twCards, checkOf } from './taiwan-world.js?v=bac9363';
+import { eraCards, KINDS } from './era-cards.js?v=bac9363';
+import { COMICS } from '../idioms/comics.js?v=bac9363';
+import { ECHOES } from './echoes.js?v=bac9363';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=bac9363';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=bac9363';
+import { POEMS } from './poems.js?v=bac9363';
+import { FAMILIES, famsOfBld } from './families.js?v=bac9363';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -323,7 +323,7 @@ function syncDetailHead() {
 // 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
 const mapKeys = () => {
   const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : '',
-    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})${curTrack() === 'tw' ? ';日本、韓國、越南、菲律賓、泰國、美國、荷蘭的建築:把地圖縮小就看得到' : ''}` : '',
+    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})${curTrack() === 'tw' ? ';日本、韓國、越南、菲律賓、泰國、美國、荷蘭、俄羅斯的建築:把地圖縮小就看得到' : ''}` : '',
     st.layers.fam && curTrack() === 'tw' ? '<i class="cmap-sw fam"></i>家=地方家族(只顯示這個年代有活動的家族)' : ''].filter(Boolean);
   return `${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}`;
 };
@@ -376,6 +376,7 @@ function bldHTML(b) {
     ${b.img ? `<figure class="cmap-bldimg"><img src="${esc(b.img.src)}" alt="${esc(b.name)}${b.img.kind === 'ai' ? '(示意圖)' : ''}" width="800" height="533" loading="lazy" decoding="async">
       <figcaption>${b.img.kind === 'ai' ? '<span class="cmap-ai">示意圖,不是照片</span> AI 生成,本站製作' : `${esc(b.img.label || '照片')}:${esc(b.img.artist)}/${L(b.img.page, '維基共享資源')}/${L(b.img.licenseUrl || b.img.page, esc(b.img.license))}(經本站裁切縮圖)`}</figcaption></figure>` : ''}
     <p>建造:${esc(b.built)}</p><p>${esc(b.history)}</p>
+    ${b.link ? `<p>和中國、臺灣的往來:${esc(b.link)}</p>` : ''}
     ${b.rebuilt ? `<p class="cmap-note">重建、遷移:${esc(b.rebuilt)}</p>` : ''}
     ${b.inscription ? `<p>題字:${esc(b.inscription)}</p>` : ''}
     ${b.text ? `<p>相關篇目:${[b.text, b.alsoText].filter(Boolean).map((x) => L(x.wikisource, `${esc(x.author)}〈${esc(x.title)}〉`)).join('、')}${b.quote ? `;「${esc(b.quote)}」` : ''}</p>` : ''}
@@ -386,18 +387,18 @@ function bldHTML(b) {
 }
 // ---------------------------------------------------------------- 地方家族(WY75,使用者 2026-11-07 裁 5 題皆 A)
 // 圖層只在臺灣時期線:依家族活躍的年代顯示(f.eras);宅第已是重要建築卡的,兩邊互相連過去,不重寫。
-// 卡片:任何一條出處待查證,標題旁標「部分待查證」;有爭議的段落各說法並列、各附出處,不下評價。
+// 卡片:任何一條出處待查證,標題旁標「部分待查證」;有爭議的段落收合(使用者 11-07 裁 CD3 待裁 1=A),各說法並列、各附出處,不下評價。
 const famsOn = () => (curTrack() === 'tw' ? FAMILIES.filter((f) => (st.layers.fam && f.eras.includes(st.era)) || st.fam === f) : []);
 const srcLi = (x) => `<li>${L(x.u, esc(x.t))} ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`;
 function famHTML(f) {
   const part = f.src.some((x) => !x.ok) || f.today.some((x) => x.check);
-  return `<div class="cmap-card cmap-fam"><p class="cmap-kindline"><span class="cmap-kind k-fam">地方家族</span>${f.tags.map((t) => `<span class="cmap-label">${esc(t)}</span>`).join('')}今日位置:${esc(f.where)}${f.approx ? '<span class="cmap-ai">大致位置</span>' : ''}</p>
+  return `<div class="cmap-card cmap-fam"><p class="cmap-kindline"><span class="cmap-kind k-fam">地方家族</span>${f.tags.length ? f.tags.map((t) => `<span class="cmap-label">${esc(t)}</span>`).join('') : '<span class="cmap-ai">起家方式:出處待查證</span>'}今日位置:${esc(f.where)}${f.approx ? '<span class="cmap-ai">大致位置</span>' : ''}</p>
     <h2>${esc(f.name)}<span class="${part ? 'cmap-ai' : 'cmap-ok'}">${part ? '部分待查證' : '已查證'}</span></h2>
     <p>活躍年代:${f.eras.map((id) => esc(eraName(id))).join('、')}</p>${f.eras.includes(st.era) ? '' : `<p class="cmap-src">地圖目前是「${esc(eraName(st.era))}」,不在這一家的活躍年代內;圖層只會在活躍年代顯示這一家。</p>`}${f.eraNote ? `<p class="cmap-src">${esc(f.eraNote)}</p>` : ''}
     <h3>主要人物</h3><ul class="cmap-tw-list">${f.people.map((p) => `<li><b>${esc(p.n)}</b>(${esc(p.life)}):${esc(p.role)}</li>`).join('')}</ul>
     <h3>這一家做了什麼</h3>${f.story.map((t) => `<p>${esc(t)}</p>`).join('')}
     <h3>今天的關聯</h3><ul class="cmap-tw-list">${f.today.map((x) => `<li>${esc(x.t)}${x.check ? ' <span class="cmap-ai">待查證</span>' : ''}${x.bld ? ` <button type="button" class="cmap-eralink" data-bld="${esc(x.bld)}">看這棟建築 →</button>` : ''}</li>`).join('')}</ul>
-    ${f.dispute?.length ? `<h3>有爭議的事 <span class="cmap-ai">有爭議</span></h3>${f.dispute.map((d) => `<p>${esc(d.p)}</p><ul class="cmap-tw-list">${d.views.map((v) => `<li>${esc(v.p)}(${L(v.u, esc(v.t))})</li>`).join('')}</ul>`).join('')}<p class="cmap-src">不同說法並列,本站不下評價。</p>` : ''}
+    ${f.dispute?.length ? `<details class="cmap-dispute"><summary>有爭議的事(${f.dispute.length}) <span class="cmap-ai">有爭議</span></summary>${f.dispute.map((d) => `<p>${esc(d.p)}</p><ul class="cmap-tw-list">${d.views.map((v) => `<li>${esc(v.p)}(${L(v.u, esc(v.t))})</li>`).join('')}</ul>`).join('')}<p class="cmap-src">不同說法並列,本站不下評價。</p></details>` : ''}
     ${f.approx ? `<p class="cmap-src">確切位置不明,點只標到${esc(f.approx)}。</p>` : ''}
     <details class="cmap-src"><summary>出處(${f.src.length})</summary><ul>${f.src.map(srcLi).join('')}</ul><p>內容由本站依上列資料自行撰寫;座標:${esc(f.atSrc)}。${BOCH_CREDIT}</p></details>
     <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
