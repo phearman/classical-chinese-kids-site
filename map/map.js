@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=bac9363';
-import { escapeHTML as esc } from '../shared/terms.js?v=bac9363';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=bac9363';
-import { WORLD_BASE as B } from './world-base.js?v=bac9363';
-import { twCards, checkOf } from './taiwan-world.js?v=bac9363';
-import { eraCards, KINDS } from './era-cards.js?v=bac9363';
-import { COMICS } from '../idioms/comics.js?v=bac9363';
-import { ECHOES } from './echoes.js?v=bac9363';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=bac9363';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=bac9363';
-import { POEMS } from './poems.js?v=bac9363';
-import { FAMILIES, famsOfBld } from './families.js?v=bac9363';
+import { initPage } from '../shared/page.js?v=9cd8937';
+import { escapeHTML as esc } from '../shared/terms.js?v=9cd8937';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=9cd8937';
+import { WORLD_BASE as B } from './world-base.js?v=9cd8937';
+import { twCards, checkOf } from './taiwan-world.js?v=9cd8937';
+import { eraCards, KINDS } from './era-cards.js?v=9cd8937';
+import { COMICS } from '../idioms/comics.js?v=9cd8937';
+import { ECHOES } from './echoes.js?v=9cd8937';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=9cd8937';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=9cd8937';
+import { POEMS } from './poems.js?v=9cd8937';
+import { FAMILIES, famsOfBld } from './families.js?v=9cd8937';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -121,7 +121,7 @@ app.innerHTML = `
         <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><label><input type="checkbox" data-layer="fam"> 地方家族(臺灣時期線)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small><b>地圖</b><label><input type="checkbox" data-opt="refit"> 換時期時拉回該國範圍</label><label><input type="checkbox" data-opt="pac"> 太平洋置中</label><small>沒勾時,換時期會保留目前的縮放與位置;按 ⌂ 隨時拉回。</small></div>
         <p class="cmap-credit"><span>疆界:${L('https://github.com/Seshat-Global-History-Databank/cliopatria', 'Cliopatria')}(Seshat,${L(CCBY, 'CC BY 4.0')},經本站簡化)・地點座標:${L('https://www.geonames.org/', 'GeoNames')}(${L(CCBY, 'CC BY 4.0')})・部分國名:${L('https://www.wikidata.org/', 'Wikidata')}(${L('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0')})・底圖:${L('https://www.naturalearthdata.com/', 'Natural Earth')}(${L('https://www.naturalearthdata.com/about/terms-of-use/', '公有領域')})・示意,非精確疆界</span></p>
       </div>
-      <div class="cmap-dwrap"><div class="cmap-dhead"><div class="cmap-split-h" id="m-split-detail" role="separator" aria-orientation="horizontal" aria-label="拖拉調整說明區高度(方向鍵也可以)" tabindex="0"></div><b id="m-dtitle"></b><span class="cmap-tz" role="group" aria-label="說明文字大小"><button type="button" id="m-tz-dn" aria-label="文字縮小">A−</button><span id="m-tz-v">100%</span><button type="button" id="m-tz-up" aria-label="文字放大">A+</button></span><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
+      <div class="cmap-dwrap"><div class="cmap-dhead"><div class="cmap-split-h" id="m-split-detail" role="separator" aria-orientation="horizontal" aria-label="拖拉調整說明區高度(方向鍵也可以)" tabindex="0"></div><b id="m-dtitle"></b><span class="cmap-tz" role="group" aria-label="說明文字大小"><button type="button" id="m-tz-dn" aria-label="文字縮小">A−</button><span id="m-tz-v">100%</span><button type="button" id="m-tz-up" aria-label="文字放大">A+</button></span><button type="button" class="cmap-fold-map" id="m-fold-map" aria-controls="m-box" aria-expanded="true"></button><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
       <div class="cmap-detail" id="m-detail" aria-live="polite"></div></div>
     </section>
   </main>`;
@@ -298,7 +298,8 @@ function renderDetail() {
 const stopsOf = (it) => [it.place, ...[].concat(it.to || [])].filter(Boolean).map((id) => PLACE_BY_ID[id]);
 function poemHTML(it) {
   const p = POEMS[it.title], era = ERAS.find((e) => e.id === it.era), stops = stopsOf(it);
-  const where = stops.length > 1 ? `<p class="cmap-routeline">詩裡的路線:${stops.map((x) => esc(x.name)).join(' → ')}</p>` : '';
+  // noRoute:路線有一站查不到出處,只標查得到的點、不畫路線(CPM WY52)
+  const where = stops.length > 1 && !it.noRoute ? `<p class="cmap-routeline">詩裡的路線:${stops.map((x) => esc(x.name)).join(' → ')}</p>` : '';
   return `<div class="cmap-card cmap-poem"><h2><span class="cmap-ty poem">${TYPE.poem}</span>${esc(it.title)}</h2>
     <p class="cmap-poem-by">${esc(era.name)}${badges(it)}・${esc(p.author)}<small>${esc(p.form)}</small></p>
     ${p.lines.map(block).join('')}
@@ -307,7 +308,7 @@ function poemHTML(it) {
     <h3>作者</h3><p>${esc(p.about)}</p>
     <h3>詩裡的地方</h3>${where}${stops.length ? '' : `<p>${p.off.length ? '詩裡的地名查不到可以引用的出處' : '詩裡沒有寫到地名'},地圖上不標點,只列在清單裡。</p>`}<ul class="cmap-tw-list">${stops.map((x) => `<li>${esc(x.name)}:今${esc(x.modern)}(${esc(x.src)})</li>`).join('')}
       ${p.off.map(([n, why]) => `<li>${esc(n)}:${esc(why)}</li>`).join('')}</ul>
-    <p class="cmap-src">年代:${esc(era.name)}${isGuessed(it) ? ' <span class="cmap-ai">AI 推算</span>' : ''}。${esc(it.when)}。${stops.length ? `地圖上的點是今天縣市的位置,只是示意${stops.length > 1 ? ';路線也只是示意,不是真正走的路' : ''}。` : ''}</p>
+    <p class="cmap-src">年代:${esc(era.name)}${isGuessed(it) ? ' <span class="cmap-ai">AI 推算</span>' : ''}。${esc(it.when)}。${stops.length ? `地圖上的點是今天縣市的位置,只是示意${stops.length > 1 && !it.noRoute ? ';路線也只是示意,不是真正走的路' : ''}。` : ''}</p>
     <details class="cmap-src"><summary>出處(${p.src.length})</summary><ul>${p.src.map((x) => `<li>${L(x.u, esc(x.t))}</li>`).join('')}</ul>
       <p>原文照錄維基文庫(標點依該站;異體字改為通行繁體字);白話、難詞與說明由本站依上列資料自行撰寫。</p></details>
     <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
@@ -399,6 +400,7 @@ function famHTML(f) {
     <h3>這一家做了什麼</h3>${f.story.map((t) => `<p>${esc(t)}</p>`).join('')}
     <h3>今天的關聯</h3><ul class="cmap-tw-list">${f.today.map((x) => `<li>${esc(x.t)}${x.check ? ' <span class="cmap-ai">待查證</span>' : ''}${x.bld ? ` <button type="button" class="cmap-eralink" data-bld="${esc(x.bld)}">看這棟建築 →</button>` : ''}</li>`).join('')}</ul>
     ${f.dispute?.length ? `<details class="cmap-dispute"><summary>有爭議的事(${f.dispute.length}) <span class="cmap-ai">有爭議</span></summary>${f.dispute.map((d) => `<p>${esc(d.p)}</p><ul class="cmap-tw-list">${d.views.map((v) => `<li>${esc(v.p)}(${L(v.u, esc(v.t))})</li>`).join('')}</ul>`).join('')}<p class="cmap-src">不同說法並列,本站不下評價。</p></details>` : ''}
+    ${f.differ?.length ? `<details class="cmap-dispute"><summary>資料說法不同(${f.differ.length}) <span class="cmap-ai">資料說法不同</span></summary>${f.differ.map((d) => `<p>${esc(d.p)}</p><ul class="cmap-tw-list">${d.views.map((v) => `<li>${esc(v.p)}(${L(v.u, esc(v.t))})</li>`).join('')}</ul>`).join('')}<p class="cmap-src">不同資料的寫法並列,本站不判斷哪一個對。</p></details>` : ''}
     ${f.approx ? `<p class="cmap-src">確切位置不明,點只標到${esc(f.approx)}。</p>` : ''}
     <details class="cmap-src"><summary>出處(${f.src.length})</summary><ul>${f.src.map(srcLi).join('')}</ul><p>內容由本站依上列資料自行撰寫;座標:${esc(f.atSrc)}。${BOCH_CREDIT}</p></details>
     <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
@@ -429,6 +431,7 @@ const vb = () => svg.getAttribute('viewBox').split(' ').map(Number);
 const unitsPerPx = (v = vb()) => 1 / Math.min(svg.clientWidth / v[2], svg.clientHeight / v[3]);
 let drawSeq = 0;
 async function drawMap() {
+  if (root.classList.contains('fold-map')) return; // 地圖收合時不畫(WY80);展開時 ResizeObserver 會重畫,viewBox 不變所以回到原來的位置
   const seq = ++drawSeq;
   // 詩詞(WY52):選中時地圖移到包住詩裡各站的範圍(唐、元的全國視野太大,路線會看不清楚)
   // 只在剛選中時縮放一次(fitPoem);之後按 ⌂ 照舊回到這個年代的範圍
@@ -580,7 +583,7 @@ async function drawMap() {
     const [x, y] = P(coordsOf(st.item));
     // 路線:to 可以是一站或依序好幾站(WY52 詩詞);詩詞另在各站畫圓點與站名
     const stops = stopsOf(st.item);
-    stops.slice(1).forEach((q, i) => {
+    if (!st.item.noRoute) stops.slice(1).forEach((q, i) => {
       const [x1, y1] = P(stops[i].at), [x2, y2] = P(q.at); const mx = (x1 + x2) / 2 - (y2 - y1) * 0.18, my = (y1 + y2) / 2 + (x2 - x1) * 0.18;
       frag.append(el('path', { d: `M${x1} ${y1}Q${mx} ${my} ${x2} ${y2}`, class: 'm-route' }));
       const a = Math.atan2(y2 - my, x2 - mx), h = 10 * u;
@@ -647,15 +650,22 @@ function star(x, y, r) {
 // ---------------------------------------------------------------- 互動
 // 桌機收合(WY53):年代清單欄、下方說明區;狀態記在本機(讀寫失敗就預設展開)。收合後地圖區變大,ResizeObserver 會重畫,viewBox 不變所以中心與縮放保留。
 // 說明區收合時,點了地圖上或清單裡的項目、國家,說明區自動展開。
-const FOLD_KEY = { list: 'ccc:map-fold-list', detail: 'ccc:map-fold-detail' };
+const FOLD_KEY = { list: 'ccc:map-fold-list', detail: 'ccc:map-fold-detail', map: 'ccc:map-fold-map' };
 const readFold = (k) => { try { return localStorage.getItem(FOLD_KEY[k]) === '1'; } catch { return false; } };
 function setFold(k, on, save = true) {
+  const was = root.classList.contains(`fold-${k}`);
   root.classList.toggle(`fold-${k}`, on);
   if (save) { try { localStorage.setItem(FOLD_KEY[k], on ? '1' : '0'); } catch { /* 無痕或封鎖時只在本頁有效 */ } }
   const b = $(`m-fold-${k}`);
   b.setAttribute('aria-expanded', String(!on));
   if (k === 'list') { b.setAttribute('aria-label', on ? '展開年代清單' : '收合年代清單'); b.title = on ? '展開年代清單' : '收合年代清單'; b.innerHTML = on ? '<span aria-hidden="true">›</span><span class="cmap-fold-txt">年代清單</span>' : '<span aria-hidden="true">‹</span><span class="cmap-fold-hint">收合</span>'; } // 寫出「收合」兩字,讓人看得出可以收(使用者 2026-11-01)
+  else if (k === 'map') { b.setAttribute('aria-label', on ? '展開地圖' : '收合地圖'); b.innerHTML = `<span class="cmap-fold-verb">${on ? '展開' : '收合'}</span>地圖 <span aria-hidden="true">${on ? '▾' : '▴'}</span>`; } // 很窄的畫面只顯示「地圖」,名稱照樣念完整
   else { b.setAttribute('aria-label', on ? '展開說明' : '收合說明'); b.innerHTML = on ? '展開 <span aria-hidden="true">▴</span>' : '收合 <span aria-hidden="true">▾</span>'; }
+  // 地圖與說明區不同時收合(WY80):收一邊就展開另一邊
+  if (on && (k === 'map' || k === 'detail')) { const o = k === 'map' ? 'detail' : 'map'; if (root.classList.contains(`fold-${o}`)) setFold(o, false, save); }
+  // 收合時作廢還在等資料的舊繪製;展開時直接重畫一次,不只靠 ResizeObserver(Codex 審查)
+  if (k === 'map' && on) drawSeq++;
+  if (k === 'map' && was && !on && (!mobile() || st.tab === 'map')) drawMap();
 }
 let lastPick = null; // null=頁面剛載入,第一次畫面不算「選了新項目」
 function update() { renderList(); renderCards(); renderAxis(); renderDetail(); syncDetailHead(); if (!mobile() || st.tab === 'map') drawMap(); }
@@ -798,9 +808,10 @@ const setTz = (v) => { tz = v; root.style.setProperty('--tz', String(v)); $('m-t
 setTz(tz);
 $('m-tz-dn').addEventListener('click', () => setTz(TZ[Math.max(0, TZ.indexOf(tz) - 1)]));
 $('m-tz-up').addEventListener('click', () => setTz(TZ[Math.min(TZ.length - 1, TZ.indexOf(tz) + 1)]));
-setFold('list', readFold('list'), false); setFold('detail', readFold('detail'), false);
+setFold('list', readFold('list'), false); setFold('detail', readFold('detail'), false); setFold('map', readFold('map'), readFold('map') && readFold('detail')); // 兩個都存成收合時以地圖為準,說明區改回展開並寫回本機
 $('m-fold-list').addEventListener('click', () => setFold('list', !root.classList.contains('fold-list')));
 $('m-fold-detail').addEventListener('click', () => setFold('detail', !root.classList.contains('fold-detail')));
+$('m-fold-map').addEventListener('click', () => setFold('map', !root.classList.contains('fold-map')));
 // 拖拉分隔線(使用者 2026-11-04,桌機):年代清單寬度、說明區高度;記在本機,方向鍵每次 16px
 const SPLIT = { list: { key: 'ccc:map-list-w', css: '--lw', min: 200, max: () => Math.min(600, innerWidth * 0.5) },
   detail: { key: 'ccc:map-detail-h', css: '--dh', min: 60, max: () => { const r = root.querySelector('.cmap-right').getBoundingClientRect(); return r.bottom - box.getBoundingClientRect().top - 240; } } }; // 地圖至少留 240px
