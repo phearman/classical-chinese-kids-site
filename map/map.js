@@ -1,17 +1,17 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=0eaca88';
-import { escapeHTML as esc } from '../shared/terms.js?v=0eaca88';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=0eaca88';
-import { WORLD_BASE as B } from './world-base.js?v=0eaca88';
-import { twCards, checkOf } from './taiwan-world.js?v=0eaca88';
-import { eraCards, KINDS } from './era-cards.js?v=0eaca88';
-import { COMICS } from '../idioms/comics.js?v=0eaca88';
-import { ECHOES } from './echoes.js?v=0eaca88';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=0eaca88';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=0eaca88';
-import { POEMS } from './poems.js?v=0eaca88';
+import { initPage } from '../shared/page.js?v=04e30e5';
+import { escapeHTML as esc } from '../shared/terms.js?v=04e30e5';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=04e30e5';
+import { WORLD_BASE as B } from './world-base.js?v=04e30e5';
+import { twCards, checkOf } from './taiwan-world.js?v=04e30e5';
+import { eraCards, KINDS } from './era-cards.js?v=04e30e5';
+import { COMICS } from '../idioms/comics.js?v=04e30e5';
+import { ECHOES } from './echoes.js?v=04e30e5';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=04e30e5';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=04e30e5';
+import { POEMS } from './poems.js?v=04e30e5';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -47,8 +47,9 @@ const GO = { lesson: '讀課文', person: '看人物', comic: '看漫畫' };
 // 頁腳來源連結(新分頁開)
 const CCBY = 'https://creativecommons.org/licenses/by/4.0/';
 // 外部連結(延伸閱讀):新分頁開、不帶來源網址,加「↗」表示會離開本站
-const LX = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${text} <span aria-hidden="true">↗</span><span class="sr-only">(開新分頁,離開本站)</span></a>`;
-const L = (href, text) => `<a href="${href}" target="_blank" rel="noopener">${text}</a>`;
+// 連結、圖片網址一律經 esc() 跳脫(WY77):資料裡帶 " < > & 也不會破壞 HTML;text 由呼叫端先 esc
+const LX = (href, text) => `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${text} <span aria-hidden="true">↗</span><span class="sr-only">(開新分頁,離開本站)</span></a>`;
+const L = (href, text) => `<a href="${esc(href)}" target="_blank" rel="noopener">${text}</a>`;
 const FILLS = ['#c9a27e', '#9fb38a', '#a9b7c9', '#d1a7a0', '#c2b37a', '#b3a2c4', '#8fb3ad', '#d4b48c', '#a8b98f', '#c7a3b4'];
 // 各年代一開始看的範圍 [西經, 南緯, 東經, 北緯]
 // 本土在別處、在臺灣也有領土的政權:國名另外標在臺灣島上([經度, 緯度])
@@ -89,7 +90,7 @@ const noState = (era) => (era === 'myth' ? '傳說' : era === 'out' ? '域外' :
 
 // 標記(使用者裁 CPM 待裁 41 B):年代或地點由 AI 推算的(isGuessed),清單、說明一律標「AI 推算」並寫出依據;
 // 地點是推算的(原文沒寫地點、只寫國別而點在都城、或古今對照待查證),地圖點另加虛線圈,選中時名牌也寫「AI 推算」
-const yearGuess = (it) => it.basis === 'speaker' || it.basis === 'book';
+const yearGuess = (it) => it.basis === 'speaker' || it.basis === 'book' || it.basis === 'authorGuess';
 const pointGuess = (it) => Boolean(it.placeGuess) || placeOf(it)?.status === '待查證';
 const badges = (it) => (isGuessed(it) ? '<span class="cmap-ai">AI 推算</span>' : '');
 
@@ -187,7 +188,7 @@ function twCardHTML() {
     ${c.todo?.length ? `<p class="cmap-src"><span class="cmap-ai">待查證</span> ${c.todo.map(esc).join(';')}</p>` : ''}
     ${c.route.length ? `<p class="cmap-routeline">示意航線:${routeText(c.route)}</p>` : ''}
     ${c.route.length ? `<button type="button" class="cmap-go" data-route="${c.id}">${st.route === c.id && !mobile() ? '收起航線' : '在地圖上看示意航線 →'}</button>` : ''}
-    <details class="cmap-src"><summary>出處(${c.src.length})</summary><ul>${c.src.map((x) => `<li><a href="${x.u}" target="_blank" rel="noopener">${esc(x.t)}</a> ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`).join('')}</ul>
+    <details class="cmap-src"><summary>出處(${c.src.length})</summary><ul>${c.src.map((x) => `<li><a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a> ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`).join('')}</ul>
       <p>${c.route.length ? '內容由本站依上列資料自行撰寫;航線只是示意,不是真正的航路。' : c.intro?.some((b) => b.orig) ? '原文照錄維基文庫(標點依該站;簡體、異體字改為通行繁體字);白話與說明由本站依上列資料自行撰寫。' : '內容由本站依上列資料自行撰寫。'}</p></details>
   </div>`;
 }
@@ -279,6 +280,7 @@ function renderDetail() {
   const when = it.basis === 'myth' ? `神話,不推算年代(${esc(it.when)})`
     : it.basis === 'text' ? `${era.name}(原文:${esc(it.when)})`
     : it.basis === 'author' ? `${era.name}(${esc(it.when)})`
+    : it.basis === 'authorGuess' ? `${era.name} <span class="cmap-ai">AI 推算</span> 作者跨兩個朝代,寫作年代沒有出處,依規則掛前一朝(${esc(it.when)})`
     : `${era.name} <span class="cmap-ai">AI 推算</span> 原文沒寫年代(${esc(it.when)}),依${it.basis === 'speaker' ? '說故事的人的時代' : '成書時代'}推算`;
   let where = `${s ? esc(s.name) + '・' : ''}${esc(it.text)}`;
   if (it.placeGuess) where += ` <span class="cmap-ai">AI 推算</span> ${esc(it.placeGuess)}`;
@@ -295,15 +297,15 @@ function poemHTML(it) {
   const p = POEMS[it.title], era = ERAS.find((e) => e.id === it.era), stops = stopsOf(it);
   const where = stops.length > 1 ? `<p class="cmap-routeline">詩裡的路線:${stops.map((x) => esc(x.name)).join(' → ')}</p>` : '';
   return `<div class="cmap-card cmap-poem"><h2><span class="cmap-ty poem">${TYPE.poem}</span>${esc(it.title)}</h2>
-    <p class="cmap-poem-by">${esc(era.name)}・${esc(p.author)}<small>${esc(p.form)}</small></p>
+    <p class="cmap-poem-by">${esc(era.name)}${badges(it)}・${esc(p.author)}<small>${esc(p.form)}</small></p>
     ${p.lines.map(block).join('')}
     ${p.note ? `<p class="cmap-note">${esc(p.note)}</p>` : ''}
     ${block({ gloss: p.gloss })}
     <h3>作者</h3><p>${esc(p.about)}</p>
-    <h3>詩裡的地方</h3>${where}<ul class="cmap-tw-list">${stops.map((x) => `<li>${esc(x.name)}:今${esc(x.modern)}(${esc(x.src)})</li>`).join('')}
+    <h3>詩裡的地方</h3>${where}${stops.length ? '' : `<p>${p.off.length ? '詩裡的地名查不到可以引用的出處' : '詩裡沒有寫到地名'},地圖上不標點,只列在清單裡。</p>`}<ul class="cmap-tw-list">${stops.map((x) => `<li>${esc(x.name)}:今${esc(x.modern)}(${esc(x.src)})</li>`).join('')}
       ${p.off.map(([n, why]) => `<li>${esc(n)}:${esc(why)}</li>`).join('')}</ul>
-    <p class="cmap-src">年代:${esc(era.name)}。${esc(it.when)}。地圖上的點是今天縣市的位置,只是示意${stops.length > 1 ? ";路線也只是示意,不是真正走的路" : ""}。</p>
-    <details class="cmap-src"><summary>出處(${p.src.length})</summary><ul>${p.src.map((x) => `<li>${L(esc(x.u), esc(x.t))}</li>`).join('')}</ul>
+    <p class="cmap-src">年代:${esc(era.name)}${isGuessed(it) ? ' <span class="cmap-ai">AI 推算</span>' : ''}。${esc(it.when)}。${stops.length ? `地圖上的點是今天縣市的位置,只是示意${stops.length > 1 ? ';路線也只是示意,不是真正走的路' : ''}。` : ''}</p>
+    <details class="cmap-src"><summary>出處(${p.src.length})</summary><ul>${p.src.map((x) => `<li>${L(x.u, esc(x.t))}</li>`).join('')}</ul>
       <p>原文照錄維基文庫(標點依該站;異體字改為通行繁體字);白話、難詞與說明由本站依上列資料自行撰寫。</p></details>
     <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
 }
@@ -318,7 +320,7 @@ function syncDetailHead() {
 // 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
 const mapKeys = () => {
   const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : '',
-    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})` : ''].filter(Boolean);
+    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})${curTrack() === 'tw' ? ';日本、韓國、越南、菲律賓、泰國、美國、荷蘭的建築:把地圖縮小就看得到' : ''}` : ''].filter(Boolean);
   return `${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}`;
 };
 // ---------------------------------------------------------------- 今昔對比(WY54)
@@ -361,12 +363,14 @@ const echoesIn = (p) => { const list = ECHOES.filter((e) => e.eras.includes(st.e
 // 圖層打開時,只顯示目前年代結束前已經蓋好的建築(依建造年份);勾「全部年代」則全部顯示。圖示為本站 SVG 繪製的小樓閣;
 // 點位只標到城市的(approx)外加虛線圈,和 AI 推算點位同一種樣式。臺灣:文化部文化資產局開放資料;中國:各篇原文與出處。
 const bldJSON = () => todayJSON('../buildings'); // 同一個快取:today/../buildings.json
+// 其他國家的建築(WY57):中國朝代線只放中國與臺灣;臺灣時期線與各國視角才顯示其他國家(使用者 2026-11-07 裁:放「臺灣與世界」)
+const bldOnTrack = (b) => b.region === 'tw' || b.region === 'cn' || curTrack() !== 'cn';
 const eraEnd = (id) => { const t = (ERAS.find((e) => e.id === id)?.time || '').split('~').pop().trim(); if (!t) return 9999; const n = Number(t.replace(/[^0-9]/g, '')); return t.startsWith('前') ? -n : n || 9999; };
 const BOCH_CREDIT = `文化部文化資產局 2026 文資局古蹟/文資局歷史建築開放資料(下載日 2026-11-01)。此開放資料依政府資料開放授權條款(Open Government Data License)進行公眾釋出,使用者於遵守本條款各項規定之前提下,得利用之。授權條款:${L('https://data.gov.tw/license', 'https://data.gov.tw/license')}。本站經摘要改寫。`;
 function bldHTML(b) {
   return `<div class="cmap-card cmap-bld"><p class="cmap-kindline"><span class="cmap-kind k-bld">重要建築</span>${b.status ? esc(b.status) + '・' : ''}今日位置:${esc(b.where)}${b.approx ? '<span class="cmap-ai">大致位置</span>' : ''}</p><h2>${esc(b.name)}</h2>
-    ${b.img ? `<figure class="cmap-bldimg"><img src="${b.img.src}" alt="${esc(b.name)}${b.img.kind === 'ai' ? '(示意圖)' : ''}" width="800" height="533" loading="lazy" decoding="async">
-      <figcaption>${b.img.kind === 'ai' ? '<span class="cmap-ai">示意圖,不是照片</span> AI 生成,本站製作' : `照片:${esc(b.img.artist)}/${L(b.img.page, '維基共享資源')}/${L(b.img.licenseUrl || b.img.page, esc(b.img.license))}(經本站裁切縮圖)`}</figcaption></figure>` : ''}
+    ${b.img ? `<figure class="cmap-bldimg"><img src="${esc(b.img.src)}" alt="${esc(b.name)}${b.img.kind === 'ai' ? '(示意圖)' : ''}" width="800" height="533" loading="lazy" decoding="async">
+      <figcaption>${b.img.kind === 'ai' ? '<span class="cmap-ai">示意圖,不是照片</span> AI 生成,本站製作' : `${esc(b.img.label || '照片')}:${esc(b.img.artist)}/${L(b.img.page, '維基共享資源')}/${L(b.img.licenseUrl || b.img.page, esc(b.img.license))}(經本站裁切縮圖)`}</figcaption></figure>` : ''}
     <p>建造:${esc(b.built)}</p><p>${esc(b.history)}</p>
     ${b.rebuilt ? `<p class="cmap-note">重建、遷移:${esc(b.rebuilt)}</p>` : ''}
     ${b.inscription ? `<p>題字:${esc(b.inscription)}</p>` : ''}
@@ -397,7 +401,7 @@ async function drawMap() {
   const seq = ++drawSeq;
   // 詩詞(WY52):選中時地圖移到包住詩裡各站的範圍(唐、元的全國視野太大,路線會看不清楚)
   // 只在剛選中時縮放一次(fitPoem);之後按 ⌂ 照舊回到這個年代的範圍
-  if (st.fitPoem) { st.fitPoem = false; if (!st.view && st.item?.t === 'poem') st.view = routeView(stopsOf(st.item).map((q) => [q.name, ...q.at])); }
+  if (st.fitPoem) { st.fitPoem = false; const s = st.item?.t === 'poem' ? stopsOf(st.item) : []; if (!st.view && s.length) st.view = routeView(s.map((q) => [q.name, ...q.at])); }
   const v = st.view || viewOf(st.era);
   svg.setAttribute('viewBox', v.join(' '));
   const u = unitsPerPx(v);
@@ -470,7 +474,7 @@ async function drawMap() {
     const list = await bldJSON(); if (seq !== drawSeq) return;
     const end = eraEnd(st.era);
     // 聚合(WY59):螢幕上距離 26px 以內的建築併成一個數字圈;點了放大到能分開(圖示在螢幕上的大小固定)
-    const shown = (list || []).filter((b) => st.layers.bldall || b.y <= end);
+    const shown = (list || []).filter((b) => (st.layers.bldall || b.y <= end) && bldOnTrack(b));
     const groups = [];
     const near = v[2] <= MIN_W * 1.05 ? 0 : 26 * u; // 已放到最大就不再聚合(有些建築相距不到 1 公里,怎麼放大都分不開)
     for (const b of shown) { const [x, y] = P(b.at); const gr = near && groups.find((q) => Math.hypot(q.x - x, q.y - y) < near); if (gr) { gr.m.push(b); gr.x = (gr.x * (gr.m.length - 1) + x) / gr.m.length; gr.y = (gr.y * (gr.m.length - 1) + y) / gr.m.length; } else groups.push({ x, y, m: [b] }); }
@@ -638,7 +642,7 @@ async function openComic(slug, from) {
   const href = `../idioms/comic.html?id=${encodeURIComponent(slug)}`;
   dlg.innerHTML = `<div class="cmap-modal-box"><button type="button" class="cmap-modal-x" aria-label="關閉">×</button>
     <div class="comic-view">${comicBodyHTML(comic, { readings: ZHUYIN[comic.word], readingNote: ZHUYIN_NOTES[comic.word], idiomHref: idiomURL(comic.word), base: '../idioms/', page: false, headingId: 'cmap-modal-title' })}</div>
-    <a class="cmap-modal-page" href="${href}" target="_blank" rel="noopener">開新頁看完整漫畫 ↗</a></div>`;
+    <a class="cmap-modal-page" href="${esc(href)}" target="_blank" rel="noopener">開新頁看完整漫畫 ↗</a></div>`;
   opener = from;
   document.documentElement.classList.add('cmap-noscroll');
   dlg.showModal();

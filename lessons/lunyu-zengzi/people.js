@@ -1,10 +1,10 @@
 // 人物介紹:孔子、曾子、門人+曾子的代表故事。
 // 一屏版(WY13):一人一頁、一個故事一頁;上一頁/下一頁、←→ 鍵、手機左右滑。頁碼記在網址 #p1~#pN。
-import { people, stories } from './data.js?v=0eaca88';
-import { escapeHTML } from '../../shared/terms.js?v=0eaca88';
-import { sceneSVG } from '../../shared/figures.js?v=0eaca88';
-import { initPage } from '../../shared/page.js?v=0eaca88';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=0eaca88';
+import { people, stories } from './data.js?v=04e30e5';
+import { escapeHTML } from '../../shared/terms.js?v=04e30e5';
+import { sceneSVG } from '../../shared/figures.js?v=04e30e5';
+import { initPage } from '../../shared/page.js?v=04e30e5';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=04e30e5';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

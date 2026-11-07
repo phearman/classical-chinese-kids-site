@@ -3,8 +3,8 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=0eaca88';
-import { COUNTRY_ERAS } from './countries.js?v=0eaca88';
+import { COMICS } from '../idioms/comics.js?v=04e30e5';
+import { COUNTRY_ERAS } from './countries.js?v=04e30e5';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -73,6 +73,12 @@ export const PLACES = Object.freeze([
   P('wuxia', '巫峽', '湖北省巴東縣西,與四川省巫山縣接界', [109.8745, 31.0789], 1790920, `${MOE}「巫峽」`, MOE_URL(158615), '位於湖北省巴東縣西，與四川省巫山縣接界', '已查證', '峽谷沒有單一位置;點標在今巫山縣示意'),
   P('xiangyang', '襄陽', '湖北省北部,漢水南岸', [112.1531, 32.0654], 1790587, `${MOE}「襄陽縣」`, MOE_URL(109974), '位於湖北省北部，漢水南岸，與樊城隔水相望', '已查證', '辭典取自「襄陽縣」條;點標在今襄陽市示意'),
   P('tongguan', '潼關', '陝西省潼關縣境內', [110.2408, 34.5443], 1792673, `${MOE}「潼關」`, MOE_URL(55921), '在陝西省潼關縣境內。地當黃河之曲', '已查證', '點標在今潼關縣示意'),
+  // WY52 補齊第一批(唐詩 8 首)
+  P('guanque', '鸛雀樓', '山西省永濟縣西南', [110.4417, 34.8670], 1784818, `${MOE}「鸛雀樓」`, MOE_URL(74274), '今山西省永濟縣西南城上的一座樓亭', '已查證', '點標在今永濟市示意'),
+  P('huanghelou', '黃鶴樓', '湖北省武昌縣蛇山山頂', [114.3105, 30.5563], 1791351, `${MOE}「黃鶴樓」`, MOE_URL(86520), '位於湖北省武昌縣臨接長江大橋之蛇山山頂的閣樓', '已查證', '點標在今武漢市武昌區示意'),
+  P('guangling', '揚州(廣陵)', '江蘇江都縣地', [119.4363, 32.3912], 1787227, `${MOE}「揚州」`, MOE_URL(157462), '隋改為江都郡，治江都，在今江蘇江都縣地', '已查證', '唐朝天寶年間一度改名廣陵郡(《舊唐書‧地理志三》);點標在今揚州市示意'),
+  P('qinhuai', '秦淮河', '江蘇省南京市', [118.7778, 32.0617], 1799962, `${MOE}「秦淮河」`, MOE_URL(101497), '入南京城（今秦淮區、鼓樓區），橫貫城中', '已查證', '河流沒有單一位置;點標在今南京市示意'),
+  P('hanshansi', '寒山寺', '江蘇省吳縣西十里', [120.5954, 31.3041], 1886760, `${MOE}「寒山寺」`, MOE_URL(81834), '位於江蘇省吳縣西十里的寺廟，在楓橋附近', '已查證', '點標在今蘇州市示意'),
 ]);
 const placeById = Object.fromEntries(PLACES.map((p) => [p.id, p]));
 
@@ -149,6 +155,7 @@ const LESSON = { zengzi: 'lessons/lunyu-zengzi/story.html', xuan: 'lessons/lunyu
 
 // I(類型, 標題, 年代, 國別, 地點 id, 原文地點, 出處, 原文時代線索, 年代依據, 地點推算說明, 連結, 其他)
 // basis:text 原文有時代線索/speaker 故事沒寫,依說故事的人(AI 推算)/book 原文沒寫,依成書時代(AI 推算)/myth 神話不推算
+// author 詩詞依作者朝代(史書或辭典有傳)/authorGuess 作者跨兩朝、寫作年代沒有出處,依規則掛前一朝(AI 推算,CPM WY52)
 // placeGuess:原文沒寫明地點,由 AI 依國別或人物推定(畫面標「AI 推算」)
 const I = (t, title, era, state, place, text, src, when, basis, placeGuess, href, extra = {}) =>
   ({ t, title, era, state, place, text, src, when, basis, placeGuess, href, ...extra });
@@ -297,13 +304,30 @@ export const ITEMS = Object.freeze([
   // 唐詩、元曲(WY52 試做 3 首):詩卡內容在 poems.js;年代依作者的朝代(史書有傳)
   I('poem', '早發白帝城', 'tang', 'tang', 'baidi', '「朝辭白帝」→「千里江陵」', '李白〈早發白帝城〉', '作者李白是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { to: 'jiangling', sub: '唐詩‧李白' }),
   I('poem', '聞官軍收河南河北', 'tang', 'tang', 'wuxia', '「從巴峽穿巫峽，便下襄陽向洛陽」', '杜甫〈聞官軍收河南河北〉', '作者杜甫是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { to: ['xiangyang', 'luoyang'], sub: '唐詩‧杜甫' }),
+  // WY52 補齊第一批:唐詩 8 首(沒寫地名、或地名查不到出處的,只列在清單)
+  I('poem', '登鸛雀樓', 'tang', 'tang', 'guanque', '「更上一層樓」', '王之渙〈登鸛雀樓〉', '作者王之渙是唐朝人,元代辛文房《唐才子傳》卷三有傳', 'author', '', null, { sub: '唐詩‧王之渙(一說朱斌)' }),
+  I('poem', '黃鶴樓送孟浩然之廣陵', 'tang', 'tang', 'huanghelou', '「故人西辭黃鶴樓，煙花三月下揚州」', '李白〈黃鶴樓送孟浩然之廣陵〉', '作者李白是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { to: 'guangling', sub: '唐詩‧李白' }),
+  I('poem', '春望', 'tang', 'tang', '', '詩裡沒有寫地名', '杜甫〈春望〉', '作者杜甫是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { sub: '唐詩‧杜甫' }),
+  I('poem', '過故人莊', 'tang', 'tang', '', '詩裡沒有寫地名', '孟浩然〈過故人莊〉', '作者孟浩然是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { sub: '唐詩‧孟浩然' }),
+  I('poem', '山居秋暝', 'tang', 'tang', '', '詩裡沒有寫地名', '王維〈山居秋暝〉', '作者王維是唐朝人,《舊唐書‧文苑列傳下》有傳', 'author', '', null, { sub: '唐詩‧王維' }),
+  I('poem', '夜雨寄北', 'tang', 'tang', '', '「巴山」查不到可引用的出處,不標點', '李商隱〈夜雨寄北〉', '作者李商隱是唐朝人,《新唐書‧文藝列傳下》有傳', 'author', '', null, { sub: '唐詩‧李商隱' }),
+  I('poem', '泊秦淮', 'tang', 'tang', 'qinhuai', '「夜泊秦淮近酒家」', '杜牧〈泊秦淮〉', '作者杜牧是唐朝人,《舊唐書》卷一百四十七有傳', 'author', '', null, { sub: '唐詩‧杜牧' }),
+  I('poem', '楓橋夜泊', 'tang', 'tang', 'hanshansi', '「姑蘇城外寒山寺」', '張繼〈楓橋夜泊〉', '作者張繼是唐朝人,元代辛文房《唐才子傳》卷三有傳', 'author', '', null, { sub: '唐詩‧張繼' }),
+  // WY52 補齊第二批:宋詞 5 首、元曲 2 首(詞曲裡的地名都查不到可引用的出處,只列在清單)
+  I('poem', '水調歌頭‧明月幾時有', 'bs', 'bs', '', '詞裡沒有寫地名', '蘇軾〈水調歌頭〉', '作者蘇軾是北宋人,《宋史》卷三百三十八有傳;詞序寫「丙辰中秋」', 'author', '', null, { sub: '宋詞‧蘇軾' }),
+  I('poem', '如夢令‧常記溪亭日暮', 'bs', 'bs', '', '詞裡沒有寫地名', '李清照〈如夢令〉', '作者李清照經歷北宋末到南宋初(教育部辭典「李清照」);這首詞寫在何時沒有出處,依規則掛北宋', 'authorGuess', '', null, { sub: '宋詞‧李清照' }),
+  I('poem', '西江月‧夜行黃沙道中', 'ns', 'ns', '', '「黃沙」查不到可引用的出處,不標點', '辛棄疾〈西江月〉', '作者辛棄疾是南宋人,《宋史》卷四百一有傳', 'author', '', null, { sub: '宋詞‧辛棄疾' }),
+  I('poem', '醜奴兒‧書博山道中壁', 'ns', 'ns', '', '「博山」查不到可引用的出處,不標點', '辛棄疾〈醜奴兒〉', '作者辛棄疾是南宋人,《宋史》卷四百一有傳', 'author', '', null, { sub: '宋詞‧辛棄疾' }),
+  I('poem', '浣溪沙‧一曲新詞酒一杯', 'bs', 'bs', '', '詞裡沒有寫地名', '晏殊〈浣溪沙〉', '作者晏殊是北宋人,《宋史》卷三百一十一有傳', 'author', '', null, { sub: '宋詞‧晏殊' }),
+  I('poem', '天淨沙‧秋思', 'yuan', 'yuan', '', '曲裡沒有寫地名', '馬致遠〈天淨沙‧秋思〉', '作者馬致遠是元朝人(教育部辭典「馬致遠」)', 'author', '', null, { sub: '元曲‧馬致遠' }),
+  I('poem', '天淨沙‧秋', 'yuan', 'yuan', '', '曲裡沒有寫地名', '白樸〈天淨沙‧秋〉', '作者白樸是元朝人(教育部辭典「白樸」)', 'author', '', null, { sub: '元曲‧白樸' }),
   I('poem', '山坡羊‧潼關懷古', 'yuan', 'yuan', 'tongguan', '「山河表裡潼關路」', '張養浩〈山坡羊‧潼關懷古〉', '作者張養浩是元朝人,《元史》卷一百七十五有傳', 'author', '', null, { sub: '元曲‧張養浩' }),
   // 中國以外
   C('盲人摸象', 'out', null, null, '佛經故事,在中國以外(古印度)', '《長阿含經》卷十九', '佛經故事,沒寫年代', 'book'),
 ]);
 
 // 推算標記:年代依說故事的人/成書時代,或地點由 AI 推定,畫面一律標「AI 推算」;地點待查證的也算
-export const isGuessed = (it) => it.basis === 'speaker' || it.basis === 'book' || Boolean(it.placeGuess) || placeById[it.place]?.status === '待查證';
+export const isGuessed = (it) => it.basis === 'speaker' || it.basis === 'book' || it.basis === 'authorGuess' || Boolean(it.placeGuess) || placeById[it.place]?.status === '待查證';
 export const placeOf = (it) => (it.place ? placeById[it.place] : null);
 export const coordsOf = (it) => it.at || placeOf(it)?.at || null;
 export const PLACE_BY_ID = placeById;
