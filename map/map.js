@@ -1,17 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=04e30e5';
-import { escapeHTML as esc } from '../shared/terms.js?v=04e30e5';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=04e30e5';
-import { WORLD_BASE as B } from './world-base.js?v=04e30e5';
-import { twCards, checkOf } from './taiwan-world.js?v=04e30e5';
-import { eraCards, KINDS } from './era-cards.js?v=04e30e5';
-import { COMICS } from '../idioms/comics.js?v=04e30e5';
-import { ECHOES } from './echoes.js?v=04e30e5';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=04e30e5';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=04e30e5';
-import { POEMS } from './poems.js?v=04e30e5';
+import { initPage } from '../shared/page.js?v=61425eb';
+import { escapeHTML as esc } from '../shared/terms.js?v=61425eb';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=61425eb';
+import { WORLD_BASE as B } from './world-base.js?v=61425eb';
+import { twCards, checkOf } from './taiwan-world.js?v=61425eb';
+import { eraCards, KINDS } from './era-cards.js?v=61425eb';
+import { COMICS } from '../idioms/comics.js?v=61425eb';
+import { ECHOES } from './echoes.js?v=61425eb';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=61425eb';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=61425eb';
+import { POEMS } from './poems.js?v=61425eb';
+import { FAMILIES, famsOfBld } from './families.js?v=61425eb';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -95,7 +96,7 @@ const pointGuess = (it) => Boolean(it.placeGuess) || placeOf(it)?.status === '�
 const badges = (it) => (isGuessed(it) ? '<span class="cmap-ai">AI 推算</span>' : '');
 
 const sp = new URLSearchParams(location.search);
-const st = { era: ERAS.some((e) => e.id === sp.get('era')) ? sp.get('era') : 'cq', region: null, item: null, view: null, tab: 'list', polity: null, twc: null, route: null, layers: { today: false, echo: false, bld: false, bldall: false }, echo: null, bld: null };
+const st = { era: ERAS.some((e) => e.id === sp.get('era')) ? sp.get('era') : 'cq', region: null, item: null, view: null, tab: 'list', polity: null, twc: null, route: null, layers: { today: false, echo: false, bld: false, bldall: false, fam: false }, echo: null, bld: null, fam: null };
 const pv = COUNTRIES.find((c) => c.id === sp.get('pv')); if (pv && !sp.get('era')) st.era = pv.start; // ?pv=jp:直接開某國視角(WY60)
 const pre = ITEMS.find((i) => i.title === sp.get('item'));
 if (pre) Object.assign(st, { era: pre.era, region: pre.state, item: pre, fitPoem: pre.t === 'poem' });
@@ -114,10 +115,10 @@ app.innerHTML = `
     <section class="cmap-right">
       <div class="cmap-axis"><div class="cmap-pv" data-where="axis"></div><button type="button" class="cmap-nav" id="m-prev" aria-label="上一個年代">‹</button><div class="cmap-track" id="m-track"></div><button type="button" class="cmap-nav" id="m-next" aria-label="下一個年代">›</button></div>
       <div class="cmap-box" id="m-box">
-        <svg class="cmap-svg" id="m-svg" role="img" aria-label="地圖"></svg>
+        <svg class="cmap-svg" id="m-svg" role="group" aria-label="地圖(標記可用 Tab 選、Enter 打開)"></svg>
         <div class="cmap-legend" id="m-legend"></div>
         <div class="cmap-tools"><button type="button" id="m-in" aria-label="放大">＋</button><button type="button" id="m-out" aria-label="縮小">－</button><button type="button" id="m-home" aria-label="回到這個年代的範圍">⌂</button><button type="button" id="m-layers" aria-label="圖層" aria-expanded="false" aria-controls="m-layer-panel">層</button></div>
-        <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small><b>地圖</b><label><input type="checkbox" data-opt="refit"> 換時期時拉回該國範圍</label><label><input type="checkbox" data-opt="pac"> 太平洋置中</label><small>沒勾時,換時期會保留目前的縮放與位置;按 ⌂ 隨時拉回。</small></div>
+        <div class="cmap-layers" id="m-layer-panel" hidden><b>圖層</b><label><input type="checkbox" data-layer="today"> 今日行政區界線</label><label><input type="checkbox" data-layer="echo"> 以古鑑今</label><label><input type="checkbox" data-layer="bld"> 重要建築</label><label class="cmap-sub"><input type="checkbox" data-layer="bldall"> 全部年代(含當時還沒蓋的)</label><label><input type="checkbox" data-layer="fam"> 地方家族(臺灣時期線)</label><small>今日界線:Natural Earth(公有領域)、內政部國土測繪中心(政府資料開放授權條款);經本站簡化。點國家看「今日大約位於」。</small><b>地圖</b><label><input type="checkbox" data-opt="refit"> 換時期時拉回該國範圍</label><label><input type="checkbox" data-opt="pac"> 太平洋置中</label><small>沒勾時,換時期會保留目前的縮放與位置;按 ⌂ 隨時拉回。</small></div>
         <p class="cmap-credit"><span>疆界:${L('https://github.com/Seshat-Global-History-Databank/cliopatria', 'Cliopatria')}(Seshat,${L(CCBY, 'CC BY 4.0')},經本站簡化)・地點座標:${L('https://www.geonames.org/', 'GeoNames')}(${L(CCBY, 'CC BY 4.0')})・部分國名:${L('https://www.wikidata.org/', 'Wikidata')}(${L('https://creativecommons.org/publicdomain/zero/1.0/', 'CC0')})・底圖:${L('https://www.naturalearthdata.com/', 'Natural Earth')}(${L('https://www.naturalearthdata.com/about/terms-of-use/', '公有領域')})・示意,非精確疆界</span></p>
       </div>
       <div class="cmap-dwrap"><div class="cmap-dhead"><div class="cmap-split-h" id="m-split-detail" role="separator" aria-orientation="horizontal" aria-label="拖拉調整說明區高度(方向鍵也可以)" tabindex="0"></div><b id="m-dtitle"></b><span class="cmap-tz" role="group" aria-label="說明文字大小"><button type="button" id="m-tz-dn" aria-label="文字縮小">A−</button><span id="m-tz-v">100%</span><button type="button" id="m-tz-up" aria-label="文字放大">A+</button></span><button type="button" class="cmap-fold-detail" id="m-fold-detail" aria-controls="m-detail" aria-expanded="true"></button></div>
@@ -172,6 +173,7 @@ const block = (b) => typeof b === 'string' ? `<p>${esc(b)}</p>`
   : b.orig ? `<div class="cmap-pair">${b.h ? `<h3>${esc(b.h)}</h3>` : ''}<p class="cmap-orig">${esc(b.orig)}</p>
       <details class="cmap-tr"${mobile() ? '' : ' open'}><summary>白話</summary><p>${esc(b.tr)}</p></details>${b.note ? `<p class="cmap-note">${esc(b.note)}</p>` : ''}</div>`
   : b.gloss ? `<h3>難詞</h3><dl class="cmap-gloss">${b.gloss.map(([w, d]) => `<dt>${esc(w)}</dt><dd>${esc(d)}</dd>`).join('')}</dl>`
+  : b.fams ? `${b.h ? `<h3>${esc(b.h)}</h3>` : ''}<p>${esc(b.p)}</p><p class="cmap-famlinks">${b.fams.map((id) => FAMILIES.find((f) => f.id === id)).map((f) => `<button type="button" class="cmap-eralink" data-fam="${esc(f.id)}">${esc(f.name)} →</button>`).join(' ')}</p>` // WY75:按了跳到地圖上的家族
   : b.list ? `<ul class="cmap-tw-list">${b.list.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`
   : b.fig ? FIGS[b.fig]?.() || '' : `${b.h ? `<h3>${esc(b.h)}</h3>` : ''}<p>${esc(b.p)}</p>`;
 function twCardHTML() {
@@ -254,6 +256,7 @@ function renderAxis() {
 }
 function renderDetail() {
   const it = st.item, d = $('m-detail');
+  if (st.fam && !it && !st.polity) { d.innerHTML = famHTML(st.fam); $('m-back')?.addEventListener('click', () => setTab('list')); return; }
   if (st.bld && !it && !st.polity) { d.innerHTML = bldHTML(st.bld); return; }
   if (st.echo && !it && !st.polity) { d.innerHTML = echoHTML(st.echo); return; }
   if (st.polity && !it) {
@@ -312,15 +315,16 @@ function poemHTML(it) {
 // 說明區標題列:顯示目前說明卡的標題;選了新的項目或國家時自動展開
 function syncDetailHead() {
   const ce = ERAS.find((e) => e.id === st.era);
-  $('m-dtitle').textContent = st.item?.title || st.polity?.z || st.bld?.name || st.echo?.title || (isCountry(ce) ? `${COUNTRY_OF[ce.track].name}・${ce.name}` : curCard()?.title) || '說明';
-  const key = st.item ? `i:${st.item.title}` : st.polity ? `p:${st.polity.n}` : st.bld ? `b:${st.bld.id}` : st.echo ? `e:${st.echo.id}` : '';
+  $('m-dtitle').textContent = st.item?.title || st.polity?.z || st.fam?.name || st.bld?.name || st.echo?.title || (isCountry(ce) ? `${COUNTRY_OF[ce.track].name}・${ce.name}` : curCard()?.title) || '說明';
+  const key = st.item ? `i:${st.item.title}` : st.polity ? `p:${st.polity.n}` : st.fam ? `f:${st.fam.id}` : st.bld ? `b:${st.bld.id}` : st.echo ? `e:${st.echo.id}` : '';
   if (lastPick !== null && key && key !== lastPick && root.classList.contains('fold-detail')) setFold('detail', false);
   lastPick = key;
 }
 // 地圖圖例(手機不顯示圖例,改寫在說明區):斜線、虛線圈、疆界說明
 const mapKeys = () => {
   const keys = [sliceFor(st.era) ? '<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : '', itemsOf(st.era).some(pointGuess) ? '<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : '',
-    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})${curTrack() === 'tw' ? ';日本、韓國、越南、菲律賓、泰國、美國、荷蘭的建築:把地圖縮小就看得到' : ''}` : ''].filter(Boolean);
+    st.layers.bld ? `<i class="cmap-sw bld"></i>樓閣=重要建築(${st.layers.bldall ? '全部年代' : '只顯示這個年代結束前已經蓋好的'})${curTrack() === 'tw' ? ';日本、韓國、越南、菲律賓、泰國、美國、荷蘭的建築:把地圖縮小就看得到' : ''}` : '',
+    st.layers.fam && curTrack() === 'tw' ? '<i class="cmap-sw fam"></i>家=地方家族(只顯示這個年代有活動的家族)' : ''].filter(Boolean);
   return `${keys.length ? `<p class="cmap-keys">${keys.join('　')}</p>` : ''}${sliceFor(st.era) ? `<p class="cmap-src">${BORDER_NOTE}</p>` : ''}`;
 };
 // ---------------------------------------------------------------- 今昔對比(WY54)
@@ -376,8 +380,27 @@ function bldHTML(b) {
     ${b.inscription ? `<p>題字:${esc(b.inscription)}</p>` : ''}
     ${b.text ? `<p>相關篇目:${[b.text, b.alsoText].filter(Boolean).map((x) => L(x.wikisource, `${esc(x.author)}〈${esc(x.title)}〉`)).join('、')}${b.quote ? `;「${esc(b.quote)}」` : ''}</p>` : ''}
     ${b.approx ? '<p class="cmap-src">確切位置不明,點只標到城市。</p>' : ''}
+    ${famsOfBld(b.id).length ? `<p>地方家族:${famsOfBld(b.id).map((f) => `<button type="button" class="cmap-eralink" data-fam="${esc(f.id)}">${esc(f.name)} →</button>`).join(' ')}</p>` : ''}
     ${b.more?.length ? `<h3>延伸閱讀</h3><ul class="cmap-more">${b.more.map((x) => `<li>${LX(x.u, esc(x.t))}</li>`).join('')}</ul>` : ''}
     <details class="cmap-src"><summary>出處(${b.src.length})</summary><ul>${b.src.map((x) => `<li>${L(x.u, esc(x.t))}</li>`).join('')}</ul><p>${b.region === 'tw' ? BOCH_CREDIT : '內容由本站依上列資料自行撰寫;座標:Wikidata(CC0)。'}</p></details></div>`;
+}
+// ---------------------------------------------------------------- 地方家族(WY75,使用者 2026-11-07 裁 5 題皆 A)
+// 圖層只在臺灣時期線:依家族活躍的年代顯示(f.eras);宅第已是重要建築卡的,兩邊互相連過去,不重寫。
+// 卡片:任何一條出處待查證,標題旁標「部分待查證」;有爭議的段落各說法並列、各附出處,不下評價。
+const famsOn = () => (curTrack() === 'tw' ? FAMILIES.filter((f) => (st.layers.fam && f.eras.includes(st.era)) || st.fam === f) : []);
+const srcLi = (x) => `<li>${L(x.u, esc(x.t))} ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`;
+function famHTML(f) {
+  const part = f.src.some((x) => !x.ok) || f.today.some((x) => x.check);
+  return `<div class="cmap-card cmap-fam"><p class="cmap-kindline"><span class="cmap-kind k-fam">地方家族</span>${f.tags.map((t) => `<span class="cmap-label">${esc(t)}</span>`).join('')}今日位置:${esc(f.where)}${f.approx ? '<span class="cmap-ai">大致位置</span>' : ''}</p>
+    <h2>${esc(f.name)}<span class="${part ? 'cmap-ai' : 'cmap-ok'}">${part ? '部分待查證' : '已查證'}</span></h2>
+    <p>活躍年代:${f.eras.map((id) => esc(eraName(id))).join('、')}</p>${f.eras.includes(st.era) ? '' : `<p class="cmap-src">地圖目前是「${esc(eraName(st.era))}」,不在這一家的活躍年代內;圖層只會在活躍年代顯示這一家。</p>`}${f.eraNote ? `<p class="cmap-src">${esc(f.eraNote)}</p>` : ''}
+    <h3>主要人物</h3><ul class="cmap-tw-list">${f.people.map((p) => `<li><b>${esc(p.n)}</b>(${esc(p.life)}):${esc(p.role)}</li>`).join('')}</ul>
+    <h3>這一家做了什麼</h3>${f.story.map((t) => `<p>${esc(t)}</p>`).join('')}
+    <h3>今天的關聯</h3><ul class="cmap-tw-list">${f.today.map((x) => `<li>${esc(x.t)}${x.check ? ' <span class="cmap-ai">待查證</span>' : ''}${x.bld ? ` <button type="button" class="cmap-eralink" data-bld="${esc(x.bld)}">看這棟建築 →</button>` : ''}</li>`).join('')}</ul>
+    ${f.dispute?.length ? `<h3>有爭議的事 <span class="cmap-ai">有爭議</span></h3>${f.dispute.map((d) => `<p>${esc(d.p)}</p><ul class="cmap-tw-list">${d.views.map((v) => `<li>${esc(v.p)}(${L(v.u, esc(v.t))})</li>`).join('')}</ul>`).join('')}<p class="cmap-src">不同說法並列,本站不下評價。</p>` : ''}
+    ${f.approx ? `<p class="cmap-src">確切位置不明,點只標到${esc(f.approx)}。</p>` : ''}
+    <details class="cmap-src"><summary>出處(${f.src.length})</summary><ul>${f.src.map(srcLi).join('')}</ul><p>內容由本站依上列資料自行撰寫;座標:${esc(f.atSrc)}。${BOCH_CREDIT}</p></details>
+    <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
 }
 // 每張疆界切片都附的說明(CPM 2026-10-31):資料來源、示意、參考書目(只列書名,不抄任何圖)
 const BORDER_NOTE = '疆界依 Cliopatria 學術資料庫,邊界經簡化,細部與史書有出入,僅供示意;正式考據可參考譚其驤《中國歷史地圖集》。';
@@ -385,6 +408,13 @@ const yearText = (y) => (y < 0 ? `前 ${-y} 年` : `${y} 年`);
 
 // ---------------------------------------------------------------- 地圖
 const el = (tag, attrs = {}, text) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); if (text != null) e.textContent = text; return e; };
+// 地圖標記可用鍵盤操作(WY78):Tab 選到、Enter 或空白鍵等於點一下;名稱同滑鼠停留的提示;地圖重畫後焦點回到同一個標記
+let refocus = null;
+const act = (g, key, label, run) => {
+  for (const [k, v] of Object.entries({ tabindex: '0', role: 'button', 'aria-label': label, 'data-k': key })) g.setAttribute(k, v);
+  g.addEventListener('click', (ev) => { ev.stopPropagation(); if (!dragged) run(); });
+  g.addEventListener('keydown', (ev) => { if (ev.key !== 'Enter' && ev.key !== ' ') return; ev.preventDefault(); ev.stopPropagation(); refocus = key; run(); });
+};
 const cache = new Map();
 async function slice(name, level) {
   const key = `${name}-${level}`;
@@ -438,7 +468,7 @@ async function drawMap() {
     const g = el('g', { class: 'm-pols' + (selState?.clio || st.polity || eraClio.length ? ' has-sel' : ''), ...(fine ? { 'clip-path': 'url(#m-clip)' } : {}) });
     data.polities.forEach((p, i) => {
       const path = el('path', { d: wrapD(p.d), class: 'm-pol' + ((selState?.clio === p.n || st.polity?.n === p.n || eraClio.includes(p.n)) ? ' sel' : ''), fill: FILLS[i % FILLS.length] });
-      path.addEventListener('click', () => { if (dragged) return; st.polity = st.polity?.n === p.n ? null : p; st.item = null; st.echo = null; st.bld = null; st.region = statesOf(st.era).find((s) => s.clio === p.n)?.id || null; update(); });
+      path.addEventListener('click', () => { if (dragged) return; st.polity = st.polity?.n === p.n ? null : p; st.item = null; st.echo = null; st.bld = null; st.fam = null; st.region = statesOf(st.era).find((s) => s.clio === p.n)?.id || null; update(); });
       g.append(path);
     });
     frag.append(g);
@@ -470,18 +500,16 @@ async function drawMap() {
     if (l0) frag.append(el('path', { d: wrapD(l0.d), class: 'm-today0' }));
   }
   // 重要建築(圖層,WY55):小樓閣圖示
-  if (st.layers.bld) {
+  if (st.layers.bld || st.bld) { // 從家族卡跳過來的建築:圖層沒開也畫出那一棟
     const list = await bldJSON(); if (seq !== drawSeq) return;
     const end = eraEnd(st.era);
     // 聚合(WY59):螢幕上距離 26px 以內的建築併成一個數字圈;點了放大到能分開(圖示在螢幕上的大小固定)
-    const shown = (list || []).filter((b) => (st.layers.bldall || b.y <= end) && bldOnTrack(b));
-    const groups = [];
-    const near = v[2] <= MIN_W * 1.05 ? 0 : 26 * u; // 已放到最大就不再聚合(有些建築相距不到 1 公里,怎麼放大都分不開)
-    for (const b of shown) { const [x, y] = P(b.at); const gr = near && groups.find((q) => Math.hypot(q.x - x, q.y - y) < near); if (gr) { gr.m.push(b); gr.x = (gr.x * (gr.m.length - 1) + x) / gr.m.length; gr.y = (gr.y * (gr.m.length - 1) + y) / gr.m.length; } else groups.push({ x, y, m: [b] }); }
-    for (const gr of groups.filter((q) => q.m.length > 1 && !q.m.includes(st.bld))) {
+    const shown = st.layers.bld ? (list || []).filter((b) => (st.layers.bldall || b.y <= end) && bldOnTrack(b)) : (list || []).filter((b) => b === st.bld);
+    const groups = groupNear(shown, v, u);
+    for (const gr of groups.filter((q) => q.m.length > 1 && !q.m.includes(st.bld))) { // 聚合圈
       const c = el('g', { class: 'm-clu' });
       c.append(el('circle', { cx: gr.x, cy: gr.y, r: 13 * u }), el('text', { x: gr.x, y: gr.y + 4.5 * u, 'font-size': (13 * u).toFixed(1) }, gr.m.length), el('title', {}, `${gr.m.length} 處重要建築,點了放大`));
-      c.addEventListener('click', (ev) => { ev.stopPropagation(); if (dragged) return; zoomTo(gr.m.map((b) => P(b.at))); });
+      act(c, `bc:${gr.m[0].id}`, `${gr.m.length} 處重要建築,點了放大`, () => zoomTo(gr.m.map((b) => P(b.at))));
       frag.append(c);
     }
     for (const b of groups.filter((q) => q.m.length === 1 || q.m.includes(st.bld)).flatMap((q) => q.m)) {
@@ -489,7 +517,29 @@ async function drawMap() {
       const g = el('g', { class: 'm-bld' + (on ? ' on' : '') + (b.approx ? ' approx' : '') });
       if (b.approx) g.append(el('circle', { cx: x, cy: y, r: 12 * s, class: 'm-guess', stroke: '#8a5a2b' }));
       g.append(el('path', { d: `M${x - 8 * s} ${y + 7 * s}h${16 * s}v${-2.5 * s}h${-3 * s}v${-5 * s}h${4 * s}l${-9 * s} ${-7 * s}l${-9 * s} ${7 * s}h${4 * s}v${5 * s}h${-3 * s}z` }), el('title', {}, `重要建築:${b.name}`));
-      g.addEventListener('click', (ev) => { ev.stopPropagation(); if (dragged) return; st.bld = b; st.item = null; st.polity = null; st.echo = null; update(); });
+      act(g, `b:${b.id}`, `重要建築:${b.name}`, () => { st.bld = b; st.fam = null; st.item = null; st.polity = null; st.echo = null; update(); });
+      frag.append(g);
+    }
+  }
+  // 地方家族(圖層,WY75):「家」字圓點;靠近的併成數字圈(和建築同一套聚合);宅第就是建築卡的,建築圖層開著時往右上錯開
+  const fams = famsOn();
+  if (fams.length) {
+    const bldOn = st.layers.bld ? new Set(((await bldJSON()) || []).filter((b) => st.layers.bldall || b.y <= eraEnd(st.era)).map((b) => b.id)) : new Set();
+    if (seq !== drawSeq) return;
+    const off = (f) => (f.today.some((x) => x.bld && bldOn.has(x.bld)) ? [11 * u, -11 * u] : [0, 0]);
+    const groups = groupNear(fams, v, u, (f) => { const [x, y] = P(f.at), [dx, dy] = off(f); return [x + dx, y + dy]; });
+    for (const gr of groups.filter((q) => q.m.length > 1 && !q.m.includes(st.fam))) {
+      const c = el('g', { class: 'm-fclu' });
+      c.append(el('circle', { cx: gr.x, cy: gr.y, r: 12 * u }), el('text', { x: gr.x, y: gr.y + 4.5 * u, 'font-size': (12 * u).toFixed(1) }, gr.m.length), el('title', {}, `${gr.m.length} 個地方家族,點了放大`));
+      act(c, `fc:${gr.m[0].id}`, `${gr.m.length} 個地方家族,點了放大`, () => zoomTo(gr.m.map((f) => P(f.at))));
+      frag.append(c);
+    }
+    for (const f of groups.filter((q) => q.m.length === 1 || q.m.includes(st.fam)).flatMap((q) => q.m)) {
+      const [x0, y0] = P(f.at), [dx, dy] = off(f), x = x0 + dx, y = y0 + dy, on = st.fam === f;
+      const g = el('g', { class: 'm-fam' + (on ? ' on' : '') + (f.approx ? ' approx' : '') });
+      if (f.approx) g.append(el('circle', { cx: x, cy: y, r: 14 * u, class: 'm-guess', stroke: '#2f6f62' }));
+      g.append(el('circle', { cx: x, cy: y, r: (on ? 11 : 9) * u }), el('text', { x, y: y + 3.8 * u, 'font-size': (11 * u).toFixed(1) }, '家'), el('title', {}, `地方家族:${f.name}`));
+      act(g, `f:${f.id}`, `地方家族:${f.name}`, () => { st.fam = f; st.bld = null; st.item = null; st.polity = null; st.echo = null; update(); });
       frag.append(g);
     }
   }
@@ -498,7 +548,7 @@ async function drawMap() {
     const [x, y] = P(e.at), on = st.echo === e;
     const g = el('g', { class: 'm-echo' + (on ? ' on' : '') });
     g.append(el('circle', { cx: x, cy: y, r: (on ? 12 : 10) * u }), el('text', { x, y: y + 4.2 * u, 'font-size': (12 * u).toFixed(1) }, '古'), el('title', {}, `以古鑑今:${e.title}`));
-    g.addEventListener('click', (ev) => { ev.stopPropagation(); if (dragged) return; st.echo = e; st.item = null; st.polity = null; st.bld = null; update(); });
+    act(g, `e:${e.id}`, `以古鑑今:${e.title}`, () => { st.echo = e; st.item = null; st.polity = null; st.bld = null; st.fam = null; update(); });
     frag.append(g);
   }
   // 都城(★)與數量泡泡
@@ -521,7 +571,7 @@ async function drawMap() {
     if (pointGuess(it)) g.append(el('circle', { cx: x, cy: y, r: (on ? 9 : 7) * u, class: 'm-guess', stroke: PIN[it.t] }));
     g.append(el('circle', { cx: x, cy: y, r: (on ? 6 : 4) * u, fill: PIN[it.t] }));
     g.append(el('title', {}, pointGuess(it) ? `${it.title}(地點 AI 推算)` : it.title));
-    g.addEventListener('click', (ev) => { ev.stopPropagation(); if (!dragged) pick(it); });
+    act(g, `i:${ITEMS.indexOf(it)}`, pointGuess(it) ? `${it.title}(地點 AI 推算)` : it.title, () => pick(it));
     frag.append(g);
   }
   // 選中的那一則:路線+名牌
@@ -580,7 +630,11 @@ async function drawMap() {
       frag.append(el('text', { x: lx + fs * 0.5, y: y - fs * 0.15, class: 'm-tagt', 'font-size': fs.toFixed(1) }, q[0]));
     });
   }
+  // 重畫前焦點還在地圖標記上才還原(打開卡片後地圖可能重畫不只一次;已 Tab 到別處或切走分頁就不搶回,Codex 審查)
+  const fk = svg.contains(document.activeElement) ? document.activeElement.getAttribute('data-k') : null, kb = fk !== null && fk === refocus;
+  refocus = null;
   svg.replaceChildren(frag);
+  if (fk) (svg.querySelector(`[data-k="${CSS.escape(fk)}"]`) || (kb ? svg.querySelector('[role="button"]') : null))?.focus({ preventScroll: true }); // 鍵盤放大聚合圈後它不在了 ⇒ 焦點給第一個標記
   const era = ERAS.find((e) => e.id === st.era);
   $('m-legend').innerHTML = `<p><b>${era.name}</b> ${era.time}${name ? `・疆界是 ${yearText(+name.replace('bc', '-'))}左右的樣子` : ''}${era.note ? `・${era.note}` : ''}${era.clio?.length ? '・加深=這時統治這一帶的政權' : ''}・國名加虛線=AI 整理・帶「?」=原資料有疑問,點國家看說明${name ? '・<i class="cmap-sw bare"></i>灰色斜線=當時沒有國家政權的地區(不代表無人居住)' : ''}${itemsOf(st.era).some(pointGuess) ? '・<i class="cmap-sw guess"></i>點加虛線圈=地點 AI 推算' : ''}</p>`;
 }
@@ -607,11 +661,11 @@ function update() { renderList(); renderCards(); renderAxis(); renderDetail(); s
 // 換時期(使用者 2026-11-04):預設保留目前的縮放與位置;勾「換時期時拉回該國範圍」才回到該時期的範圍。換國家視角一律拉回。
 let refit = PREF('ccc:map-refit', false);
 function setEra(id, fit = refit) {
-  Object.assign(st, { era: id, region: null, item: null, view: fit ? null : st.view, polity: null, twc: null, route: null, echo: null, bld: null });
+  Object.assign(st, { era: id, region: null, item: null, view: fit ? null : st.view, polity: null, twc: null, route: null, echo: null, bld: null, fam: null });
   try { history.replaceState(null, '', `?era=${encodeURIComponent(id)}`); } catch { /* 網址改不了也不影響閱讀 */ } // 網址記住目前年代,可以直接分享(WY60)
   update();
 }
-function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null, echo: null, bld: null, fitPoem: it.t === 'poem' }); if (mobile()) setTab('map'); else update(); }
+function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null, echo: null, bld: null, fam: null, fitPoem: it.t === 'poem' }); if (mobile()) setTab('map'); else update(); }
 function setTab(t) {
   st.tab = t; root.dataset.tab = t;
   $('t-list').setAttribute('aria-selected', t === 'list'); $('t-map').setAttribute('aria-selected', t === 'map');
@@ -658,7 +712,9 @@ app.addEventListener('click', (ev) => {
   if (b.matches('.cmap-pv-btn')) { const m = b.nextElementSibling, open = m.hidden; closePV(); m.hidden = !open; b.setAttribute('aria-expanded', String(open)); if (open) m.querySelector('[aria-checked="true"]')?.focus(); return; }
   if (b.dataset.pv) { closePV(); setTrack(b.dataset.pv); return; }
   if (b.dataset.go) { const [era, card] = b.dataset.go.split(' '); setEra(era); st.twc = card; update(); return; }
-  if (b.dataset.echo) { st.echo = ECHOES.find((e) => e.id === b.dataset.echo); st.item = null; st.polity = null; st.bld = null; if (mobile()) setTab('map'); else update(); return; }
+  if (b.dataset.fam) { Object.assign(st, { fam: FAMILIES.find((f) => f.id === b.dataset.fam), bld: null, item: null, polity: null, echo: null }); if (mobile()) setTab('map'); else update(); return; }
+  if (b.dataset.bld) { const from = st.fam, era = st.era; bldJSON().then((list) => { if (st.fam !== from || st.era !== era) return; Object.assign(st, { bld: (list || []).find((x) => x.id === b.dataset.bld) || null, fam: null, item: null, polity: null, echo: null }); if (mobile()) setTab('map'); else update(); }); return; }
+  if (b.dataset.echo) { st.echo = ECHOES.find((e) => e.id === b.dataset.echo); st.item = null; st.polity = null; st.bld = null; st.fam = null; if (mobile()) setTab('map'); else update(); return; }
   if (b.dataset.card) { st.twc = b.dataset.card; st.route = null; st.view = null; update(); return; }
   if (b.dataset.route) { // 看航線:地圖移到包住整條航線的範圍;桌機再按一次收起
     const c = cardsOf(st.era).find((x) => x.id === b.dataset.route);
@@ -677,6 +733,12 @@ const W = B.width, H = B.height;
 const clamp = ([x, y, w, h]) => { const r = h / w, x0 = pac ? SEAM_X : 0; w = Math.min(Math.max(w, MIN_W), W); h = w * r; return [Math.min(Math.max(x, x0 - w * 0.3), x0 + W - w * 0.7), Math.min(Math.max(y, -h * 0.3), H - h * 0.7), w, h]; };
 // 放大上限(WY59):畫面寬最小 12 地圖單位(約經度 0.4 度),臺灣單一縣市放得下、建築圖示分得開
 const MIN_W = 12;
+// 聚合(WY59,WY75 起建築與家族共用):螢幕上距離 26px 以內的併成一組;已放到最大就不再聚合(有些點相距不到 1 公里,怎麼放大都分不開)
+function groupNear(list, v, u, at = (b) => P(b.at)) {
+  const groups = [], near = v[2] <= MIN_W * 1.05 ? 0 : 26 * u;
+  for (const b of list) { const [x, y] = at(b); const gr = near && groups.find((q) => Math.hypot(q.x - x, q.y - y) < near); if (gr) { gr.m.push(b); gr.x = (gr.x * (gr.m.length - 1) + x) / gr.m.length; gr.y = (gr.y * (gr.m.length - 1) + y) / gr.m.length; } else groups.push({ x, y, m: [b] }); }
+  return groups;
+}
 // 放大到包住這些點(聚合圈用):四周留白,但不小於放大上限
 function zoomTo(pts) {
   const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]), [, , w0, h0] = vb(), r = h0 / w0;

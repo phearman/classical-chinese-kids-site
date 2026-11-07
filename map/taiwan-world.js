@@ -52,6 +52,12 @@ const S = {
   roc1949: { t: '歐素瑛〈臺灣省參議會與中華民國政府遷臺〉,《臺灣學研究》第 13 期,國立中央圖書館臺灣分館(2012)', u: 'https://wwwacc.ntl.edu.tw/public/Attachment/281415584816.pdf' },
   move: { t: '〈中央政府遷臺〉,國家發展委員會檔案管理局 檔案支援教學網', u: 'https://art.archives.gov.tw/tw/art/1484.html' },
   surrender: { t: '〈中國戰區臺灣省受降儀式〉,國家發展委員會檔案管理局', u: 'https://art.archives.gov.tw/tw/art/1788.html' },
+  // WY75 地方家族怎麼起家(查證紀錄 docs/research/wy75/batch1.md)
+  hnqTcmb: { t: '〈獅潭拓墾先賢黃南球先生生平事蹟碑〉,國家文化記憶庫(苗栗縣政府文化觀光局建檔)', u: 'https://tcmb.culture.tw/zh-tw/detail?indexCode=Culture_Object&id=203857' },
+  hnqNcl: { t: '林偉洲〈黃南球〉,《臺灣歷史人物小傳—明清暨日治時期》,國家圖書館臺灣記憶', u: 'https://tm.ncl.edu.tw/article?u=016_001_0000009067&lang=chn' },
+  camphor: { t: '溫紹炳主持《台灣樟腦產業與客家人社會地位提升之研究》,成功大學客家研究中心(客家委員會典藏)', u: 'https://cloud.hakka.gov.tw/Attachment/1/61617462371.pdf' },
+  yanTcmb: { t: '江寶釵〈顏雲年〉,國家文化記憶庫(國立中正大學建檔)', u: 'https://tcmb.culture.tw/zh-tw/detail?id=152808&indexCode=Culture_People' },
+  taiyang: { t: '文化部文化資產局 國家文化資產網〈臺陽公司瑞芳辦事處歷史建築群〉', u: 'https://nchdb.boch.gov.tw/assets/overview/historicalBuilding/20030828000001' },
 };
 const src = (...keys) => keys.map((k) => ({ ...S[k], ok: true }));
 
@@ -167,6 +173,23 @@ export const TW_WORLD = Object.freeze([
       ['臺灣府', 120.20, 23.00, '海路'],
     ],
     src: src('ith', 'yifu', 'handover', 'dajia', 'mudan'),
+  },
+  {
+    // WY75:清領時期加一張(使用者 2026-11-07 裁 CPM 待裁 1 A);分類是本站整理研究資料得出的,按名字跳到地圖上的家族(families.js)
+    id: 'gentry', era: 'tw-ql', tab: '地方家族怎麼起家', title: '地方家族怎麼起家', label: '分類由本站整理',
+    intro: [
+      { p: '清領時期,臺灣各地有不少家族在地方上起家,有的到今天還留著宅第、祠堂和古蹟。下面是常見的幾種起家方式,每種舉幾家當例子;按家族名字,可以在地圖上看到那一家。' },
+      { h: '開墾', p: '招人開墾荒地、開水圳,再向佃農收租。', fams: ['beipu-jiang', 'wusha', 'xinwu-fanjiang'] },
+      { h: '做生意與行郊', p: '在福建和臺灣之間做米、鹽和貨物的買賣,有的自己有船隊。', fams: ['lukang-rimao', 'banqiao-lin', 'chen-yueji', 'luzhou-li'] },
+      { h: '科舉', p: '讀書考試,中了舉人、進士以後,在地方上辦學、修廟;也有先做生意、開墾,後代再走科舉的。', fams: ['hsinchu-zheng', 'yang-shifang', 'cai-tinglan', 'daxi-li'] },
+      { h: '軍功與樟腦', p: '苗栗的黃南球(1840–1919)隨軍出征有功,得到「五品藍翎」;他在大湖、獅潭一帶開墾,伐木熬煮樟腦賣到海外,因此致富。這一家還沒放上地圖。' },
+      { h: '日治新產業', p: '基隆的顏雲年(1874–1923)1899 年和地方人士合組「金裕豐號」,承租金礦區;1920 年成立「臺陽礦業株式會社」。這一家還沒放上地圖。' },
+      { h: '原住民族', p: '原住民族的社群也有領導家族,和清朝官府、漢人移民、外國人往來和交涉。', fams: ['zhuqian-seven', 'anli-pan-zhang', 'zhulaoshu-tokitok'] },
+      { h: '海外經商', p: '金門山后王氏到日本神戶經商,再出錢在家鄉蓋房子。', fams: ['shanhou-wang'] },
+      { p: '打開地圖「圖層」裡的「地方家族」,就會依年代顯示各個家族。這是第一批 15 家,爭議比較多的大家族之後再補。' },
+    ],
+    route: [],
+    src: src('hnqTcmb', 'hnqNcl', 'camphor', 'yanTcmb', 'taiyang'),
   },
   {
     id: 'rz', era: 'tw-rz', title: '日本(1895~1945)',
