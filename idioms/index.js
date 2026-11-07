@@ -1,11 +1,12 @@
-import { initPage } from '../shared/page.js?v=9cd8937';
-import { escapeHTML } from '../shared/terms.js?v=9cd8937';
-import { WORDS } from './words-data.js?v=9cd8937';
-import { COMICS } from './comics.js?v=9cd8937';
-import { TOPIC_LABELS } from './categories.js?v=9cd8937';
-import { ZHUYIN } from './zhuyin.js?v=9cd8937';
-import { zhuyinHTML } from './comic-view.js?v=9cd8937';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=9cd8937';
+import { initPage } from '../shared/page.js?v=97cfd27';
+import { escapeHTML } from '../shared/terms.js?v=97cfd27';
+import { WORDS } from './words-data.js?v=97cfd27';
+import { COMICS } from './comics.js?v=97cfd27';
+import { STORIES } from './history.js?v=97cfd27';
+import { TOPIC_LABELS } from './categories.js?v=97cfd27';
+import { ZHUYIN } from './zhuyin.js?v=97cfd27';
+import { zhuyinHTML } from './comic-view.js?v=97cfd27';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=97cfd27';
 
 initPage();
 const app = document.getElementById('app');
@@ -34,6 +35,7 @@ app.innerHTML = `<main class="idiom-view">
   <p class="idiom-note">主題分類依字面，僅供參考。</p>
   <div class="idiom-filters" role="group" aria-label="成語分類篩選">
     ${filterLabels.map(([id, label]) => `<button type="button" class="idiom-chip" data-filter="${id}" aria-pressed="false">${label}</button>`).join('')}
+    <a class="idiom-chip idiom-chip-link" href="story.html">歷史故事（${STORIES.length}）→</a>
   </div>
   <div class="idiom-source-filters" hidden aria-label="漫畫出處篩選">
     <label>時代<select class="idiom-select" data-source-filter="era"><option value="">全部時代</option>${eras.map((value) => `<option value="${escapeHTML(value)}">${escapeHTML(value)}</option>`).join('')}</select></label>

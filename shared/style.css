@@ -1139,3 +1139,13 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
   .shell.menu-folded .shell-body { grid-template-columns: minmax(0, 1fr); }
   .shell.menu-folded .menu { display: none; }
 }
+/* 歷史故事(WY43):成語集頁的入口連結與故事清單卡片 */
+a.idiom-chip-link { display: inline-flex; align-items: center; text-decoration: none; border-color: var(--moss); color: var(--moss); font-weight: 700; }
+a.idiom-chip-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.story-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px; margin: 16px 0; padding: 0; list-style: none; }
+.story-card { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); text-decoration: none; }
+.story-card img { width: 100%; aspect-ratio: 1; border-radius: 8px; object-fit: cover; }
+.story-card span { display: flex; flex-direction: column; gap: 2px; }
+.story-card b { font-family: var(--serif); font-size: 1.15rem; }
+.story-card small { color: var(--ink-soft); }
+.story-card:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

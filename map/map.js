@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=9cd8937';
-import { escapeHTML as esc } from '../shared/terms.js?v=9cd8937';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=9cd8937';
-import { WORLD_BASE as B } from './world-base.js?v=9cd8937';
-import { twCards, checkOf } from './taiwan-world.js?v=9cd8937';
-import { eraCards, KINDS } from './era-cards.js?v=9cd8937';
-import { COMICS } from '../idioms/comics.js?v=9cd8937';
-import { ECHOES } from './echoes.js?v=9cd8937';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=9cd8937';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=9cd8937';
-import { POEMS } from './poems.js?v=9cd8937';
-import { FAMILIES, famsOfBld } from './families.js?v=9cd8937';
+import { initPage } from '../shared/page.js?v=97cfd27';
+import { escapeHTML as esc } from '../shared/terms.js?v=97cfd27';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=97cfd27';
+import { WORLD_BASE as B } from './world-base.js?v=97cfd27';
+import { twCards, checkOf } from './taiwan-world.js?v=97cfd27';
+import { eraCards, KINDS } from './era-cards.js?v=97cfd27';
+import { COMICS } from '../idioms/comics.js?v=97cfd27';
+import { ECHOES } from './echoes.js?v=97cfd27';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=97cfd27';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=97cfd27';
+import { POEMS } from './poems.js?v=97cfd27';
+import { FAMILIES, famsOfBld } from './families.js?v=97cfd27';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -42,9 +42,9 @@ const wrapD = (d) => {
 };
 // 經度範圍轉成 viewBox;太平洋置中時跨過接縫的範圍,右邊界加一圈
 const boxView = ([x1, y1], [x2, y2]) => [x1, y1, (x2 < x1 ? x2 + B.width : x2) - x1, y2 - y1];
-const TYPE = { lesson: '課文', person: '人物', comic: '成語漫畫', poem: '詩詞' };
-const PIN = { lesson: 'var(--accent)', person: '#4f6b8a', comic: 'var(--moss)', poem: '#8a5a7a' };
-const GO = { lesson: '讀課文', person: '看人物', comic: '看漫畫' };
+const TYPE = { lesson: '課文', person: '人物', comic: '成語漫畫', poem: '詩詞', story: '歷史故事' };
+const PIN = { lesson: 'var(--accent)', person: '#4f6b8a', comic: 'var(--moss)', poem: '#8a5a7a', story: '#9a6326' };
+const GO = { lesson: '讀課文', person: '看人物', comic: '看漫畫', story: '看故事' };
 // 頁腳來源連結(新分頁開)
 const CCBY = 'https://creativecommons.org/licenses/by/4.0/';
 // 外部連結(延伸閱讀):新分頁開、不帶來源網址,加「↗」表示會離開本站

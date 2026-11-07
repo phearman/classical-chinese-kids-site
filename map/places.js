@@ -3,8 +3,8 @@
 // - 今地經緯度:GeoNames cities1000(CC BY 4.0,geonames.org)的縣市治所座標;只是示意,不是古城遺址的位置。
 // - status:'已查證'=古今對應有出處;'待查證'=沒有找到可引用的出處,位置是通行說法(畫面一律加標「AI 推算」)。
 // - ⛔ 杜撰年代:when 照原文寫,不換算西元年;basis 不是 'text' 的,畫面標「AI 推算」。
-import { COMICS } from '../idioms/comics.js?v=9cd8937';
-import { COUNTRY_ERAS } from './countries.js?v=9cd8937';
+import { COMICS } from '../idioms/comics.js?v=97cfd27';
+import { COUNTRY_ERAS } from './countries.js?v=97cfd27';
 
 const MOE = '教育部《重編國語辭典修訂本》';
 const MOE_URL = (id) => `https://dict.revised.moe.edu.tw/dictView.jsp?ID=${id}`;
@@ -265,6 +265,8 @@ export const ITEMS = Object.freeze([
   C('多多益善', 'xh', null, null, '劉邦與淮陰侯韓信閒談(原文沒寫地點)', '《史記‧淮陰侯列傳》', '韓信被降為淮陰侯之後', 'text'),
   C('門可羅雀', 'xh', 'han', null, '翟公家門前(原文沒寫地點)', '《史記‧汲鄭列傳》', '翟公當廷尉時(原文沒寫哪一年)', 'text'),
   C('改過自新', 'xh', 'han', 'changan', '緹縈「隨其父至長安」上書', '《史記‧孝文本紀》', '漢文帝時(〈孝文本紀〉與〈扁鵲倉公列傳〉記的年份不同)', 'text'),
+  // 歷史故事(WY43):只標原文有地點、且有教育部辭典出處的;北海(放羊的地方)辭典沒有對應條目,不標點(CPM 2026-11-07)
+  I('story', '蘇武牧羊', 'xh', 'han', 'changan', '「武以始元六年春至京師」(回到長安);放羊的北海沒有標點', '《漢書‧李廣蘇建傳‧蘇武》', '天漢元年出使匈奴,昭帝始元六年春回到京師', 'text', '', 'idioms/story.html?id=suwu-muyang'),
   C('一諾千金', 'xh', 'han', null, '原文沒寫曹丘生見季布的地點', '《史記‧季布欒布列傳》', '季布做漢朝的官之後(原文沒寫哪一年)', 'text'),
   C('塞翁失馬', 'xh', 'han', null, '「近塞上之人」', '《淮南子‧人間訓》', '只寫「近塞上之人」,沒寫年代', 'book', '原文只說「近塞上」,點的位置是推算的', { at: [112.0, 40.3] }),
   C('削足適履', 'xh', null, null, '比喻,沒有地點', '《淮南子‧說林訓》', '比喻,沒寫年代', 'book'),

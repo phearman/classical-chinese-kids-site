@@ -1,9 +1,9 @@
-import { initPage } from '../shared/page.js?v=9cd8937';
-import { COMICS, comicBySlug } from './comics.js?v=9cd8937';
-import { idiomURL } from './list.js?v=9cd8937';
-import { WORDS } from './words-data.js?v=9cd8937';
-import { ZHUYIN, ZHUYIN_NOTES } from './zhuyin.js?v=9cd8937';
-import { missingComicHTML, comicNeighbors, comicBodyHTML } from './comic-view.js?v=9cd8937';
+import { initPage } from '../shared/page.js?v=97cfd27';
+import { COMICS, comicBySlug } from './comics.js?v=97cfd27';
+import { idiomURL } from './list.js?v=97cfd27';
+import { WORDS } from './words-data.js?v=97cfd27';
+import { ZHUYIN, ZHUYIN_NOTES } from './zhuyin.js?v=97cfd27';
+import { missingComicHTML, comicNeighbors, comicBodyHTML } from './comic-view.js?v=97cfd27';
 
 export const getComic = (id, comics = COMICS) => comicBySlug(id, comics);
 initPage();
