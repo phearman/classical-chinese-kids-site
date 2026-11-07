@@ -1,16 +1,17 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=8a30fdc';
-import { escapeHTML as esc } from '../shared/terms.js?v=8a30fdc';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=8a30fdc';
-import { WORLD_BASE as B } from './world-base.js?v=8a30fdc';
-import { twCards, checkOf } from './taiwan-world.js?v=8a30fdc';
-import { eraCards, KINDS } from './era-cards.js?v=8a30fdc';
-import { COMICS } from '../idioms/comics.js?v=8a30fdc';
-import { ECHOES } from './echoes.js?v=8a30fdc';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=8a30fdc';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=8a30fdc';
+import { initPage } from '../shared/page.js?v=0eaca88';
+import { escapeHTML as esc } from '../shared/terms.js?v=0eaca88';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=0eaca88';
+import { WORLD_BASE as B } from './world-base.js?v=0eaca88';
+import { twCards, checkOf } from './taiwan-world.js?v=0eaca88';
+import { eraCards, KINDS } from './era-cards.js?v=0eaca88';
+import { COMICS } from '../idioms/comics.js?v=0eaca88';
+import { ECHOES } from './echoes.js?v=0eaca88';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=0eaca88';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=0eaca88';
+import { POEMS } from './poems.js?v=0eaca88';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -40,8 +41,8 @@ const wrapD = (d) => {
 };
 // 經度範圍轉成 viewBox;太平洋置中時跨過接縫的範圍,右邊界加一圈
 const boxView = ([x1, y1], [x2, y2]) => [x1, y1, (x2 < x1 ? x2 + B.width : x2) - x1, y2 - y1];
-const TYPE = { lesson: '課文', person: '人物', comic: '成語漫畫' };
-const PIN = { lesson: 'var(--accent)', person: '#4f6b8a', comic: 'var(--moss)' };
+const TYPE = { lesson: '課文', person: '人物', comic: '成語漫畫', poem: '詩詞' };
+const PIN = { lesson: 'var(--accent)', person: '#4f6b8a', comic: 'var(--moss)', poem: '#8a5a7a' };
 const GO = { lesson: '讀課文', person: '看人物', comic: '看漫畫' };
 // 頁腳來源連結(新分頁開)
 const CCBY = 'https://creativecommons.org/licenses/by/4.0/';
@@ -66,6 +67,9 @@ const VIEW = { myth: [104, 30, 122, 40.5], xia: [104, 30, 122, 40.5], shang: [10
   wd: [96, 18, 128, 46], bs: CN, ns: CN, yuan: [70, 12, 145, 62], ming: [90, 16, 130, 48], qing: [88, 16, 130, 52], roc: [80, 15, 140, 54], prc: [80, 15, 140, 54], roctw: [108, 16, 128, 30],
   out: [62, 5, 125, 45], 'tw-pre': TW, 'tw-hx': TW, 'tw-mz': TW, 'tw-ql': TW, 'tw-rz': TW, 'tw-zh': TW };
 // 航線的視野:包住所有點,四周留一點空白(WY48)
+// 示意航線(WY74):有名字的站 [名稱, 經度, 緯度, 路別];[null, 經度, 緯度]=經過點,只讓海路繞開陸地,不畫點、站名、箭頭,說明文字也不列
+const routeStops = (r) => r.filter((q) => q[0]);
+const routeText = (r) => routeStops(r).map((q, i) => (i ? ` →${q[3] ? `(${esc(q[3])})` : ''} ` : '') + esc(q[0])).join('');
 const routeView = (r) => { const xs = r.map((q) => q[1]), ys = r.map((q) => q[2]); const pad = Math.max(5, (Math.max(...xs) - Math.min(...xs)) * 0.15);
   return boxView(P([Math.min(...xs) - pad, Math.max(...ys) + pad]), P([Math.max(...xs) + pad, Math.min(...ys) - pad])); };
 // 國家視角的時期:用該國的視野(WY60)
@@ -93,7 +97,7 @@ const sp = new URLSearchParams(location.search);
 const st = { era: ERAS.some((e) => e.id === sp.get('era')) ? sp.get('era') : 'cq', region: null, item: null, view: null, tab: 'list', polity: null, twc: null, route: null, layers: { today: false, echo: false, bld: false, bldall: false }, echo: null, bld: null };
 const pv = COUNTRIES.find((c) => c.id === sp.get('pv')); if (pv && !sp.get('era')) st.era = pv.start; // ?pv=jp:直接開某國視角(WY60)
 const pre = ITEMS.find((i) => i.title === sp.get('item'));
-if (pre) Object.assign(st, { era: pre.era, region: pre.state, item: pre });
+if (pre) Object.assign(st, { era: pre.era, region: pre.state, item: pre, fitPoem: pre.t === 'poem' });
 const eras = () => erasOf(trackOf(ERAS.find((e) => e.id === st.era)));
 const cnt = (e) => itemsOf(e.id).length;
 const has = (e) => cnt(e) || cardsOf(e.id).length; // 有故事或說明卡的年代不標灰
@@ -181,6 +185,7 @@ function twCardHTML() {
     ${c.intro ? c.intro.map(block).join('') : sec('誰來了、從哪裡來', c.who) + sec('那時的世界', c.world) + sec('為什麼是臺灣', c.why) + sec(c.endLabel || '怎麼結束', c.end)}
     ${sec('在地的人', c.people)}
     ${c.todo?.length ? `<p class="cmap-src"><span class="cmap-ai">待查證</span> ${c.todo.map(esc).join(';')}</p>` : ''}
+    ${c.route.length ? `<p class="cmap-routeline">示意航線:${routeText(c.route)}</p>` : ''}
     ${c.route.length ? `<button type="button" class="cmap-go" data-route="${c.id}">${st.route === c.id && !mobile() ? '收起航線' : '在地圖上看示意航線 →'}</button>` : ''}
     <details class="cmap-src"><summary>出處(${c.src.length})</summary><ul>${c.src.map((x) => `<li><a href="${x.u}" target="_blank" rel="noopener">${esc(x.t)}</a> ${x.ok ? '已查證' : '<span class="cmap-ai">待查證</span>'}</li>`).join('')}</ul>
       <p>${c.route.length ? '內容由本站依上列資料自行撰寫;航線只是示意,不是真正的航路。' : c.intro?.some((b) => b.orig) ? '原文照錄維基文庫(標點依該站;簡體、異體字改為通行繁體字);白話與說明由本站依上列資料自行撰寫。' : '內容由本站依上列資料自行撰寫。'}</p></details>
@@ -262,16 +267,18 @@ function renderDetail() {
   if (!it && isCountry(ce)) { d.innerHTML = mobile() ? `<div class="cmap-card empty">${esc(ce.name)} ${esc(ce.time)}:說明與「同一時期」對照在「年代清單」分頁。${mapKeys()}</div>` : periodHTML(ce); return; }
   if (!it && cardsOf(st.era).length) {
     const c = curCard();
-    d.innerHTML = mobile() ? `<div class="cmap-card empty">${st.route ? `示意航線:${c.route.map((q) => esc(q[0])).join(' → ')}` : `說明卡在「年代清單」分頁。${mapKeys()}`}</div>` : twCardHTML();
+    d.innerHTML = mobile() ? `<div class="cmap-card empty">${st.route ? `示意航線:${routeText(c.route)}` : `說明卡在「年代清單」分頁。${mapKeys()}`}</div>` : twCardHTML();
     return;
   }
   if (!it) {
     d.innerHTML = `<div class="cmap-card empty">${mobile() ? '點清單裡任一則,地圖會標出它發生的地方。' : '點左邊任一則,地圖會標出它發生的地方;拖曳地圖可以看同時期的其他國家。'}${mapKeys()}</div>`;
     return;
   }
+  if (it.t === 'poem') { d.innerHTML = poemHTML(it); $('m-back')?.addEventListener('click', () => setTab('list')); return; }
   const era = ERAS.find((e) => e.id === it.era), s = stateOf(it), pl = placeOf(it);
   const when = it.basis === 'myth' ? `神話,不推算年代(${esc(it.when)})`
     : it.basis === 'text' ? `${era.name}(原文:${esc(it.when)})`
+    : it.basis === 'author' ? `${era.name}(${esc(it.when)})`
     : `${era.name} <span class="cmap-ai">AI 推算</span> 原文沒寫年代(${esc(it.when)}),依${it.basis === 'speaker' ? '說故事的人的時代' : '成書時代'}推算`;
   let where = `${s ? esc(s.name) + '・' : ''}${esc(it.text)}`;
   if (it.placeGuess) where += ` <span class="cmap-ai">AI 推算</span> ${esc(it.placeGuess)}`;
@@ -281,6 +288,24 @@ function renderDetail() {
     <p>年代:${when}</p><p>地點:${where}</p><p class="cmap-src">出處:${esc(it.src)}${it.sub ? '　' + esc(it.sub) : ''}</p>
     <a class="cmap-go" href="../${it.href}"${it.t === 'comic' ? ` data-comic="${esc(new URLSearchParams(it.href.split('?')[1]).get('id'))}"` : ''}>${GO[it.t]} →</a><button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
   $('m-back')?.addEventListener('click', () => setTab('list'));
+}
+// 詩詞卡(WY52):原文與白話逐句對照、難詞、作者、地點與出處,全部在說明區看完,不另開頁
+const stopsOf = (it) => [it.place, ...[].concat(it.to || [])].filter(Boolean).map((id) => PLACE_BY_ID[id]);
+function poemHTML(it) {
+  const p = POEMS[it.title], era = ERAS.find((e) => e.id === it.era), stops = stopsOf(it);
+  const where = stops.length > 1 ? `<p class="cmap-routeline">詩裡的路線:${stops.map((x) => esc(x.name)).join(' → ')}</p>` : '';
+  return `<div class="cmap-card cmap-poem"><h2><span class="cmap-ty poem">${TYPE.poem}</span>${esc(it.title)}</h2>
+    <p class="cmap-poem-by">${esc(era.name)}・${esc(p.author)}<small>${esc(p.form)}</small></p>
+    ${p.lines.map(block).join('')}
+    ${p.note ? `<p class="cmap-note">${esc(p.note)}</p>` : ''}
+    ${block({ gloss: p.gloss })}
+    <h3>作者</h3><p>${esc(p.about)}</p>
+    <h3>詩裡的地方</h3>${where}<ul class="cmap-tw-list">${stops.map((x) => `<li>${esc(x.name)}:今${esc(x.modern)}(${esc(x.src)})</li>`).join('')}
+      ${p.off.map(([n, why]) => `<li>${esc(n)}:${esc(why)}</li>`).join('')}</ul>
+    <p class="cmap-src">年代:${esc(era.name)}。${esc(it.when)}。地圖上的點是今天縣市的位置,只是示意${stops.length > 1 ? ";路線也只是示意,不是真正走的路" : ""}。</p>
+    <details class="cmap-src"><summary>出處(${p.src.length})</summary><ul>${p.src.map((x) => `<li>${L(esc(x.u), esc(x.t))}</li>`).join('')}</ul>
+      <p>原文照錄維基文庫(標點依該站;異體字改為通行繁體字);白話、難詞與說明由本站依上列資料自行撰寫。</p></details>
+    <button type="button" class="cmap-back" id="m-back">← 回清單</button></div>`;
 }
 // 說明區標題列:顯示目前說明卡的標題;選了新的項目或國家時自動展開
 function syncDetailHead() {
@@ -370,6 +395,9 @@ const unitsPerPx = (v = vb()) => 1 / Math.min(svg.clientWidth / v[2], svg.client
 let drawSeq = 0;
 async function drawMap() {
   const seq = ++drawSeq;
+  // 詩詞(WY52):選中時地圖移到包住詩裡各站的範圍(唐、元的全國視野太大,路線會看不清楚)
+  // 只在剛選中時縮放一次(fitPoem);之後按 ⌂ 照舊回到這個年代的範圍
+  if (st.fitPoem) { st.fitPoem = false; if (!st.view && st.item?.t === 'poem') st.view = routeView(stopsOf(st.item).map((q) => [q.name, ...q.at])); }
   const v = st.view || viewOf(st.era);
   svg.setAttribute('viewBox', v.join(' '));
   const u = unitsPerPx(v);
@@ -495,31 +523,54 @@ async function drawMap() {
   // 選中的那一則:路線+名牌
   if (st.item && coordsOf(st.item)) {
     const [x, y] = P(coordsOf(st.item));
-    if (st.item.to) {
-      const [x2, y2] = P(PLACE_BY_ID[st.item.to].at); const mx = (x + x2) / 2 - (y2 - y) * 0.18, my = (y + y2) / 2 + (x2 - x) * 0.18;
-      frag.append(el('path', { d: `M${x} ${y}Q${mx} ${my} ${x2} ${y2}`, class: 'm-route' }));
+    // 路線:to 可以是一站或依序好幾站(WY52 詩詞);詩詞另在各站畫圓點與站名
+    const stops = stopsOf(st.item);
+    stops.slice(1).forEach((q, i) => {
+      const [x1, y1] = P(stops[i].at), [x2, y2] = P(q.at); const mx = (x1 + x2) / 2 - (y2 - y1) * 0.18, my = (y1 + y2) / 2 + (x2 - x1) * 0.18;
+      frag.append(el('path', { d: `M${x1} ${y1}Q${mx} ${my} ${x2} ${y2}`, class: 'm-route' }));
       const a = Math.atan2(y2 - my, x2 - mx), h = 10 * u;
       frag.append(el('path', { d: `M${x2} ${y2}L${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)}L${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)}Z`, class: 'm-routeHead' }));
-    }
+    });
+    if (st.item.t === 'poem') stops.slice(1).forEach((q) => {
+      const [sx, sy] = P(q.at), fs = 13 * u, w = (q.name.length + 1) * fs;
+      let lx = sx + 8 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = sx - 8 * u - w;
+      frag.append(el('circle', { cx: sx, cy: sy, r: 5 * u, class: 'm-stop' }));
+      frag.append(el('rect', { x: lx, y: sy - fs * 1.3, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
+      frag.append(el('text', { x: lx + fs * 0.5, y: sy - fs * 0.15, class: 'm-tagt', 'font-size': fs.toFixed(1) }, q.name));
+    });
     const tag = pointGuess(st.item) ? `${st.item.title}・AI 推算` : st.item.title;
     const fs = 14 * u, w = (tag.length + 1) * fs;
     let lx = x + 9 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = x - 9 * u - w;
     frag.append(el('rect', { x: lx, y: y - fs * 1.6, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
     frag.append(el('text', { x: lx + fs * 0.5, y: y - fs * 0.45, class: 'm-tagt', 'font-size': fs.toFixed(1) }, tag));
   }
-  // 臺灣時期說明卡的示意航線(WY48):依序連線,每段一個箭頭,站名標在點旁
+  // 臺灣時期說明卡的示意航線(WY48):依序連線;WY74 起整條用平順曲線穿過經過點,箭頭、圓點、站名只畫在有名字的站
   const rc = st.route && cardsOf(st.era).find((c) => c.id === st.route);
   if (rc) {
-    const pts = rc.route.map((q) => P([q[1], q[2]])), fs = 13 * u;
-    pts.slice(1).forEach(([x2, y2], i) => {
-      const [x, y] = pts[i], mx = (x + x2) / 2 - (y2 - y) * 0.12, my = (y + y2) / 2 + (x2 - x) * 0.12;
-      frag.append(el('path', { d: `M${x} ${y}Q${mx} ${my} ${x2} ${y2}`, class: 'm-route' }));
-      const a = Math.atan2(y2 - my, x2 - mx), h = 10 * u;
-      frag.append(el('path', { d: `M${x2} ${y2}L${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)}L${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)}Z`, class: 'm-routeHead' }));
-    });
+    const pts = rc.route.map((q) => P([q[1], q[2]])), fs = 13 * u, f = (p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`;
+    const at = (j) => pts[Math.max(0, Math.min(pts.length - 1, j))];
+    let from = 0;
     rc.route.forEach((q, i) => {
+      if (!i || !q[0]) return;
+      let d = `M${f(pts[from])}`, c2 = pts[from];
+      for (let j = from; j < i; j++) { // Catmull-Rom 換成三次貝茲曲線,線經過每個點且轉折平順
+        const p0 = at(j - 1), p1 = pts[j], p2 = pts[j + 1], p3 = at(j + 2);
+        const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        d += `C${f(c1)} ${f(c2)} ${f(p2)}`;
+      }
+      frag.append(el('path', { d, class: 'm-route' + (q[3] === '陸路' ? ' land' : '') }));
+      const [x2, y2] = pts[i], a = Math.atan2(y2 - c2[1], x2 - c2[0]), h = 10 * u;
+      frag.append(el('path', { d: `M${x2} ${y2}L${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)}L${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)}Z`, class: 'm-routeHead' }));
+      from = i;
+    });
+    const placed = [], hit = (l, t, w) => placed.some(([a, b, c]) => l < a + c && a < l + w && Math.abs(t - b) < fs * 1.5);
+    rc.route.forEach((q, i) => {
+      if (!q[0]) return;
       const [x, y] = pts[i], w = (q[0].length + 1) * fs;
       let lx = x + 8 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = x - 8 * u - w; // 靠右邊的站名改放左邊,免得被裁掉或被縮放鈕蓋住
+      if (hit(lx, y, w)) lx = lx > x ? x - 8 * u - w : x + 8 * u; // 和前一站的站名疊在一起就換邊(雞籠、淡水很近,WY74)
+      placed.push([lx, y, w]);
       frag.append(el('circle', { cx: x, cy: y, r: 5 * u, class: 'm-stop' }));
       frag.append(el('rect', { x: lx, y: y - fs * 1.3, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
       frag.append(el('text', { x: lx + fs * 0.5, y: y - fs * 0.15, class: 'm-tagt', 'font-size': fs.toFixed(1) }, q[0]));
@@ -556,7 +607,7 @@ function setEra(id, fit = refit) {
   try { history.replaceState(null, '', `?era=${encodeURIComponent(id)}`); } catch { /* 網址改不了也不影響閱讀 */ } // 網址記住目前年代,可以直接分享(WY60)
   update();
 }
-function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null, echo: null, bld: null }); if (mobile()) setTab('map'); else update(); }
+function pick(it) { Object.assign(st, { item: it, region: it.state, view: null, polity: null, echo: null, bld: null, fitPoem: it.t === 'poem' }); if (mobile()) setTab('map'); else update(); }
 function setTab(t) {
   st.tab = t; root.dataset.tab = t;
   $('t-list').setAttribute('aria-selected', t === 'list'); $('t-map').setAttribute('aria-selected', t === 'map');

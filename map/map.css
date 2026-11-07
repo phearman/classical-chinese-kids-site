@@ -20,7 +20,7 @@
 .cmap-it.sel { background: var(--accent-soft); font-weight: 700; }
 .cmap-cnt { font-size: 12px; color: var(--ink-soft); background: var(--quote-bg); border-radius: 999px; padding: 0 7px; font-weight: 400; }
 .cmap-ty { display: inline-block; font-size: 11px; line-height: 1; padding: 3px 5px; border-radius: 4px; color: var(--on-accent); }
-.cmap-ty.lesson { background: var(--accent); } .cmap-ty.person { background: #4f6b8a; } .cmap-ty.comic { background: var(--moss); }
+.cmap-ty.lesson { background: var(--accent); } .cmap-ty.person { background: #4f6b8a; } .cmap-ty.comic { background: var(--moss); } .cmap-ty.poem { background: #8a5a7a; }
 .cmap-nomap { font-size: 11px; color: var(--ink-soft); }
 /* 兩種標記分開:AI 推算(原文沒寫,AI 推算的年代或地點)/都城示意(原文只寫國別,點標在都城) */
 .cmap-ai, .cmap-cap { display: inline-block; font-size: 11px; line-height: 1.4; border-radius: 4px; padding: 0 4px; font-weight: 400; white-space: nowrap; }
@@ -84,6 +84,7 @@
 .m-tagt { fill: var(--bg); font-weight: 700; pointer-events: none; }
 .m-route { fill: none; stroke: var(--accent); stroke-dasharray: 6 5; stroke-width: 2.2; vector-effect: non-scaling-stroke; }
 .m-routeHead { fill: var(--accent); }
+.m-route.land { stroke-dasharray: 1.5 5; stroke-linecap: round; } /* WY74:陸路段用點線,和海路(虛線)分開 */
 .m-none { fill: var(--ink-soft); text-anchor: middle; font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
 
 @media (max-width: 767px) {
@@ -176,6 +177,7 @@
 :root[data-theme="dark"] .cmap-ok { color: #a9dbb3; background: #1f3324; border-color: #44704d; }
 .m-stop { fill: var(--accent); stroke: var(--bg); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .cmap-tw button.cmap-go { border: 0; cursor: pointer; font: inherit; font-size: 14px; }
+.cmap-tw .cmap-routeline { margin: 10px 0 0; font-size: 14px; } /* WY74:航線說明(只列有名字的站,標路別) */
 /* WY49:說明卡的條列與示意圖(南島語族族譜樹) */
 .cmap-tw-tabs { flex-wrap: wrap; }
 .cmap-tw-list { margin: 2px 0 6px; padding-left: 20px; line-height: 1.7; }
@@ -385,3 +387,7 @@
   .cmap-split-h:hover, .cmap-split-h.on, .cmap-split-h:focus-visible { background: linear-gradient(180deg, transparent 4px, var(--accent) 4px, var(--accent) 6px, transparent 6px); outline: none; }
 }
 .cmap-layers > b:not(:first-child) { margin-top: 6px; }
+/* 詩詞卡(WY52) */
+.cmap-poem-by { margin: 2px 0 8px; font-weight: 700; }
+.cmap-poem-by small { margin-left: 8px; font-weight: 400; color: var(--ink-soft); }
+.cmap-poem .cmap-orig { letter-spacing: .04em; }
