@@ -9,7 +9,7 @@
   --accent-soft: #f3dcd3;
   --moss: #5f7350;        /* 墨綠 */
   --term-bg: #fbeee0;
-  --term-line: #d9a86c;
+  --term-line: #b08857;
   --quote-bg: #f1e8d6;
   --badge: #8a6d3b;
   --art-paper: #efe5d1;
@@ -36,6 +36,7 @@
   --cur-fg: #9a3a27; --cur-bg: #f6e0d8;   /* 選單目前頁 */
   --map-water: #d6e6ea; --map-land: #eceee2; --map-sea-ink: #2d5563;   /* 魯國地理圖(WY30) */
   --ok-fg: #4d5f40; --ok-bg: #e3e8dc;
+  --chip-line: #857868;   /* 標籤、選擇用小標籤的邊框(WY84):對淺色 --bg、--surface 都 ≥3:1 */
   color-scheme: light;
 }
 
@@ -43,7 +44,7 @@
   :root:not([data-theme="light"]) {
     --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
     --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
-    --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
+    --term-bg: #3a2f22; --term-line: #b88a4f; --chip-line: #9a8c7a; --quote-bg: #2f2a24; --badge: #d6b47a;
     --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428; --art-sky: #2a3840; --art-chaos: #26222f; --myth-on-chaos: #f3ead6; --myth-sea: #2c4a55; --myth-sea-ink: #d6e9ef; --myth-bang: #f0a08a;
     --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
     --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
@@ -55,7 +56,7 @@
 :root[data-theme="dark"] {
   --bg: #1d1a17; --surface: #27231f; --ink: #ece4d6; --ink-soft: #b3a897; --line: #3d362f;
   --accent: #e0846c; --accent-soft: #4a2e27; --moss: #9db58a;
-  --term-bg: #3a2f22; --term-line: #b88a4f; --quote-bg: #2f2a24; --badge: #d6b47a;
+  --term-bg: #3a2f22; --term-line: #b88a4f; --chip-line: #9a8c7a; --quote-bg: #2f2a24; --badge: #d6b47a;
   --art-paper: #34302a; --art-hall: #3a332a; --art-night: #232838; --art-floor: #4a4033; --art-garden: #2f3428; --art-sky: #2a3840; --art-chaos: #26222f; --myth-on-chaos: #f3ead6; --myth-sea: #2c4a55; --myth-sea-ink: #d6e9ef; --myth-bang: #f0a08a;
   --fig-head: #e2c4a6; --fig-hair: #120f0c; --prop: #a88a63; --glow: #e9b54d;
   --shadow: 0 1px 3px rgb(0 0 0 / 40%); --shade: rgb(0 0 0 / 55%);
@@ -316,7 +317,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .quizbar { display: grid; gap: 6px; }
 .levelpick { border: 0; padding: 0; margin: 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .levelpick legend { float: left; margin-right: 6px; color: var(--ink-soft); font-size: 15px; }
-.pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: var(--bg); cursor: pointer; }
+.pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--chip-line); border-radius: 999px; padding: 4px 12px; background: var(--bg); cursor: pointer; }
 .pill:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .pill input { accent-color: var(--accent); }
 .summary { margin: 4px 0 0; font-weight: 700; }
@@ -1087,7 +1088,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .idiom-search { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; }
 .idiom-search:focus-visible, .idiom-chip:focus-visible, .idiom-more:focus-visible, .comic-back:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .idiom-filters { display: flex; flex-wrap: nowrap; gap: 7px; margin: 10px 0; overflow-x: auto; overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: thin; }
-.idiom-chip { flex: 0 0 auto; min-height: 36px; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.idiom-chip { flex: 0 0 auto; min-height: 36px; border: 1px solid var(--chip-line); border-radius: 999px; padding: 4px 11px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
 .idiom-chip.is-current { border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
 .idiom-source-filters { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; color: var(--ink); font-size: 14px; }.idiom-source-filters label { display: grid; gap: 3px; }.idiom-select { min-height: 36px; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; background: var(--surface); color: var(--ink); font: inherit; }.idiom-select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .idiom-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
@@ -1095,7 +1096,7 @@ h2 small { font-size: 14px; font-weight: normal; color: var(--ink-soft); margin-
 .idiom-word { font-family: var(--serif); font-size: 19px; font-weight: 700; }
 .idiom-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
 .idiom-tag { display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 12px; text-decoration: none; white-space: nowrap; }
-.idiom-ready { background: var(--ok-bg); color: var(--ok-fg); }.idiom-waiting { background: var(--quote-bg); color: var(--ink-soft); }.idiom-dict { border: 1px solid var(--line); color: var(--ink); }
+.idiom-ready { background: var(--ok-bg); color: var(--ok-fg); }.idiom-waiting { background: var(--quote-bg); color: var(--ink-soft); }.idiom-dict { border: 1px solid var(--chip-line); color: var(--ink); }
 .zhuyin-word ruby, .idiom-word ruby { ruby-position: over; }
 .zhuyin-word rt, .idiom-word rt { font-family: system-ui, sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 0; color: var(--ink-soft); }
 .zhuyin-word rt { font-size: 13px; }
