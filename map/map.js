@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=2940f6a';
-import { escapeHTML as esc } from '../shared/terms.js?v=2940f6a';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=2940f6a';
-import { WORLD_BASE as B } from './world-base.js?v=2940f6a';
-import { twCards, checkOf } from './taiwan-world.js?v=2940f6a';
-import { eraCards, KINDS } from './era-cards.js?v=2940f6a';
-import { COMICS } from '../idioms/comics.js?v=2940f6a';
-import { ECHOES } from './echoes.js?v=2940f6a';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=2940f6a';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=2940f6a';
-import { POEMS } from './poems.js?v=2940f6a';
-import { FAMILIES, famsOfBld } from './families.js?v=2940f6a';
+import { initPage } from '../shared/page.js?v=135d03d';
+import { escapeHTML as esc } from '../shared/terms.js?v=135d03d';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=135d03d';
+import { WORLD_BASE as B } from './world-base.js?v=135d03d';
+import { twCards, checkOf } from './taiwan-world.js?v=135d03d';
+import { eraCards, KINDS } from './era-cards.js?v=135d03d';
+import { COMICS } from '../idioms/comics.js?v=135d03d';
+import { ECHOES } from './echoes.js?v=135d03d';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=135d03d';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=135d03d';
+import { POEMS } from './poems.js?v=135d03d';
+import { FAMILIES, famsOfBld } from './families.js?v=135d03d';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
