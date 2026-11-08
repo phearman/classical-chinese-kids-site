@@ -1,10 +1,10 @@
 // 人物介紹(WY22):沈復的基本資料與時間線、《浮生六記》四卷導覽、一輩子的物外之趣、延伸人物推薦。
 // 一屏版(比照第一課 people.js):一張卡一頁;上一頁/下一頁、←→ 鍵、手機左右滑;頁碼記在網址 #p1~#pN。
-import { study, people, recommends } from './data.js?v=135d03d';
-import { escapeHTML } from '../../shared/terms.js?v=135d03d';
-import { sceneSVG } from '../../shared/figures.js?v=135d03d';
-import { initPage } from '../../shared/page.js?v=135d03d';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=135d03d';
+import { study, people, recommends } from './data.js?v=214b37e';
+import { escapeHTML } from '../../shared/terms.js?v=214b37e';
+import { sceneSVG } from '../../shared/figures.js?v=214b37e';
+import { initPage } from '../../shared/page.js?v=214b37e';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=214b37e';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

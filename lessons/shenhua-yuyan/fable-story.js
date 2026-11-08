@@ -1,9 +1,9 @@
-import { fableStoryPages, fableStoryNote } from './fable-data.js?v=135d03d';
-import { escapeHTML } from '../../shared/terms.js?v=135d03d';
-import { initPage } from '../../shared/page.js?v=135d03d';
-import { mountStoryPager } from '../../shared/story-pager.js?v=135d03d';
-import { FULL, place, backdrop } from '../../shared/fable-props.js?v=135d03d';
-import { ROLES, imageURL } from '../../shared/figures.js?v=135d03d';
+import { fableStoryPages, fableStoryNote } from './fable-data.js?v=214b37e';
+import { escapeHTML } from '../../shared/terms.js?v=214b37e';
+import { initPage } from '../../shared/page.js?v=214b37e';
+import { mountStoryPager } from '../../shared/story-pager.js?v=214b37e';
+import { FULL, place, backdrop } from '../../shared/fable-props.js?v=214b37e';
+import { ROLES, imageURL } from '../../shared/figures.js?v=214b37e';
 initPage({ paged: true });
 const app = document.querySelector('#app');
 const total = fableStoryPages.length;
