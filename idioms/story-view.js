@@ -1,5 +1,5 @@
-// 歷史故事(WY43)的畫面:清單與四格內文。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
-import { escapeHTML } from '../shared/terms.js?v=829841f';
+// 歷史故事(WY43;WY90 文字卡)的畫面:清單與四格內文;kind: 'text' 的沒有圖,白話分段、另列旁註。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
+import { escapeHTML } from '../shared/terms.js?v=2940f6a';
 
 export const storyHref = (story) => `story.html?id=${encodeURIComponent(story.slug)}`;
 
@@ -8,8 +8,8 @@ export const missingStoryHTML = () => '<main class="idiom-view idiom-empty"><h1>
 // 清單:每則一張卡片(第 1 格縮圖+題目+出處)。
 export function storyListHTML(stories) {
   return `<main class="idiom-view">
-  <h1>歷史故事</h1><p class="idiom-note">史書裡的真實事件，畫成四格漫畫。原文照史書，白話由本站改寫。</p>
-  <ul class="story-list">${stories.map((s) => `<li><a class="story-card" href="${storyHref(s)}"><img src="${escapeHTML(s.images[0])}" alt="" loading="lazy"><span><b>${escapeHTML(s.title)}</b><small>${escapeHTML(s.book)}・${escapeHTML(s.era)}</small></span></a></li>`).join('')}</ul>
+  <h1>歷史故事</h1><p class="idiom-note">史書裡的真實事件，畫成四格漫畫；臺灣古典文獻先做成文字卡。原文照古籍，白話由本站改寫。</p>
+  <ul class="story-list">${stories.map((s) => `<li><a class="story-card" href="${storyHref(s)}">${s.images.length ? `<img src="${escapeHTML(s.images[0])}" alt="" loading="lazy">` : `<span class="story-noimg" aria-hidden="true">文</span>`}<span><b>${escapeHTML(s.title)}</b><small>${escapeHTML(s.book)}・${escapeHTML(s.era)}${s.kind === 'text' ? '・文字卡' : ''}</small></span></a></li>`).join('')}</ul>
   <a class="comic-back" href="index.html">← 回成語集</a>
   <p class="idiom-license">漫畫與文字：本站依古籍原文自行改寫；原典屬公有領域。</p>
 </main>`;
@@ -30,10 +30,12 @@ const navHTML = (nav, label) => (nav ? `<nav class="comic-nav" aria-label="${esc
 </nav>` : '');
 
 export function storyBodyHTML(story, { nav = null } = {}) {
-  return `<main class="comic-view"><h1>${escapeHTML(story.title)}</h1><p class="idiom-note">歷史故事${story.aka ? `・${escapeHTML(story.aka)}` : ''}</p>
+  return `<main class="comic-view"><h1>${escapeHTML(story.title)}</h1><p class="idiom-note">${escapeHTML(story.group || '歷史故事')}${story.aka ? `・${escapeHTML(story.aka)}` : ''}</p>
     ${navHTML(nav, '切換故事（頁首）')}
-    <ol class="comic-panels">${story.panels.map((text, i) => `<li><img src="${escapeHTML(story.images[i])}" alt="第 ${i + 1} 格：${escapeHTML(text)}"><p>${escapeHTML(text)}</p></li>`).join('')}</ol>
+    ${story.kind === 'text' ? `<ol class="story-text">${story.panels.map((text) => `<li><p>${escapeHTML(text)}</p></li>`).join('')}</ol>`
+    : `<ol class="comic-panels">${story.panels.map((text, i) => `<li><img src="${escapeHTML(story.images[i])}" alt="第 ${i + 1} 格：${escapeHTML(text)}"><p>${escapeHTML(text)}</p></li>`).join('')}</ol>`}
     <blockquote class="idiom-quote">${escapeHTML(story.original)}<cite>${escapeHTML(story.source)}</cite></blockquote>
+    ${story.asides?.length ? `<section class="story-asides"><h2>旁註</h2><ul>${story.asides.map((a) => `<li><q>${escapeHTML(a.q)}</q>${escapeHTML(a.n)}</li>`).join('')}</ul></section>` : ''}
     ${story.note ? `<p class="idiom-note">${escapeHTML(story.note)}</p>` : ''}
     <dl class="comic-details"><div><dt>出處</dt><dd>${escapeHTML(story.book)}<br><span class="comic-era">${escapeHTML(story.era)}</span></dd></div></dl>
     ${navHTML(nav, '切換故事（頁尾）')}<a class="comic-back" href="story.html">← 回歷史故事</a>
