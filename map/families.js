@@ -164,7 +164,7 @@ const S = {
   suJt: { t: '蘇建唐〈從語用觀點論〈東遊六十四日隨筆〉的人物互動〉,《東海中文學報》第 41 期(2021)摘要', u: 'https://lawdata.com.tw/tw/detail.aspx?no=445239' },
   tcmbYan2: { t: '李鎧揚〈顏雲年〉,國家文化記憶庫(崧旭資訊建檔)', u: 'https://tcmb.culture.tw/zh-tw/detail?id=636922&indexCode=Culture_People' },
   wangHj: { t: '王惠君、宋曉雯、陳勤忠〈日治時期瑞芳鑛山之建設與發展過程〉(新北市立黃金博物館)', u: 'https://www.gep.ntpc.gov.tw/files/file_pool/1/0G252589970162398027/02_20140128.pdf' },
-  huangSh: { t: '黃紹恆《日本帝國主義下的臺灣金礦業—文獻解題與歷史研究》成果報告書(新北市立黃金博物館委託,2011)', u: 'https://www.gep.ntpc.gov.tw/files/file_pool/2/0H075499802593606050/' },
+  huangSh: { t: '黃紹恆《日本帝國主義下的臺灣金礦業—文獻解題與歷史研究》成果報告書(新北市立黃金博物館委託,2011;原網址已失效,2026-11-08 檢查)', u: 'https://www.gep.ntpc.gov.tw/files/file_pool/2/0H075499802593606050/' },
   jingtong: { t: '文化部文化資產局 國家文化資產網〈菁桐車站〉', u: N('monument', '20030501000001') },
   liWyTomb: { t: '文化部文化資產局 國家文化資產網〈宜蘭舉人李望洋之墓〉', u: N('monument', '20241108000002') },
   chenJh: { t: '陳家煌〈晚清臺灣人李望洋宦遊甘肅的處境及心境〉,《中央大學人文學報》第 58 期(2014)', u: 'https://lit.ncu.edu.tw/ncujoh/viewArticle.asp?P_No=72&CA_ID=543' },

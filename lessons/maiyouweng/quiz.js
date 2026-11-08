@@ -1,9 +1,9 @@
 // 隨堂測驗頁:題目由 quiz-data.js 產生;作答只存在這台裝置的瀏覽器(localStorage),不上傳、不需帳號。
 // 一屏版(WY13):第一頁是說明與程度選擇,之後一題一頁(題組一頁);網址 #intro、#題號。
-import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=64f49b2';
-import { escapeHTML } from '../../shared/terms.js?v=64f49b2';
-import { initPage } from '../../shared/page.js?v=64f49b2';
-import { createPaging, pagerHTML } from '../../shared/deck.js?v=64f49b2';
+import { quizMeta, categories, levels, goals, types, questions, gradeItem, isAutoGraded, flatItems } from './quiz-data.js?v=829841f';
+import { escapeHTML } from '../../shared/terms.js?v=829841f';
+import { initPage } from '../../shared/page.js?v=829841f';
+import { createPaging, pagerHTML } from '../../shared/deck.js?v=829841f';
 
 initPage({ paged: true });
 const app = document.getElementById('app');

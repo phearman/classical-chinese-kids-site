@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=64f49b2';
-import { escapeHTML as esc } from '../shared/terms.js?v=64f49b2';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=64f49b2';
-import { WORLD_BASE as B } from './world-base.js?v=64f49b2';
-import { twCards, checkOf } from './taiwan-world.js?v=64f49b2';
-import { eraCards, KINDS } from './era-cards.js?v=64f49b2';
-import { COMICS } from '../idioms/comics.js?v=64f49b2';
-import { ECHOES } from './echoes.js?v=64f49b2';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=64f49b2';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=64f49b2';
-import { POEMS } from './poems.js?v=64f49b2';
-import { FAMILIES, famsOfBld } from './families.js?v=64f49b2';
+import { initPage } from '../shared/page.js?v=829841f';
+import { escapeHTML as esc } from '../shared/terms.js?v=829841f';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=829841f';
+import { WORLD_BASE as B } from './world-base.js?v=829841f';
+import { twCards, checkOf } from './taiwan-world.js?v=829841f';
+import { eraCards, KINDS } from './era-cards.js?v=829841f';
+import { COMICS } from '../idioms/comics.js?v=829841f';
+import { ECHOES } from './echoes.js?v=829841f';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=829841f';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=829841f';
+import { POEMS } from './poems.js?v=829841f';
+import { FAMILIES, famsOfBld } from './families.js?v=829841f';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -589,16 +589,20 @@ async function drawMap() {
       const a = Math.atan2(y2 - my, x2 - mx), h = 10 * u;
       frag.append(el('path', { d: `M${x2} ${y2}L${x2 - h * Math.cos(a - 0.45)} ${y2 - h * Math.sin(a - 0.45)}L${x2 - h * Math.cos(a + 0.45)} ${y2 - h * Math.sin(a + 0.45)}Z`, class: 'm-routeHead' }));
     });
-    if (st.item.t === 'poem') stops.slice(1).forEach((q) => {
-      const [sx, sy] = P(q.at), fs = 13 * u, w = (q.name.length + 1) * fs;
-      let lx = sx + 8 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = sx - 8 * u - w;
-      frag.append(el('circle', { cx: sx, cy: sy, r: 5 * u, class: 'm-stop' }));
-      frag.append(el('rect', { x: lx, y: sy - fs * 1.3, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
-      frag.append(el('text', { x: lx + fs * 0.5, y: sy - fs * 0.15, class: 'm-tagt', 'font-size': fs.toFixed(1) }, q.name));
-    });
     const tag = pointGuess(st.item) ? `${st.item.title}・AI 推算` : st.item.title;
     const fs = 14 * u, w = (tag.length + 1) * fs;
     let lx = x + 9 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = x - 9 * u - w;
+    // 站名牌互相蓋住時往下挪(WY89〈泊船瓜洲〉三站很近)
+    const used = [[lx, y - fs * 1.6, w, fs * 1.5]], hit = (a) => used.some((b) => a[0] < b[0] + b[2] && b[0] < a[0] + a[2] && a[1] < b[1] + b[3] && b[1] < a[1] + a[3]);
+    if (st.item.t === 'poem') stops.slice(1).forEach((q) => {
+      const [sx, sy] = P(q.at), fs = 13 * u, w = (q.name.length + 1) * fs;
+      let lx = sx + 8 * u; if (lx + w > v[0] + v[2] - 50 * u) lx = sx - 8 * u - w;
+      let ry = sy - fs * 1.3; for (let k = 0; k < 6 && hit([lx, ry, w, fs * 1.5]); k++) ry += fs * 1.6;
+      used.push([lx, ry, w, fs * 1.5]);
+      frag.append(el('circle', { cx: sx, cy: sy, r: 5 * u, class: 'm-stop' }));
+      frag.append(el('rect', { x: lx, y: ry, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
+      frag.append(el('text', { x: lx + fs * 0.5, y: ry + fs * 1.15, class: 'm-tagt', 'font-size': fs.toFixed(1) }, q.name));
+    });
     frag.append(el('rect', { x: lx, y: y - fs * 1.6, width: w, height: fs * 1.5, rx: 4 * u, class: 'm-tag' }));
     frag.append(el('text', { x: lx + fs * 0.5, y: y - fs * 0.45, class: 'm-tagt', 'font-size': fs.toFixed(1) }, tag));
   }

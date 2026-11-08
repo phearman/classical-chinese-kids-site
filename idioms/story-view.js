@@ -1,5 +1,5 @@
 // 歷史故事(WY43)的畫面:清單與四格內文。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
-import { escapeHTML } from '../shared/terms.js?v=64f49b2';
+import { escapeHTML } from '../shared/terms.js?v=829841f';
 
 export const storyHref = (story) => `story.html?id=${encodeURIComponent(story.slug)}`;
 

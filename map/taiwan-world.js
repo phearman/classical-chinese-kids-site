@@ -43,7 +43,7 @@ const S = {
   flood: { t: '伊婉‧貝林(2012)〈洪水‧漂流‧遷徙:原住民口傳文學中的漂流記〉,《原住民族文獻》第 2 期,原住民族委員會', u: 'https://ihc.cip.gov.tw/EJournal/EJournalCat/32' },
   kavalan: { t: 'Uki Bauki(2019-11-15)〈第一個復名的平埔族群:噶瑪蘭族〉,《原視界》,原住民族文化事業基金會', u: 'https://insight.ipcf.org.tw/article/218' },
   siraya: { t: '中央社(2026-07-30)〈政院核定西拉雅為原住民第17族 平埔族首例、8月中起可登記身分〉', u: 'https://www.cna.com.tw/news/aipl/202607300176.aspx' },
-  siraya2: { t: '中央社(2026-10-14)〈西拉雅族7月獲政院核定 1336人已完成身分登記〉', u: 'https://cna.com.tw/news/ahel/202610140036.aspx' },
+  siraya2: { t: '中央社(2026-10-14)〈西拉雅族7月獲政院核定 1336人已完成身分登記〉', u: 'https://www.cna.com.tw/news/ahel/202610140036.aspx' },
   // 待查證補查(2026-10-31)
   koxinga: { t: '戴寶村〈國姓爺的歷史與傳說〉,吳三連臺灣史料基金會「台灣之窗」(2001-04-30)', u: 'https://www.twcenter.org.tw/thematic_series/history_class/tw_window/e02_20010430' },
   dadu: { t: '宋竹勛〈被遺忘的大肚王國〉,東海大學大肚山地方知識平台', u: 'https://dadu3.thu.edu.tw/history_d.php?i=13' },
