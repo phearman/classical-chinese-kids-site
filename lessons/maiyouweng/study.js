@@ -1,11 +1,11 @@
 // 〈賣油翁〉課文學習版:三段原文一句一頁(原文、點詞詞卡、白話),比喻、想一想、延伸、故事人物、作者小檔案各自成頁。
 // 一屏版(比照第 7 課):上方段落籤可跳段;頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=edf6ae9';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=edf6ae9';
-import { setupGlossary } from '../../shared/sheet.js?v=edf6ae9';
-import { initPage } from '../../shared/page.js?v=edf6ae9';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=edf6ae9';
-import { characterURL } from '../../shared/assets.js?v=edf6ae9';
+import { lesson, glossary, study } from './data.js?v=7f68285';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=7f68285';
+import { setupGlossary } from '../../shared/sheet.js?v=7f68285';
+import { initPage } from '../../shared/page.js?v=7f68285';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=7f68285';
+import { characterURL } from '../../shared/assets.js?v=7f68285';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -78,6 +78,8 @@ const SECTIONS = [...parts.map((p) => [p.id, p.short]), ['analogy', '比喻'], [
 const paging = createPaging({
   root: app,
   keys,
+  // WY127:史書故事〈歐陽修以荻畫地〉連到 study.html#author,頁序變動也指得到作者小檔案
+  aliases: { author: keys[pages.findIndex((x) => x.eyebrow === '作者')] },
   onShow(key, i, total) {
     const p = pages[i];
     const sections = SECTIONS.map(([id, label]) => ({ label, key: keys[pages.findIndex((x) => x.section === id)], current: p.section === id }));

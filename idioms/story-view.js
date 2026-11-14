@@ -1,5 +1,5 @@
 // 歷史故事(WY43;WY90 文字卡)的畫面:清單與四格內文;kind: 'text' 的沒有圖,白話分段、另列旁註。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
-import { escapeHTML } from '../shared/terms.js?v=edf6ae9';
+import { escapeHTML } from '../shared/terms.js?v=7f68285';
 
 export const storyHref = (story) => `story.html?id=${encodeURIComponent(story.slug)}`;
 
@@ -37,6 +37,7 @@ export function storyBodyHTML(story, { nav = null } = {}) {
     <blockquote class="idiom-quote">${escapeHTML(story.original)}<cite>${escapeHTML(story.source)}</cite></blockquote>
     ${story.asides?.length ? `<section class="story-asides"><h2>旁註</h2><ul>${story.asides.map((a) => `<li><q>${escapeHTML(a.q)}</q>${escapeHTML(a.n)}</li>`).join('')}</ul></section>` : ''}
     ${story.note ? `<p class="idiom-note">${escapeHTML(story.note)}</p>` : ''}
+    ${story.see ? `<p class="idiom-note"><a href="${escapeHTML(story.see.href)}">${escapeHTML(story.see.text)}</a></p>` : ''}
     <dl class="comic-details"><div><dt>出處</dt><dd>${escapeHTML(story.book)}<br><span class="comic-era">${escapeHTML(story.era)}</span></dd></div></dl>
     ${navHTML(nav, '切換故事（頁尾）')}<a class="comic-back" href="story.html">← 回歷史故事</a>
     <p class="idiom-license">漫畫與文字：本站依古籍原文自行改寫；原典屬公有領域。</p></main>`;
