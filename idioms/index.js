@@ -1,12 +1,12 @@
-import { initPage } from '../shared/page.js?v=5feb223';
-import { escapeHTML } from '../shared/terms.js?v=5feb223';
-import { WORDS } from './words-data.js?v=5feb223';
-import { COMICS } from './comics.js?v=5feb223';
-import { STORIES } from './history.js?v=5feb223';
-import { TOPIC_LABELS } from './categories.js?v=5feb223';
-import { ZHUYIN } from './zhuyin.js?v=5feb223';
-import { zhuyinHTML } from './comic-view.js?v=5feb223';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=5feb223';
+import { initPage } from '../shared/page.js?v=3ba9820';
+import { escapeHTML } from '../shared/terms.js?v=3ba9820';
+import { WORDS } from './words-data.js?v=3ba9820';
+import { COMICS } from './comics.js?v=3ba9820';
+import { STORIES } from './history.js?v=3ba9820';
+import { TOPIC_LABELS } from './categories.js?v=3ba9820';
+import { ZHUYIN } from './zhuyin.js?v=3ba9820';
+import { zhuyinHTML } from './comic-view.js?v=3ba9820';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=3ba9820';
 
 initPage();
 const app = document.getElementById('app');
