@@ -1,5 +1,5 @@
 // 歷史故事(WY43;WY90 文字卡)的畫面:清單與四格內文;kind: 'text' 的沒有圖,白話分段、另列旁註。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
-import { escapeHTML } from '../shared/terms.js?v=214b37e';
+import { escapeHTML } from '../shared/terms.js?v=5feb223';
 
 export const storyHref = (story) => `story.html?id=${encodeURIComponent(story.slug)}`;
 

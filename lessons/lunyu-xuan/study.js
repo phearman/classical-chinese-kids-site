@@ -1,10 +1,10 @@
 // 〈論語選〉課文學習版:三則原文一句一頁(原文、點詞詞卡、白話),比喻、想一想、延伸閱讀各自成頁。
 // 一屏版(比照第一課):上方段落籤可跳段;頁碼記在網址 #p1~#pN。
-import { lesson, glossary, study } from './data.js?v=214b37e';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=214b37e';
-import { setupGlossary } from '../../shared/sheet.js?v=214b37e';
-import { initPage } from '../../shared/page.js?v=214b37e';
-import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=214b37e';
+import { lesson, glossary, study } from './data.js?v=5feb223';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=5feb223';
+import { setupGlossary } from '../../shared/sheet.js?v=5feb223';
+import { initPage } from '../../shared/page.js?v=5feb223';
+import { createPaging, pagerHTML, sectionsHTML } from '../../shared/deck.js?v=5feb223';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
