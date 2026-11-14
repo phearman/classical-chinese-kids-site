@@ -1,5 +1,5 @@
 // 歷史故事(WY43;WY90 文字卡)的畫面:清單與四格內文;kind: 'text' 的沒有圖,白話分段、另列旁註。資料在 history.js;版面沿用成語漫畫的 class(comic-panels、idiom-quote 等)。
-import { escapeHTML } from '../shared/terms.js?v=7f68285';
+import { escapeHTML } from '../shared/terms.js?v=dad3d16';
 
 export const storyHref = (story) => `story.html?id=${encodeURIComponent(story.slug)}`;
 
@@ -37,6 +37,7 @@ export function storyBodyHTML(story, { nav = null } = {}) {
     <blockquote class="idiom-quote">${escapeHTML(story.original)}<cite>${escapeHTML(story.source)}</cite></blockquote>
     ${story.asides?.length ? `<section class="story-asides"><h2>旁註</h2><ul>${story.asides.map((a) => `<li><q>${escapeHTML(a.q)}</q>${escapeHTML(a.n)}</li>`).join('')}</ul></section>` : ''}
     ${story.note ? `<p class="idiom-note">${escapeHTML(story.note)}</p>` : ''}
+    ${story.dispute?.length ? `<details class="story-dispute"><summary>有爭議的事(${story.dispute.length})</summary>${story.dispute.map((d) => `<p>${escapeHTML(d.p)}</p><ul>${d.views.map((v) => `<li>${escapeHTML(v.p)}(<a href="${escapeHTML(v.u)}" target="_blank" rel="noopener">${escapeHTML(v.t)}</a>)</li>`).join('')}</ul>`).join('')}<p class="idiom-note">不同說法並列,本站不下評價。</p></details>` : ''}
     ${story.see ? `<p class="idiom-note"><a href="${escapeHTML(story.see.href)}">${escapeHTML(story.see.text)}</a></p>` : ''}
     <dl class="comic-details"><div><dt>出處</dt><dd>${escapeHTML(story.book)}<br><span class="comic-era">${escapeHTML(story.era)}</span></dd></div></dl>
     ${navHTML(nav, '切換故事（頁尾）')}<a class="comic-back" href="story.html">← 回歷史故事</a>

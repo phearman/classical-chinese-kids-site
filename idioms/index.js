@@ -1,12 +1,12 @@
-import { initPage } from '../shared/page.js?v=7f68285';
-import { escapeHTML } from '../shared/terms.js?v=7f68285';
-import { WORDS } from './words-data.js?v=7f68285';
-import { COMICS } from './comics.js?v=7f68285';
-import { STORIES } from './history.js?v=7f68285';
-import { TOPIC_LABELS } from './categories.js?v=7f68285';
-import { ZHUYIN } from './zhuyin.js?v=7f68285';
-import { zhuyinHTML } from './comic-view.js?v=7f68285';
-import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=7f68285';
+import { initPage } from '../shared/page.js?v=dad3d16';
+import { escapeHTML } from '../shared/terms.js?v=dad3d16';
+import { WORDS } from './words-data.js?v=dad3d16';
+import { COMICS } from './comics.js?v=dad3d16';
+import { STORIES } from './history.js?v=dad3d16';
+import { TOPIC_LABELS } from './categories.js?v=dad3d16';
+import { ZHUYIN } from './zhuyin.js?v=dad3d16';
+import { zhuyinHTML } from './comic-view.js?v=dad3d16';
+import { PAGE_SIZE, eraOf, idiomURL, filterWords, visibleWords, readFilterParams, filterSearch } from './list.js?v=dad3d16';
 
 initPage();
 const app = document.getElementById('app');

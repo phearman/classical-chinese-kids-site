@@ -1160,3 +1160,7 @@ a.idiom-chip-link:focus-visible { outline: 3px solid var(--accent); outline-offs
 .story-asides ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
 .story-asides q { font-family: var(--serif); margin-right: .3em; }
 .story-asides q::before { content: '「'; } .story-asides q::after { content: '」'; }
+.story-dispute { margin: 12px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.story-dispute summary { cursor: pointer; font-weight: 700; color: var(--moss); }
+.story-dispute ul { margin: 6px 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.story-dispute p { margin: 8px 0 0; }

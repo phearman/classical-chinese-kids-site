@@ -1,2 +1,2 @@
 // 網站版本(由 scripts/publish.js 發佈時產生)
-export const version = { date: '2026-11-15', commit: '7f68285' };
+export const version = { date: '2026-11-15', commit: 'dad3d16' };
