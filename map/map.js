@@ -1,18 +1,18 @@
 // 文言文地圖(WY42-B2):照定案稿(docs/mockups/wy42/d-final.html)做的正式頁。
 // 資料:places.js(各則、地點、國別)、borders/(世界歷史疆界切片,Cliopatria CC BY 4.0)、world-base.js(Natural Earth 底圖)。
 // 標記:「AI 推算」=原文沒寫、AI 推算的年代或地點(含原文只寫國別、點標在該國都城的);地點推算的點加虛線圈。
-import { initPage } from '../shared/page.js?v=dad3d16';
-import { escapeHTML as esc } from '../shared/terms.js?v=dad3d16';
-import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=dad3d16';
-import { WORLD_BASE as B } from './world-base.js?v=dad3d16';
-import { twCards, checkOf } from './taiwan-world.js?v=dad3d16';
-import { eraCards, KINDS } from './era-cards.js?v=dad3d16';
-import { COMICS } from '../idioms/comics.js?v=dad3d16';
-import { ECHOES } from './echoes.js?v=dad3d16';
-import { comicBodyHTML } from '../idioms/comic-view.js?v=dad3d16';
-import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=dad3d16';
-import { POEMS } from './poems.js?v=dad3d16';
-import { FAMILIES, famsOfBld } from './families.js?v=dad3d16';
+import { initPage } from '../shared/page.js?v=7a31525';
+import { escapeHTML as esc } from '../shared/terms.js?v=7a31525';
+import { ERAS, STATES, ITEMS, PLACE_BY_ID, placeOf, coordsOf, sliceFor, isGuessed } from './places.js?v=7a31525';
+import { WORLD_BASE as B } from './world-base.js?v=7a31525';
+import { twCards, checkOf } from './taiwan-world.js?v=7a31525';
+import { eraCards, KINDS } from './era-cards.js?v=7a31525';
+import { COMICS } from '../idioms/comics.js?v=7a31525';
+import { ECHOES } from './echoes.js?v=7a31525';
+import { comicBodyHTML } from '../idioms/comic-view.js?v=7a31525';
+import { COUNTRIES, LATER, PH_LINKS } from './countries.js?v=7a31525';
+import { POEMS } from './poems.js?v=7a31525';
+import { FAMILIES, famsOfBld } from './families.js?v=7a31525';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
@@ -283,6 +283,7 @@ function renderDetail() {
   const when = it.basis === 'myth' ? `神話,不推算年代(${esc(it.when)})`
     : it.basis === 'text' ? `${era.name}(原文:${esc(it.when)})`
     : it.basis === 'author' ? `${era.name}(${esc(it.when)})`
+    : it.basis === '成語典' ? `${era.name}(原文沒寫年代,依教育部《成語典》:${esc(it.when)})`
     : it.basis === 'authorGuess' ? `${era.name} <span class="cmap-ai">AI 推算</span> 作者跨兩個朝代,寫作年代沒有出處,依規則掛前一朝(${esc(it.when)})`
     : `${era.name} <span class="cmap-ai">AI 推算</span> 原文沒寫年代(${esc(it.when)}),依${it.basis === 'speaker' ? '說故事的人的時代' : '成書時代'}推算`;
   let where = `${s ? esc(s.name) + '・' : ''}${esc(it.text)}`;
