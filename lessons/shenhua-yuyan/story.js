@@ -1,10 +1,10 @@
 // 〈古代神話與寓言選〉圖文故事(WY26 PR-B1,比照第 7 課):一頁一段情境,上下頁導覽;頁碼記在網址 #p1~#pN。
 // 一屏版(WY13):插圖依剩餘高度縮放,文字太長時只在文字區內捲動,整頁不捲。
-import { glossary, storyPages, storyNote } from './data.js?v=dc84d56';
-import { renderMarked, escapeHTML } from '../../shared/terms.js?v=dc84d56';
-import { setupGlossary } from '../../shared/sheet.js?v=dc84d56';
-import { sceneSVG } from '../../shared/figures.js?v=dc84d56';
-import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=dc84d56';
+import { glossary, storyPages, storyNote } from './data.js?v=425ce05';
+import { renderMarked, escapeHTML } from '../../shared/terms.js?v=425ce05';
+import { setupGlossary } from '../../shared/sheet.js?v=425ce05';
+import { sceneSVG } from '../../shared/figures.js?v=425ce05';
+import { initPage, overlayOpen, onSwipe } from '../../shared/page.js?v=425ce05';
 
 initPage({ paged: true });
 const app = document.getElementById('app');
