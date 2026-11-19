@@ -1,6 +1,6 @@
-import { initPage } from '../shared/page.js?v=425ce05';
-import { STORIES, storyBySlug } from './history.js?v=425ce05';
-import { storyListHTML, storyBodyHTML, storyNeighbors, missingStoryHTML } from './story-view.js?v=425ce05';
+import { initPage } from '../shared/page.js?v=94aa6b6';
+import { STORIES, storyBySlug } from './history.js?v=94aa6b6';
+import { storyListHTML, storyBodyHTML, storyNeighbors, missingStoryHTML } from './story-view.js?v=94aa6b6';
 
 initPage();
 const app = document.getElementById('app');
